@@ -35,9 +35,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalFocusChangeListener;
-import android.view.ViewTreeObserver.OnWindowFocusChangeListener;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -71,8 +69,8 @@ import com.zhuchao.android.tianpu.data.json.regoem.RecommendvideoBean;
 import com.zhuchao.android.tianpu.data.json.regoem.RemoveAppBean;
 
 import com.zhuchao.android.tianpu.databinding.ActivityMainBinding;
-import com.zhuchao.android.tianpu.services.MyService;
-import com.zhuchao.android.tianpu.services.SerialService;
+import com.zhuchao.android.tianpu.services.iflytekService;
+import com.zhuchao.android.tianpu.services.myService;
 import com.zhuchao.android.tianpu.utils.AppHandler;
 import com.zhuchao.android.tianpu.utils.AppManager;
 import com.zhuchao.android.tianpu.utils.GlideMgr;
@@ -203,7 +201,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
 
     private MySerialPort serialPortUtils = new MySerialPort(this);
-    //private SerialService serialService;
+    //private myService serialService;
     private Handler SerialPortReceivehandler;
     private byte[] SerialPortReceiveBuffer;
     //private byte[] BluetoothOpen = {0x02, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x0E, 0x7E};//蓝牙  K70 //  serialPortUtils.sendBuffer(BluetoothOpen,SizeOf(BluetoothOpen));
@@ -341,7 +339,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         binding.scrollTv.setSelected(true);
 
 
-        bindService(new Intent(this, SerialService.class), this, BIND_AUTO_CREATE);
+        bindService(new Intent(this, myService.class), this, BIND_AUTO_CREATE);
 
         SerialPortReceivehandler = new Handler() {
             @Override
@@ -376,8 +374,8 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         registerReceiver(mBootCompletedReceiver, filter);
 
         Intent iii;
-        iii = new Intent(MainActivity.this, MyService.class);
-        Log.d(TAG, "start MyService");
+        iii = new Intent(MainActivity.this, iflytekService.class);
+        Log.d(TAG, "start iflytekService");
         startService(iii);
 
         requestPermition();
@@ -986,9 +984,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
-        SerialService.Binder binder = (SerialService.Binder) service;
-        SerialService serialService = binder.getService();
-        serialService.setCallback(new SerialService.Callback() {
+        myService.Binder binder = (myService.Binder) service;
+        myService myService = binder.getService();
+        myService.setCallback(new myService.Callback() {
             @Override
             public void onDataChange(String data) {
                 lo = data;
@@ -2318,9 +2316,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.ivFill.setVisibility(View.GONE);
                 onClick(binding.fl8);
             } else if ((_action.contains("全民K歌")) || (_action.contains("我要唱歌")) || (_action.contains("我想唱歌")) || (_action.contains("K歌")) || (_action.contains("KTV"))) {
-                handleViewKey(binding.fl1, -1, true);
+                handleViewKey(binding.fl0, -1, true);
             } else if ((_action.contains("腾讯视频")) || (_action.contains("云视听"))) {
-                handleViewKey(binding.fl2, -1, true);
+                handleViewKey(binding.fl1, -1, true);
             } else if (_action.contains("应用") || _action.contains("程序")) {
                 AppsActivity.lunchAppsActivity(MainActivity.this, MY_APP_TYPE);
             } else if (_action.contains("最近")) {
@@ -2497,13 +2495,13 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             if (intent != null) {
                 if (intent.getAction().equals("com.iflytek.xiri.init.start")) {
                     Intent iii;
-                    iii = new Intent(MainActivity.this, MyService.class);
+                    iii = new Intent(MainActivity.this, iflytekService.class);
                     Log.d(TAG, "com.iflytek.xiri.init.start");
                     startService(iii);
                 }
                 if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
                     Intent iii;
-                    iii = new Intent(MainActivity.this, MyService.class);
+                    iii = new Intent(MainActivity.this, iflytekService.class);
                     Log.d(TAG, "android.intent.action.BOOT_COMPLETED");
                     startService(iii);
                 }
@@ -2636,7 +2634,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
     //传参数的服务
     public void StartServiceSendBytes(byte[] bytes) {
-        Intent intent = new Intent(this, SerialService.class);
+        Intent intent = new Intent(this, myService.class);
         if (bytes != null) {
             intent.putExtra("serial", bytes);
         }
@@ -2646,7 +2644,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
     //不传参数的服务
     public void StartService() {
-        Intent intent = new Intent(this, SerialService.class);
+        Intent intent = new Intent(this, myService.class);
         //启动servicce服务
         startService(intent);
     }

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,9 +31,9 @@ import java.util.List;
  *
  * @author hhtao
  */
-public class MyService extends AppService {
+public class iflytekService extends AppService {
 
-    private static final String TAG = MyService.class.getSimpleName();
+    private static final String TAG = iflytekService.class.getSimpleName();
     private Feedback mFeedback = null;
     //private boolean bReb = false;
     private String action_Cammand = null;
@@ -764,13 +765,18 @@ public class MyService extends AppService {
     }
 
     private boolean isTopActivity(String packageName) {
-        ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-        List<ActivityManager.RunningTaskInfo> tasksInfo = activityManager.getRunningTasks(5);
-        if (tasksInfo.size() > 0) {
-            //应用程序位于堆栈的顶层
-            String str = tasksInfo.get(0).topActivity.getPackageName();
-            if (packageName.contains(str)) {
-                return true;
+
+        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            if (packageName.equals(myService.GetTopPackageName())) return true;
+        } else {
+            ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+            List<ActivityManager.RunningTaskInfo> tasksInfo = activityManager.getRunningTasks(5);
+            if (tasksInfo.size() > 0) {
+                //应用程序位于堆栈的顶层
+                String str = tasksInfo.get(0).topActivity.getPackageName();
+                if (packageName.contains(str)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -790,7 +796,7 @@ public class MyService extends AppService {
     }
 
     public void ServiceSendBytes(byte[] bytes) {
-        Intent intent = new Intent(this, SerialService.class);
+        Intent intent = new Intent(this, myService.class);
         if (bytes != null) {
             intent.putExtra("serial", bytes);
         }
@@ -845,12 +851,12 @@ public class MyService extends AppService {
             int vv = 0;
             if (msg.what == 1) {
 
-                vv = SerialService.getMicVolume() + 4;
+                vv = myService.getMicVolume() + 4;
 
                 if (vv > 60)
                     vv = 60;
 
-                SerialService.setMicVolume(vv);
+                myService.setMicVolume(vv);
 
                 tbb = utils.ChangeTool.intToBytes(vv);
 
@@ -866,12 +872,12 @@ public class MyService extends AppService {
                 ServiceSendBytes(SetMicVolumeK50);
 
             } else if (msg.what == 2) {
-                vv = SerialService.getMicVolume() - 4;
+                vv = myService.getMicVolume() - 4;
 
                 if (vv < 0)
                     vv = 0;
 
-                SerialService.setMicVolume(vv);
+                myService.setMicVolume(vv);
 
                 tbb = utils.ChangeTool.intToBytes(vv);
                 //SetMicVolume[7] = tbb[3];
@@ -886,12 +892,12 @@ public class MyService extends AppService {
                 ServiceSendBytes(SetMicVolumeK50);
 
             } else if (msg.what == 3) {
-                vv = SerialService.getMusicVolume() + 4;
+                vv = myService.getMusicVolume() + 4;
 
                 if (vv > 60)
                     vv = 60;
 
-                SerialService.setMusicVolume(vv);
+                myService.setMusicVolume(vv);
                 tbb = utils.ChangeTool.intToBytes(vv);
 
                 //SetMusicVolume[7] = tbb[3];
@@ -907,11 +913,11 @@ public class MyService extends AppService {
 
 
             } else if (msg.what == 4) {
-                vv = SerialService.getMusicVolume() - 4;
+                vv = myService.getMusicVolume() - 4;
                 if (vv <= 0)
                     vv = 0;
 
-                SerialService.setMusicVolume(vv);
+                myService.setMusicVolume(vv);
                 tbb = utils.ChangeTool.intToBytes(vv);
 
                 //SetMusicVolume[7] = tbb[3];
@@ -1067,7 +1073,7 @@ public class MyService extends AppService {
             }
             try {
                 Log.d(TAG, "MyReceiver.updateGlobal Result:" + Result);
-                updateGlobal(MyService.this, Result);
+                updateGlobal(iflytekService.this, Result);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1085,6 +1091,7 @@ public class MyService extends AppService {
         else
             mFeedback.feedback("关键字错误", Feedback.DIALOG);
     }
+
 
 }
 

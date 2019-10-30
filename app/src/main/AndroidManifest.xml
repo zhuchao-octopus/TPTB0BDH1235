@@ -52,9 +52,9 @@
             </intent-filter>
         </activity>
         <activity android:name="com.zhuchao.android.tianpu.activities.AppsActivity" />
-        <service android:name="com.zhuchao.android.tianpu.services.SerialService" android:enabled="true"/>
+        <service android:name="com.zhuchao.android.tianpu.services.myService" android:enabled="true"/>
         <activity android:name="com.zhuchao.android.tianpu.activities.VideoActivity"/>
-        <service android:name="com.zhuchao.android.tianpu.services.MyService" >
+        <service android:name="com.zhuchao.android.tianpu.services.iflytekService" >
             <intent-filter>
                 <action android:name="com.iflytek.xiri2.app.NOTIFY" />
                 <action android:name="android.intent.action.MAIN" />

@@ -11,24 +11,26 @@ android {
     //    }
     //}
 
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     applicationVariants.all {
-        variant ->variant.outputs.all {
-            //def fileName = "TPDYX0${defaultConfig.versionName}.apk"
-            //def fileName = "TPHWBD${defaultConfig.versionName}.apk"
-            //def fileName = "TPHWM0${defaultConfig.versionName}.apk"
-            def fileName = "TP0BDH1235_${defaultConfig.versionName}.apk"
-            outputFileName = fileName
-        }
+        variant ->
+            variant.outputs.all {
+                //def fileName = "TPDYX0${defaultConfig.versionName}.apk"
+                //def fileName = "TPHWBD${defaultConfig.versionName}.apk"
+                //def fileName = "TPHWM0${defaultConfig.versionName}.apk"
+                def fileName = "TP0BDH1235_v${defaultConfig.versionName}_${releaseTime()}.apk"
+                outputFileName = fileName
+            }
     }
+
 
     defaultConfig {
         applicationId "com.zhuchao.android.tianpu"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 67
-        versionName "6.7"
+        versionCode 68
+        versionName "6.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
             moduleName "myserialport"
@@ -68,6 +70,10 @@ android {
         checkReleaseBuilds false
         abortOnError false
     }
+}
+
+def releaseTime() {
+    return new Date().format("yyyyMMddHHmm", TimeZone.getTimeZone("UTC"))
 }
 
 greendao {
@@ -111,13 +117,13 @@ dependencies {
         exclude group: "com.android.support"
     }
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
-    implementation 'com.zhuchao.android:libDecodeCore:2.0:@aar'
-    implementation 'com.zhuchao.android:libNetUtil:2.0:@aar'
-    implementation 'com.zhuchao.android:libPlayUtil:2.1:@aar'
-    implementation 'com.zhuchao.android:libPlaySession:2.2:@aar'
-    implementation 'com.zhuchao.android:libVideo:1.0:@aar'
+    //implementation 'com.zhuchao.android:libDecodeCore:2.0:@aar'
+    //implementation 'com.zhuchao.android:libNetUtil:2.0:@aar'
+    //implementation 'com.zhuchao.android:libPlayUtil:2.1:@aar'
+    //implementation 'com.zhuchao.android:libPlaySession:2.2:@aar'
+    //implementation 'com.zhuchao.android:libVideo:1.0:@aar'
     //implementation 'com.zhuchao.android:libDialog:1.0:@aar'
-    implementation 'com.zhuchao.android:libCallbackEvent:1.0:@aar'
+    //implementation 'com.zhuchao.android:libCallbackEvent:1.0:@aar'
     //implementation 'com.zhuchao.android:libFileManager:1.0:@aar'
     implementation files('libs/framwork_all.jar')
 }

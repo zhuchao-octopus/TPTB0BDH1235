@@ -19,11 +19,10 @@ import android.os.RemoteException;
 import android.os.SystemProperties;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.View;
 import android.view.WindowManager;
 
 import com.zhuchao.android.tianpu.R;
-import com.zhuchao.android.tianpu.activities.MainActivity;
+import com.zhuchao.android.tianpu.utils.ForegroundAppUtil;
 import com.zhuchao.android.tianpu.views.dialogs.Mac_Dialog;
 import com.zhuchao.android.tianpu.views.dialogs.MusicDialog;
 import com.zhuchao.android.tianpu.views.dialogs.Sound_Effect_Dialog;
@@ -36,8 +35,8 @@ import utils.ChangeTool;
 import utils.IMyAidlInterface;
 import utils.MySerialPort;
 
-public class SerialService extends Service {
-    private final String TAG = "SerialService";
+public class myService extends Service {
+    private final String TAG = "myService";
     private MySerialPort MyPortDevice = new MySerialPort(this);
     private byte[] SerialPortReceiveBuffer;
     private String lo;
@@ -59,7 +58,7 @@ public class SerialService extends Service {
     private byte[] SetMusicVolumeK50 = {0x01, 0x01, 0x02, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x0a, 0x7E};//设置音乐音量  K50
     private boolean isCharging = false;
     private MediaPlayer mMediaPlayer = null;
-
+    private  static String mTopPackageName;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -91,7 +90,7 @@ public class SerialService extends Service {
             bytes = intent.getByteArrayExtra("serial");
             if (bytes != null) {
                 MyPortDevice.sendBuffer(bytes);
-                Log.i("SerialService.发送", utils.ChangeTool.ByteArrToHexStr(bytes, 0, bytes.length));
+                Log.i("myService.发送", utils.ChangeTool.ByteArrToHexStr(bytes, 0, bytes.length));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,14 +104,14 @@ public class SerialService extends Service {
     }
 
     public class Binder extends IMyAidlInterface.Stub {  //android.os.Binder
-        public SerialService getService() {
+        public myService getService() {
 
             receiver = new MyReceiver();
             IntentFilter filter = new IntentFilter();
             filter.addAction("com.iflytek.xiri2.hal.volume");
             registerReceiver(receiver, filter);
 
-            return SerialService.this;
+            return myService.this;
         }
 
         @Override
@@ -134,6 +133,33 @@ public class SerialService extends Service {
     public void onDestroy() {
         super.onDestroy();
     }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        handler.postDelayed(r, 1000);
+        return START_STICKY;
+    }
+
+
+
+    private Handler handler = new Handler();
+    private Runnable r = new Runnable() {
+        @Override
+        public void run() {
+            mTopPackageName = ForegroundAppUtil.getForegroundActivityName(getApplicationContext());
+            //Toast.makeText(getApplicationContext(), foregroundActivityName, Toast.LENGTH_SHORT).show();
+
+            handler.postDelayed(r, 1000);
+        }
+    };
+
+   public static String GetTopPackageName()
+   {
+       return mTopPackageName;
+   }
+
+
+
 
     public static int getMicVolume() {
         return MicVolume;
