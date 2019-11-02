@@ -239,7 +239,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         //启动服务
         StartService();
 
@@ -2168,7 +2168,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             if (!Settings.canDrawOverlays(MainActivity.this)) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                         Uri.parse("package:" + getPackageName()));
-                startActivityForResult(intent, 10);
+                //startActivityForResult(intent, 10);
             }
         }
     }

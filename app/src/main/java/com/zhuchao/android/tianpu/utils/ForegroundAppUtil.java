@@ -20,12 +20,16 @@ public class ForegroundAppUtil {
     /**
      * 获取栈顶的应用包名
      */
-    public static String getForegroundActivityName(Context context) {
+    public static String getForegroundActivityName(Context context)
+    {
         String currentClassName = "";
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+        {
             ActivityManager manager = (ActivityManager) context.getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
             currentClassName = manager.getRunningTasks(1).get(0).topActivity.getPackageName();
-        } else {
+        }
+        else
+        {
             UsageStats initStat = getForegroundUsageStats(context, START_TIME, END_TIME);
             if (initStat != null) {
                 currentClassName = initStat.getPackageName();
@@ -55,7 +59,8 @@ public class ForegroundAppUtil {
     /**
      * 获取记录前台应用的UsageStats对象
      */
-    private static UsageStats getForegroundUsageStats(Context context, long startTime, long endTime) {
+    private static UsageStats getForegroundUsageStats(Context context, long startTime, long endTime)
+    {
         UsageStats usageStatsResult = null;
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             List<UsageStats> usageStatses = getUsageStatsList(context, startTime, endTime);
@@ -72,7 +77,8 @@ public class ForegroundAppUtil {
     /**
      * 获取记录当前应用的UsageStats对象
      */
-    public static UsageStats getCurrentUsageStats(Context context, long startTime, long endTime) {
+    public static UsageStats getCurrentUsageStats(Context context, long startTime, long endTime)
+    {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             List<UsageStats> usageStatses = getUsageStatsList(context, startTime, endTime);
             if (usageStatses == null || usageStatses.isEmpty()) return null;
@@ -94,9 +100,9 @@ public class ForegroundAppUtil {
             //UsageStatsManager.INTERVAL_WEEKLY，UsageStatsManager的参数定义了5个，具体查阅源码
             List<UsageStats> usageStatses = manager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, startTime, endTime);
             if (usageStatses == null || usageStatses.size() == 0) {// 没有权限，获取不到数据
-                Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+                /*Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.getApplicationContext().startActivity(intent);
+                context.getApplicationContext().startActivity(intent);*/
                 return null;
             }
             return usageStatses;

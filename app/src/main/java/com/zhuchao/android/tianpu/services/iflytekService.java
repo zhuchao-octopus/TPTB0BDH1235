@@ -19,6 +19,7 @@ import com.zhuchao.android.tianpu.data.Constants;
 import com.zhuchao.android.tianpu.data.PackageName;
 import com.iflytek.xiri.AppService;
 import com.iflytek.xiri.Feedback;
+import com.zhuchao.android.tianpu.utils.ForegroundAppUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -767,7 +768,10 @@ public class iflytekService extends AppService {
     private boolean isTopActivity(String packageName) {
 
         if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-            if (packageName.equals(myService.GetTopPackageName())) return true;
+            //if (packageName.equals(myService.GetTopPackageName())) return true;
+            String strt = ForegroundAppUtil.getForegroundActivityName(getApplicationContext());
+            if (packageName.equals(strt)) return true;
+
         } else {
             ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
             List<ActivityManager.RunningTaskInfo> tasksInfo = activityManager.getRunningTasks(5);
@@ -1059,8 +1063,7 @@ public class iflytekService extends AppService {
             // 上传命令词
             String Result = "";
             try {
-                InputStreamReader reader = new InputStreamReader(getResources()
-                        .getAssets().open("readme.txt"));
+                InputStreamReader reader = new InputStreamReader(getResources().getAssets().open("readme.txt"));
                 BufferedReader buff = new BufferedReader(reader);
                 String line = "";
 

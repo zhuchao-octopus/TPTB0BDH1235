@@ -136,7 +136,7 @@ public class myService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        handler.postDelayed(r, 1000);
+        //handler.postDelayed(r, 1000);
         return START_STICKY;
     }
 

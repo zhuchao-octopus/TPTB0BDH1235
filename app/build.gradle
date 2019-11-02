@@ -30,7 +30,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 68
-        versionName "6.8"
+        versionName "6.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
             moduleName "myserialport"
@@ -41,7 +41,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
         }
