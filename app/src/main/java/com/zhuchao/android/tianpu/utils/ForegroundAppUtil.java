@@ -100,9 +100,9 @@ public class ForegroundAppUtil {
             //UsageStatsManager.INTERVAL_WEEKLY，UsageStatsManager的参数定义了5个，具体查阅源码
             List<UsageStats> usageStatses = manager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, startTime, endTime);
             if (usageStatses == null || usageStatses.size() == 0) {// 没有权限，获取不到数据
-                /*Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+                Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.getApplicationContext().startActivity(intent);*/
+                context.getApplicationContext().startActivity(intent);
                 return null;
             }
             return usageStatses;

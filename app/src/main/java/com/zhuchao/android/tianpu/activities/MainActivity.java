@@ -36,7 +36,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewTreeObserver.OnGlobalFocusChangeListener;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -69,8 +68,8 @@ import com.zhuchao.android.tianpu.data.json.regoem.RecommendvideoBean;
 import com.zhuchao.android.tianpu.data.json.regoem.RemoveAppBean;
 
 import com.zhuchao.android.tianpu.databinding.ActivityMainBinding;
+import com.zhuchao.android.tianpu.services.MyService;
 import com.zhuchao.android.tianpu.services.iflytekService;
-import com.zhuchao.android.tianpu.services.myService;
 import com.zhuchao.android.tianpu.utils.AppHandler;
 import com.zhuchao.android.tianpu.utils.AppManager;
 import com.zhuchao.android.tianpu.utils.GlideMgr;
@@ -201,7 +200,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
 
     private MySerialPort serialPortUtils = new MySerialPort(this);
-    //private myService serialService;
+    private MyService myService;
     private Handler SerialPortReceivehandler;
     private byte[] SerialPortReceiveBuffer;
     //private byte[] BluetoothOpen = {0x02, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x0E, 0x7E};//蓝牙  K70 //  serialPortUtils.sendBuffer(BluetoothOpen,SizeOf(BluetoothOpen));
@@ -339,15 +338,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         binding.scrollTv.setSelected(true);
 
 
-        bindService(new Intent(this, myService.class), this, BIND_AUTO_CREATE);
-
-        SerialPortReceivehandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-            }
-        };
-
+        bindService(new Intent(this, MyService.class), this, BIND_AUTO_CREATE);
 
         binding.ivFill.setVisibility(View.GONE);
         //initCache();
@@ -378,9 +369,10 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         Log.d(TAG, "start iflytekService");
         startService(iii);
 
-        requestPermition();
+        //requestPermition();
 
-        new Thread() {
+        new Thread()
+        {
             @Override
             public void run() {
                 super.run();
@@ -395,13 +387,13 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             }
         }.start();
 
-        switchToOtherChanel("空");
+        switchToOtherChanel("未知目标");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.e(TAG, "onStart");
+        //Log.e(TAG, "onStart");
         timeHandler.regTimeReceiver();
         netTool.registerNetReceiver();
         appHandler.regAppReceiver();
@@ -984,9 +976,17 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
-        myService.Binder binder = (myService.Binder) service;
-        myService myService = binder.getService();
-        myService.setCallback(new myService.Callback() {
+        if(SerialPortReceivehandler == null) {
+            SerialPortReceivehandler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    super.handleMessage(msg);
+                }
+            };
+        }
+        MyService.Binder binder = (MyService.Binder) service;
+        myService = binder.getService();
+        myService.setCallback(new MyService.Callback() {
             @Override
             public void onDataChange(String data) {
                 lo = data;
@@ -2584,34 +2584,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     }
 
 
-    private void setupFocuce() {
-        //默认焦点
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                try {
-
-                    sleep(4000);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            binding.fl1.requestFocus();
-                        }
-                    });
-                    //binding.fl1.requestFocus();
-                    //sendKeyEvent(KeyEvent.KEYCODE_DPAD_DOWN);
-                    //binding.fl1.requestFocus();
-                    //sleep(500);
-                    //sendKeyEvent(KeyEvent.KEYCODE_DPAD_UP);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
-
-    }
-
 
     private void startVedioPlayerActivity() {
         Intent intent1 = new Intent();
@@ -2634,17 +2606,19 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
     //传参数的服务
     public void StartServiceSendBytes(byte[] bytes) {
-        Intent intent = new Intent(this, myService.class);
-        if (bytes != null) {
-            intent.putExtra("serial", bytes);
-        }
+        //Intent intent = new Intent(this, MyService.class);
+        //if (bytes != null) {
+        //    intent.putExtra("serial", bytes);
+        //}
         //启动servicce服务
-        startService(intent);
+        //startService(intent);
+        if(myService != null)
+        myService.sendCommand(bytes);
     }
 
     //不传参数的服务
     public void StartService() {
-        Intent intent = new Intent(this, myService.class);
+        Intent intent = new Intent(this, MyService.class);
         //启动servicce服务
         startService(intent);
     }
@@ -2669,13 +2643,13 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         }
     }
 
-   private void switchToOtherChanel(String ChanelName)
-   {
-       binding.bgIv5.setVisibility(View.VISIBLE);
-       binding.bgIv5.setImageResource(R.drawable.bb2);
-       StartServiceSendBytes(LastChanelApp);
-       Log.i(TAG,"切换通道："+ChanelName);
-   }
+    private void switchToOtherChanel(String ChanelName) {
+        binding.bgIv5.setVisibility(View.VISIBLE);
+        binding.bgIv5.setImageResource(R.drawable.bb2);
+        Log.i(TAG, "切换通道：" + ChanelName);
+        StartServiceSendBytes(LastChanelApp);
+    }
+
     /**
      * 初始化缓存
      */

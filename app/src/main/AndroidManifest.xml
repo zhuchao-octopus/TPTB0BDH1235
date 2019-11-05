@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.zhuchao.android.tianpu"
-    android:sharedUserId="android.uid.system">
+    package="com.zhuchao.android.tianpu">
+
+    <!--    android:sharedUserId="android.uid.system"-->
 
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
@@ -54,7 +55,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.zhuchao.android.tianpu.activities.AppsActivity" />
-        <service android:name="com.zhuchao.android.tianpu.services.myService" android:enabled="true"/>
+        <service android:name="com.zhuchao.android.tianpu.services.MyService" android:enabled="true"/>
         <activity android:name="com.zhuchao.android.tianpu.activities.VideoActivity"/>
         <service android:name="com.zhuchao.android.tianpu.services.iflytekService" >
             <intent-filter>

@@ -29,8 +29,8 @@ android {
         applicationId "com.zhuchao.android.tianpu"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 68
-        versionName "6.9"
+        versionCode 70
+        versionName "7.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
             moduleName "myserialport"
@@ -118,7 +118,7 @@ dependencies {
         exclude group: "com.android.support"
     }
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
-    //implementation 'com.zhuchao.android:libDecodeCore:2.0:@aar'
+    //implementation 'com.zhuchao.android:libDecodeCore:+@aar'
     //implementation 'com.zhuchao.android:libNetUtil:2.0:@aar'
     //implementation 'com.zhuchao.android:libPlayUtil:2.1:@aar'
     //implementation 'com.zhuchao.android:libPlaySession:2.2:@aar'

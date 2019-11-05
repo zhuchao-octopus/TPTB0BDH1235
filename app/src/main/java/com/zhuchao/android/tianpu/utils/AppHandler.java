@@ -126,7 +126,7 @@ public class AppHandler {
                 }
                 list.put(i, app);
                 saAPP = list;
-                Log.d(TAG, app.toString());
+                //Log.d(TAG, app.toString());
             }
             if (listener != null&&context!=null) {
                 ((Activity) context).runOnUiThread(new Runnable() {
@@ -200,8 +200,8 @@ public class AppHandler {
                     Log.d(TAG, "idI = " + idI);
                     String idStr = String.valueOf(idI);
                     String packageName = shareAdapter.getStr(idStr);
-                    Log.d(TAG, "idStr = " + idStr);
-                    Log.d(TAG, "packageName " + packageName);
+                    Log.d(TAG, "ScanHomeTask.idStr = " + idStr);
+                    Log.d(TAG, "ScanHomeTask.packageName " + packageName);
                     if (listenerOk) {
                         if (TextUtils.isEmpty(packageName)) {
                             app = clearApp;

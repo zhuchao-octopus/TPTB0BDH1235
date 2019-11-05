@@ -71,6 +71,8 @@ public class iflytekService extends AppService {
 
     private MyReceiver receiver = null;
 
+    private MyService myService = null;
+
     /**
      * 暂停系统播放器
      */
@@ -80,6 +82,12 @@ public class iflytekService extends AppService {
         freshIntent.putExtra("command", "pause");
         sendBroadcast(freshIntent);
     }
+
+    public iflytekService() {
+        super();
+        //isTopActivity("com.zhuchao.android.tianpu");
+    }
+
 
     private IVideoIntentListener mIVideoIntentListener = new IVideoIntentListener() {
 
@@ -136,6 +144,7 @@ public class iflytekService extends AppService {
                         startActivity(i);
                         pauseMusic();
                         return;
+
                     } else if (isTopActivity("com.zhuchao.android.tianpu")) {
                     }
 
@@ -768,7 +777,7 @@ public class iflytekService extends AppService {
     private boolean isTopActivity(String packageName) {
 
         if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-            //if (packageName.equals(myService.GetTopPackageName())) return true;
+            //if (packageName.equals(MyService.GetTopPackageName())) return true;
             String strt = ForegroundAppUtil.getForegroundActivityName(getApplicationContext());
             if (packageName.equals(strt)) return true;
 
@@ -786,26 +795,19 @@ public class iflytekService extends AppService {
         return false;
     }
 
-    private boolean isTopActivity2(String packageName) {
-        ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-        List<ActivityManager.RunningTaskInfo> tasksInfo = activityManager.getRunningTasks(5);
-        if (tasksInfo.size() > 0) {
-            //应用程序位于堆栈的顶层
-            String str = tasksInfo.get(0).topActivity.getClassName();
-            if (packageName.contains(str)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void ServiceSendBytes(byte[] bytes) {
-        Intent intent = new Intent(this, myService.class);
+        Intent intent = new Intent();
         if (bytes != null) {
-            intent.putExtra("serial", bytes);
+            //intent.putExtra("serial", bytes);
+            Bundle b=new Bundle();
+            b.putByteArray("SerialData", bytes);
+
+            intent.putExtras(b);
+            intent.setAction("com.iflytek.xiri2.hal.iflytekService");
+            sendBroadcast(intent);
         }
         //启动servicce服务
-        startService(intent);
+        //startService(intent);
     }
 
     @Override
@@ -841,6 +843,7 @@ public class iflytekService extends AppService {
         receiver = new MyReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction("com.iflytek.xiri.init.start");
+
         registerReceiver(receiver, filter);
         //adb shell am broadcast -a com.iflytek.xiri.init.start
 
@@ -855,12 +858,12 @@ public class iflytekService extends AppService {
             int vv = 0;
             if (msg.what == 1) {
 
-                vv = myService.getMicVolume() + 4;
+                vv = MyService.getMicVolume() + 4;
 
                 if (vv > 60)
                     vv = 60;
 
-                myService.setMicVolume(vv);
+                MyService.setMicVolume(vv);
 
                 tbb = utils.ChangeTool.intToBytes(vv);
 
@@ -876,12 +879,12 @@ public class iflytekService extends AppService {
                 ServiceSendBytes(SetMicVolumeK50);
 
             } else if (msg.what == 2) {
-                vv = myService.getMicVolume() - 4;
+                vv = MyService.getMicVolume() - 4;
 
                 if (vv < 0)
                     vv = 0;
 
-                myService.setMicVolume(vv);
+                MyService.setMicVolume(vv);
 
                 tbb = utils.ChangeTool.intToBytes(vv);
                 //SetMicVolume[7] = tbb[3];
@@ -896,12 +899,12 @@ public class iflytekService extends AppService {
                 ServiceSendBytes(SetMicVolumeK50);
 
             } else if (msg.what == 3) {
-                vv = myService.getMusicVolume() + 4;
+                vv = MyService.getMusicVolume() + 4;
 
                 if (vv > 60)
                     vv = 60;
 
-                myService.setMusicVolume(vv);
+                MyService.setMusicVolume(vv);
                 tbb = utils.ChangeTool.intToBytes(vv);
 
                 //SetMusicVolume[7] = tbb[3];
@@ -917,11 +920,11 @@ public class iflytekService extends AppService {
 
 
             } else if (msg.what == 4) {
-                vv = myService.getMusicVolume() - 4;
+                vv = MyService.getMusicVolume() - 4;
                 if (vv <= 0)
                     vv = 0;
 
-                myService.setMusicVolume(vv);
+                MyService.setMusicVolume(vv);
                 tbb = utils.ChangeTool.intToBytes(vv);
 
                 //SetMusicVolume[7] = tbb[3];

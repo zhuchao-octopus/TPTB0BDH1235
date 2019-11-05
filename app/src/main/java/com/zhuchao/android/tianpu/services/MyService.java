@@ -35,8 +35,8 @@ import utils.ChangeTool;
 import utils.IMyAidlInterface;
 import utils.MySerialPort;
 
-public class myService extends Service {
-    private final String TAG = "myService";
+public class MyService extends Service {
+    private final String TAG = "MyService";
     private MySerialPort MyPortDevice = new MySerialPort(this);
     private byte[] SerialPortReceiveBuffer;
     private String lo;
@@ -58,7 +58,8 @@ public class myService extends Service {
     private byte[] SetMusicVolumeK50 = {0x01, 0x01, 0x02, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x0a, 0x7E};//设置音乐音量  K50
     private boolean isCharging = false;
     private MediaPlayer mMediaPlayer = null;
-    private  static String mTopPackageName;
+    private static String mTopPackageName;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -84,14 +85,13 @@ public class myService extends Service {
     @Override
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
-        try {
-            if (intent == null) return;
 
-            bytes = intent.getByteArrayExtra("serial");
-            if (bytes != null) {
-                MyPortDevice.sendBuffer(bytes);
-                Log.i("myService.发送", utils.ChangeTool.ByteArrToHexStr(bytes, 0, bytes.length));
-            }
+    }
+
+    public void sendCommand(byte[] bytes) {
+        try {
+            MyPortDevice.sendBuffer(bytes);
+            Log.i("MyService.发送数据", utils.ChangeTool.ByteArrToHexStr(bytes, 0, bytes.length));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -104,14 +104,15 @@ public class myService extends Service {
     }
 
     public class Binder extends IMyAidlInterface.Stub {  //android.os.Binder
-        public myService getService() {
+        public MyService getService() {
 
             receiver = new MyReceiver();
             IntentFilter filter = new IntentFilter();
             filter.addAction("com.iflytek.xiri2.hal.volume");
+            filter.addAction("com.iflytek.xiri2.hal.iflytekService");
             registerReceiver(receiver, filter);
 
-            return myService.this;
+            return MyService.this;
         }
 
         @Override
@@ -141,7 +142,6 @@ public class myService extends Service {
     }
 
 
-
     private Handler handler = new Handler();
     private Runnable r = new Runnable() {
         @Override
@@ -153,12 +153,9 @@ public class myService extends Service {
         }
     };
 
-   public static String GetTopPackageName()
-   {
-       return mTopPackageName;
-   }
-
-
+    public static String GetTopPackageName() {
+        return mTopPackageName;
+    }
 
 
     public static int getMicVolume() {
@@ -270,8 +267,7 @@ public class myService extends Service {
                     //Intent intent = new Intent("COMMAND_DATA");
                     //intent.putExtra("COMMAND_DATA", 0x20);
                     //sendBroadcast(intent);
-                    if(result == 0x20)
-                    {
+                    if (result == 0x20) {
                         Intent in = new Intent();
                         in.setClassName("com.android.settings", "com.android.settings.Settings");
                         startActivity(in);
@@ -468,38 +464,45 @@ public class myService extends Service {
         //adb shell am broadcast -a com.zhuchao.android.tianpu.services
         @Override
         public void onReceive(Context context, Intent intent) {
-            int vol = -1;
+            int data = -1;
             String mType = "0200";
             Bundle bundle = intent.getExtras();
 
             if (bundle != null) {
-                vol = bundle.getInt("volume", -1);
+                data = bundle.getInt("volume", -1);
                 mType = bundle.getString("type", "0200");
             }
 
-            //vol = vol * 100 / 60;
-            if (vol > 60) vol = 60;
 
-            Log.d("MyReceiver--->", intent.getAction() + ":volume=" + vol);
+            if (intent.getAction().equals("com.iflytek.xiri2.hal.volume")) {
+                if (data > 60) data = 60;
 
-            if (intent.getAction() == "com.iflytek.xiri2.hal.volume") {
-                if ((vol >= 0) && (vol <= 60)) {
-                    if (mType.equals("0200")) {
-                        //音乐音量
-                        showVolumeDialog(vol, mType);
-                        MusicVolume = vol;
-                        setVolume(MusicVolume);
-                    } else if (mType.equals("0300")) {
-                        //mic音量
-                        showVolumeDialog(vol, mType);
-                        MicVolume = vol;
+                Log.d("MyReceiver--->", intent.getAction() + ":volume=" + data);
+
+                if (intent.getAction() == "com.iflytek.xiri2.hal.volume") {
+                    if ((data >= 0) && (data <= 60)) {
+                        if (mType.equals("0200")) {
+                            //音乐音量
+                            showVolumeDialog(data, mType);
+                            MusicVolume = data;
+                            setVolume(MusicVolume);
+                        } else if (mType.equals("0300")) {
+                            //mic音量
+                            showVolumeDialog(data, mType);
+                            MicVolume = data;
+                        } else {
+                            showVolumeDialog(data, mType);
+                            MusicVolume = data;
+                        }
                     } else {
-                        showVolumeDialog(vol, mType);
-                        MusicVolume = vol;
+                        showVolumeDialog(MusicVolume, "0200");
                     }
-                } else {
-                    showVolumeDialog(MusicVolume, "0200");
                 }
+            }
+            if (intent.getAction().equals("com.iflytek.xiri2.hal.iflytekService"))
+            {
+                byte[] bytes = bundle.getByteArray("SerialData");
+                sendCommand(bytes);
             }
         }
     }
