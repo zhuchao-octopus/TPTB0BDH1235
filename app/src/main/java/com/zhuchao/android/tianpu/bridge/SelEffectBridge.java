@@ -27,7 +27,7 @@ public class SelEffectBridge extends BaseEffectBridge {
 	private AnimatorSet mCurrentAnimatorSet;
 	private View mFocusView;
 	private RectF mUpPaddingRect = new RectF(0, 0, 0, 0);
-
+    //private float mScaleX,mScaleY;
 	@Override
 	public void onInitBridge(MainUpView view) {
 		view.setVisibility(View.GONE);
@@ -85,6 +85,8 @@ public class SelEffectBridge extends BaseEffectBridge {
 	@Override
 	public void onFocusView(View focusView, float scaleX, float scaleY) {
 		mFocusView = focusView;
+		//mScaleX = scaleX;
+		//mScaleY = scaleY;
 		if (focusView != null) {
 			runTranslateAnimation(focusView,scaleX,scaleY);
 		}
@@ -198,14 +200,14 @@ public class SelEffectBridge extends BaseEffectBridge {
 				getMainUpView().setVisibility(mIsHide ? View.INVISIBLE : View.VISIBLE);
 				// XF add（先锋TV开发(404780246)修复)
 				// BUG:5.0系统边框错位.
-				if (Utils.getSDKVersion() >= 21) {
-//					int newWidth = (int) (focusView.getMeasuredWidth() *
-//							mScaleX);
-//					int newHeight = (int) (focusView.getMeasuredHeight() *
-//							mScaleY);
-//					getMainUpView().getLayoutParams().width = newWidth;
-//					getMainUpView().getLayoutParams().height = newHeight;
-//					getMainUpView().requestLayout();
+				//getMainUpView().invalidate();
+				if (Utils.getSDKVersion() >= 21)
+				{
+					int newWidth = (int) (focusView.getMeasuredWidth() * scaleX);
+					int newHeight = (int) (focusView.getMeasuredHeight() *scaleY);
+					getMainUpView().getLayoutParams().width = newWidth;
+					getMainUpView().getLayoutParams().height = newHeight;
+					getMainUpView().requestLayout();
 				}
 			}
 

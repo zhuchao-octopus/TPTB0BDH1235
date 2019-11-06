@@ -15,6 +15,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -35,6 +36,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalFocusChangeListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -140,7 +142,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     private boolean marqueeScanOK = false;
     private List<String> imgUrls;
 
-    private String lo;
+    private String mSerialData;
     //    private String img;
     private Context mContext;
     private int nba = 0;
@@ -285,7 +287,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         //binding.fl15.setOnKeyListener(this);
         binding.fl15.setOnClickListener(this);
         // binding.fl16.setOnKeyListener(this);
-        binding.fl16.setOnClickListener(this);
+        //binding.fl16.setOnClickListener(this);
         binding.fl2.setOnClickListener(this);
 
 
@@ -296,7 +298,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         binding.fl11.setOnTouchListener(this);
         binding.fl14.setOnTouchListener(this);
         binding.fl15.setOnTouchListener(this);
-        binding.fl16.setOnTouchListener(this);
+        //binding.fl16.setOnTouchListener(this);
 
         binding.fl0.setOnTouchListener(this);
         binding.fl1.setOnTouchListener(this);
@@ -312,7 +314,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         binding.ad.setOnTouchListener(this);
 
 
-        selEffectBridge = (SelEffectBridge) binding.mainUpView.getEffectBridge();
         binding.mainRl.getViewTreeObserver().addOnGlobalFocusChangeListener(this);
 
         //时间更新
@@ -371,8 +372,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
         //requestPermition();
 
-        new Thread()
-        {
+        new Thread() {
             @Override
             public void run() {
                 super.run();
@@ -387,7 +387,10 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             }
         }.start();
 
-        switchToOtherChanel("未知目标");
+
+        selEffectBridge = (SelEffectBridge) binding.mainUpView.getEffectBridge();
+        binding.mainRl.getViewTreeObserver().addOnGlobalFocusChangeListener(this);
+        setFocuseEffect(binding.fl0);
     }
 
     @Override
@@ -403,8 +406,8 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         if (bottomAppDialog != null) {
             appHandler.scanBottom();
         }
-        //StartServiceSendBytes(QueryState);
-        StartServiceSendBytes(QueryStateK50);
+
+
     }
 
     @Override
@@ -416,7 +419,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         netTool.unRegisterNetReceiver();
         appHandler.unRegAppReceiver();
         binding.adBg.stopAutoPlay();
-
     }
 
     /**
@@ -437,8 +439,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         binding.adBg.startAutoPlay();
         registerHomeKeyReceiver(this);
         //mBatteryHandler.post(mBatteryRunnable);
-        binding.mainRl.getViewTreeObserver().addOnGlobalFocusChangeListener(this);
-        View rootview = this.getWindow().getDecorView();
+        View rootview = MainActivity.this.getWindow().getDecorView();
         View v = rootview.findFocus();
 
         if (v != null) {
@@ -451,6 +452,32 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             binding.fl0.requestFocus();
             setFocuseEffect(binding.fl0);
         }
+
+
+        new Thread() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (true) {
+                            View v = rootview.findFocus();
+                            if (v != null) {
+                                ViewGroup root = (ViewGroup) rootview;
+                                Rect rect = new Rect();
+                                root.offsetDescendantRectToMyCoords(v, rect);
+                                if (rect.left > 0 && rect.right > 0) {
+                                    setFocuseEffect(binding.fl0);
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                });
+
+            }
+        }.start();
 
     }
 
@@ -495,6 +522,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         v.requestFocus();
         if (event.getAction() == ACTION_UP)
             handleViewKey(v, -1, true);
+        // else
+        //    setFocuseEffect(binding.fl0);
+
         return true;//super.onTouchEvent(event);
     }
 
@@ -513,7 +543,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                     break;
                 case KeyEvent.KEYCODE_HOME:
                 case KeyEvent.KEYCODE_BACK:
+                    //setFocuseEffect(binding.fl0);
                     binding.ivFill.setVisibility(View.GONE);
+
                     break;
             }
         }
@@ -775,7 +807,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 //蓝牙
                 binding.bgIv111.setImageResource(R.drawable.xsb);
                 binding.bgIv113.setImageResource(R.drawable.xac);
-                binding.bgIv116.setImageResource(R.drawable.nnn);
+                //binding.bgIv116.setImageResource(R.drawable.nnn);
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv115.setImageResource(R.drawable.xae);
@@ -793,7 +825,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 //同轴
                 binding.bgIv112.setImageResource(R.drawable.xsa);
                 binding.bgIv113.setImageResource(R.drawable.xac);
-                binding.bgIv116.setImageResource(R.drawable.nnn);
+                //binding.bgIv116.setImageResource(R.drawable.nnn);
                 binding.bgIv111.setImageResource(R.drawable.xaa);
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv115.setImageResource(R.drawable.xae);
@@ -809,7 +841,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             case R.id.fl13:
                 //光纤
                 binding.bgIv113.setImageResource(R.drawable.xsd);
-                binding.bgIv116.setImageResource(R.drawable.nnn);
+                //binding.bgIv116.setImageResource(R.drawable.nnn);
                 binding.bgIv111.setImageResource(R.drawable.xaa);
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv114.setImageResource(R.drawable.xad);
@@ -826,7 +858,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             case R.id.fl14:
                 //模拟
                 binding.bgIv114.setImageResource(R.drawable.xsc);
-                binding.bgIv116.setImageResource(R.drawable.nnn);
+                //binding.bgIv116.setImageResource(R.drawable.nnn);
                 binding.bgIv111.setImageResource(R.drawable.xaa);
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv113.setImageResource(R.drawable.xac);
@@ -842,7 +874,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             case R.id.fl15:
                 //系统播放器
                 binding.bgIv115.setImageResource(R.drawable.xse);
-                binding.bgIv116.setImageResource(R.drawable.nnn);
+                //binding.bgIv116.setImageResource(R.drawable.nnn);
                 binding.bgIv111.setImageResource(R.drawable.xaa);
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv113.setImageResource(R.drawable.xac);
@@ -855,9 +887,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 StartServiceSendBytes(UsbClose);
                 launchApp("com.android.music");
                 break;
-            case R.id.fl16:
+/*            case R.id.fl16:
                 //最后一个使用的app
-                binding.bgIv116.setImageResource(R.drawable.blue6);
+                //binding.bgIv116.setImageResource(R.drawable.blue6);
                 binding.bgIv111.setImageResource(R.drawable.xaa);
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv113.setImageResource(R.drawable.xac);
@@ -870,7 +902,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                     launchApp(lastoneApp);
                 }
                 switchToOtherChanel(v.getClass().getName());
-                break;
+                break;*/
             case R.id.fl4:
                 //QQ音乐
                 switchToOtherChanel("QQ音乐");
@@ -976,7 +1008,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
-        if(SerialPortReceivehandler == null) {
+        if (SerialPortReceivehandler == null) {
             SerialPortReceivehandler = new Handler() {
                 @Override
                 public void handleMessage(Message msg) {
@@ -986,10 +1018,12 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         }
         MyService.Binder binder = (MyService.Binder) service;
         myService = binder.getService();
-        myService.setCallback(new MyService.Callback() {
+
+
+        myService.setActionCallback(new MyService.Callback() {
             @Override
             public void onDataChange(String data) {
-                lo = data;
+                mSerialData = data;
                 Log.i("Callback.onDataChange", "data=" + data);
                 if (null != SerialPortReceivehandler) {
                     new Thread() {
@@ -1015,7 +1049,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         @Override
         public void run() {
             isThelast = false;
-            if (lo.equals("0201050000020000010B7E") || lo.equals("0101050000020000010A7E")) {
+            if (mSerialData.equals("0201050000020000010B7E") || mSerialData.equals("0101050000020000010A7E")) {
                 pauseMusic();
                 //同轴
                 saveType = "同轴";
@@ -1024,7 +1058,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
                 binding.bgIv111.setImageResource(R.drawable.xaa);
                 binding.bgIv113.setImageResource(R.drawable.xac);
-                binding.bgIv116.setImageResource(R.drawable.nnn);
+                //binding.bgIv116.setImageResource(R.drawable.nnn);
                 binding.bgIv112.setImageResource(R.drawable.xsa);
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv115.setImageResource(R.drawable.xae);
@@ -1033,7 +1067,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 //} else
                 binding.ivFill.setImageResource(R.drawable.btz);
 
-            } else if (lo.equals("0201050000020004000E7E") || lo.equals("0101050000020004000D7E")) {
+            } else if (mSerialData.equals("0201050000020004000E7E") || mSerialData.equals("0101050000020004000D7E")) {
                 //蓝牙
                 pauseMusic();
                 saveType = "蓝牙";
@@ -1041,7 +1075,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.fl11.requestFocus();
                 binding.bgIv111.setImageResource(R.drawable.xsb);
                 binding.bgIv113.setImageResource(R.drawable.xac);
-                binding.bgIv116.setImageResource(R.drawable.nnn);
+                //binding.bgIv116.setImageResource(R.drawable.nnn);
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv115.setImageResource(R.drawable.xae);
@@ -1051,14 +1085,14 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 if (blutoothConnected)
                     isFive = true;
 
-            } else if (lo.equals("0201050000020080008A7E") || lo.equals("010105000002008000897E")) {
+            } else if (mSerialData.equals("0201050000020080008A7E") || mSerialData.equals("010105000002008000897E")) {
                 pauseMusic();
                 //模拟
                 saveType = "模拟";
 
                 binding.bgIv111.setImageResource(R.drawable.xaa);
                 binding.bgIv113.setImageResource(R.drawable.xac);
-                binding.bgIv116.setImageResource(R.drawable.nnn);
+                //binding.bgIv116.setImageResource(R.drawable.nnn);
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv114.setImageResource(R.drawable.xsc);
                 binding.bgIv115.setImageResource(R.drawable.xae);
@@ -1067,14 +1101,14 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bgIv5.setImageResource(R.drawable.mn);
                 binding.fl14.requestFocus();
                 binding.ivFill.setImageResource(R.drawable.bmn);
-            } else if (lo.equals("0201050000020000020C7E") || lo.equals("0101050000020000020B7E")) {
+            } else if (mSerialData.equals("0201050000020000020C7E") || mSerialData.equals("0101050000020000020B7E")) {
                 pauseMusic();
                 //光纤
                 saveType = "光纤";
 
                 binding.bgIv111.setImageResource(R.drawable.xaa);
                 binding.bgIv113.setImageResource(R.drawable.xsd);
-                binding.bgIv116.setImageResource(R.drawable.nnn);
+                //binding.bgIv116.setImageResource(R.drawable.nnn);
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv115.setImageResource(R.drawable.xae);
@@ -1086,15 +1120,15 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.ivFill.setImageResource(R.drawable.bopt);
 
 
-            } else if (lo.equals("0201050000020000000A7E") || lo.equals("010105000002000000097E")) {
+            } else if (mSerialData.equals("0201050000020000000A7E") || mSerialData.equals("010105000002000000097E")) {
                 pauseMusic();
                 //最后的app
                 saveType = "last";
                 isThelast = true;
-                binding.fl16.requestFocus();
+                //binding.fl16.requestFocus();
                 binding.bgIv111.setImageResource(R.drawable.xaa);
                 binding.bgIv113.setImageResource(R.drawable.xac);
-                binding.bgIv116.setImageResource(R.drawable.blue6);
+                //binding.bgIv116.setImageResource(R.drawable.blue6);
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv115.setImageResource(R.drawable.xae);
@@ -1102,33 +1136,33 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                     launchApp(lastoneApp);
                 }
 
-            } else if (lo.equals("020105000002000800127E") || lo.equals("010105000002000800117E")) {
+            } else if (mSerialData.equals("020105000002000800127E") || mSerialData.equals("010105000002000800117E")) {
                 pauseMusic();
                 //usb/TF
                 saveType = "player";
                 binding.bgIv111.setImageResource(R.drawable.xaa);
                 binding.bgIv113.setImageResource(R.drawable.xac);
-                binding.bgIv116.setImageResource(R.drawable.nnn);
+                //binding.bgIv116.setImageResource(R.drawable.nnn);
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv115.setImageResource(R.drawable.xse);
                 binding.fl15.requestFocus();
                 //launchApp("com.android.music");
-            } else if (lo.equals("")) {
+            } else if (mSerialData.equals("")) {
                 //mic A开
                 binding.micA.setImageResource(R.drawable.ano);
-            } else if (lo.equals("")) {
+            } else if (mSerialData.equals("")) {
                 //mic A关
                 binding.micA.setVisibility(View.GONE);
-            } else if (lo.equals("")) {
+            } else if (mSerialData.equals("")) {
                 //mic B开
                 binding.micB.setImageResource(R.drawable.bno);
-            } else if (lo.equals("")) {
+            } else if (mSerialData.equals("")) {
                 //mic B关
                 binding.micB.setVisibility(View.GONE);
             }
 
-            if (lo.equals("0201050000020004000E7E") || lo.equals("0101050000020004000D7E")) {
+            if (mSerialData.equals("0201050000020004000E7E") || mSerialData.equals("0101050000020004000D7E")) {
                 if (blutoothConnected) {
                     binding.bluetooth.setVisibility(View.VISIBLE);
                     binding.bluetooth.setImageResource(R.drawable.bluetoothhave);
@@ -2240,7 +2274,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 break;
             case R.id.fl14:
             case R.id.fl15:
-            case R.id.fl16:
                 selEffectBridge.setUpRectResource(R.drawable.home_sel_btn1);
                 selEffectBridge.setVisibleWidget(false);
                 binding.mainUpView.setFocusView(newFocus, oldFocus, 1.0f);
@@ -2323,7 +2356,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 AppsActivity.lunchAppsActivity(MainActivity.this, MY_APP_TYPE);
             } else if (_action.contains("最近")) {
                 AppsActivity.lunchAppsActivity(MainActivity.this, RECENT_TYPE);
-
             } else if ((_action != null) && (_action.equals("music") || _action.equals("ktv"))) {
             }
         }
@@ -2584,7 +2616,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     }
 
 
-
     private void startVedioPlayerActivity() {
         Intent intent1 = new Intent();
         intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -2612,8 +2643,8 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         //}
         //启动servicce服务
         //startService(intent);
-        if(myService != null)
-        myService.sendCommand(bytes);
+        if (myService != null)
+            myService.sendCommand(bytes);
     }
 
     //不传参数的服务
@@ -2630,7 +2661,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 if (lastApp.equals(appHandler.saAPP.get(i).getPackageName())) {
                     App app = appHandler.saAPP.get(i);
                     Log.e("Tag", "appp=" + app);
-                    binding.ivLastone.setBackground(app.getIcon());
+                    //binding.ivLastone.setBackground(app.getIcon());
                     lastoneApp = app.getPackageName();
                     lastApps = app.getIcon();
                 }
@@ -2699,7 +2730,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 } else if (saveType.equals("last")) {
                     //StartServiceSendBytes(LastAppOpen);
                     //switchToOtherChanel();
-                    binding.bgIv116.setImageResource(R.drawable.blue6);
+                    //binding.bgIv116.setImageResource(R.drawable.blue6);
                     binding.bluetooth.setVisibility(View.GONE);
                     isThelast = true;
                 }

@@ -143,6 +143,7 @@ public class MainUpView extends FrameLayout {
 		baseEffectBridge.onInitBridge(this);
 		baseEffectBridge.setMainUpView(this);
 		setEffectBridge(baseEffectBridge);
+		//invalidate();
 	}
 
 	/**

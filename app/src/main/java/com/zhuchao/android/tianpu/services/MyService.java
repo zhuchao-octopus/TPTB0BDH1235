@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.RemoteException;
 import android.os.SystemProperties;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -45,7 +44,7 @@ public class MyService extends Service {
     private Sound_Effect_Dialog sdialog;
     private Mac_Dialog mdialog;
 
-    private Callback callback;
+    private Callback actionCallback;
     private byte[] bytes;
     private int h = 0;
 
@@ -56,9 +55,12 @@ public class MyService extends Service {
     private byte tbb[] = {0, 0, 0, 0};
     private byte[] SetMusicVolume = {0x02, 0x01, 0x02, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x0b, 0x7E};//设置音乐音量  K70//
     private byte[] SetMusicVolumeK50 = {0x01, 0x01, 0x02, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x0a, 0x7E};//设置音乐音量  K50
+    private byte[] LastChanelApp = {0x01, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x09, 0x7E};//最后使用的app  K50
+    private byte[] QueryStateK50 = {0x01, 0x01, 0x06, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x09, 0x7E};//初始状态  K50
     private boolean isCharging = false;
     private MediaPlayer mMediaPlayer = null;
     private static String mTopPackageName;
+
 
     @Override
     public void onCreate() {
@@ -78,13 +80,10 @@ public class MyService extends Service {
         } else {
             Log.e("Service", "onCreate：串口打开成功！！！！！");
             CheckSerialPortEvent();
+
+            sendCommand(LastChanelApp);
+            sendCommand(QueryStateK50);
         }
-
-    }
-
-    @Override
-    public void onStart(Intent intent, int startId) {
-        super.onStart(intent, startId);
 
     }
 
@@ -117,8 +116,8 @@ public class MyService extends Service {
 
     }
 
-    public void setCallback(Callback callback) {
-        this.callback = callback;
+    public void setActionCallback(Callback actionCallback) {
+        this.actionCallback = actionCallback;
     }
 
     public static interface Callback {
@@ -374,7 +373,7 @@ public class MyService extends Service {
             }
 
         } else if (type.equals("0500")) {
-            if (callback != null) {
+            if (actionCallback != null) {
                 //if(IsTopActivtyFromLolipopOnwards("com.zhuchao.android.tianpu")==false)
                 {
                     Intent i = new Intent();
@@ -384,7 +383,7 @@ public class MyService extends Service {
 
                     startActivity(i);
                 }
-                callback.onDataChange(lo);
+                actionCallback.onDataChange(lo);
             }
         } else if (type.equals("0700")) {
             //吉他

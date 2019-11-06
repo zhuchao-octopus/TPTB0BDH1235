@@ -248,7 +248,7 @@
                 android:layout_height="50dp"
                 android:layout_gravity="bottom|center_horizontal"
                 android:gravity="center"
-                android:text="@string/no_dowmnload"
+                android:text=""
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
 
@@ -304,7 +304,7 @@
                 android:layout_height="50dp"
                 android:layout_gravity="bottom|center_horizontal"
                 android:gravity="center"
-                android:text="@string/no_dowmnload"
+                android:text=""
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
         </FrameLayout>
@@ -351,7 +351,8 @@
             android:clipChildren="false"
             android:clipToPadding="false"
             android:focusable="true"
-            android:focusableInTouchMode="true">
+            android:focusableInTouchMode="true"
+            android:nextFocusRight="@id/fl14">
 
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/bg_iv111"
@@ -431,7 +432,8 @@
             android:clipChildren="false"
             android:clipToPadding="false"
             android:focusable="true"
-            android:focusableInTouchMode="true">
+            android:focusableInTouchMode="true"
+            android:nextFocusRight="@id/fl15">
 
             <View
                 android:layout_width="1dp"
@@ -444,7 +446,6 @@
                 android:layout_height="55dp"
                 android:layout_marginLeft="1dp"
                 android:clickable="false"
-                android:focusableInTouchMode="false"
                 android:scaleType="fitXY"
                 fresco:failureImage="@drawable/failedbg1"
                 fresco:failureImageScaleType="fitXY"
@@ -474,60 +475,21 @@
 
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/bg_iv115"
-                android:layout_width="83dp"
+                android:layout_width="160dp"
                 android:layout_height="55dp"
                 android:layout_marginLeft="1dp"
                 android:clickable="false"
-                android:focusableInTouchMode="false"
                 android:scaleType="fitXY"
                 fresco:failureImage="@drawable/failedbg1"
                 fresco:failureImageScaleType="fitXY"
                 fresco:placeholderImage="@drawable/xae"
                 fresco:placeholderImageScaleType="fitXY"
                 fresco:retryImage="@drawable/failedbg1"
-                fresco:retryImageScaleType="fitXY" />
+                fresco:retryImageScaleType="fitXY"
+                tools:src="@drawable/xae" />
         </FrameLayout>
 
         <!--最后使用的应用-->
-        <FrameLayout
-            android:id="@+id/fl16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/fl5"
-            android:layout_toRightOf="@id/fl15"
-            android:clickable="true"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:focusable="true"
-            android:focusableInTouchMode="true">
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="55dp"
-                android:background="#fff" />
-
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/bg_iv116"
-                android:layout_width="83dp"
-                android:layout_height="55dp"
-                android:layout_marginLeft="1dp"
-                android:scaleType="fitXY"
-                fresco:failureImage="@drawable/failedbg1"
-                fresco:failureImageScaleType="fitXY"
-                fresco:placeholderImage="@drawable/nnn"
-                fresco:placeholderImageScaleType="fitXY"
-                fresco:retryImage="@drawable/failedbg1"
-                fresco:retryImageScaleType="fitXY" />
-
-            <ImageView
-                android:id="@+id/iv_lastone"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                android:clickable="false"
-                android:focusableInTouchMode="true"
-                android:scaleType="fitXY" />
-        </FrameLayout>
 
         <FrameLayout
             android:id="@+id/fl8"
@@ -782,7 +744,7 @@
                 android:layout_height="50dp"
                 android:layout_gravity="bottom|center_horizontal"
                 android:gravity="center"
-                android:text="@string/no_dowmnload"
+                android:text=""
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
 
@@ -850,8 +812,8 @@
 
     <com.zhuchao.android.tianpu.views.MainUpView
         android:id="@+id/mainUpView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <ImageView
         android:id="@+id/iv_fill"
