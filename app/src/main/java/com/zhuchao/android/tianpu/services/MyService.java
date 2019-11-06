@@ -32,7 +32,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import utils.ChangeTool;
-import utils.IMyAidlInterface;
+
 import utils.MySerialPort;
 
 public class MyService extends Service {
@@ -103,7 +103,7 @@ public class MyService extends Service {
         return new Binder();
     }
 
-    public class Binder extends IMyAidlInterface.Stub {  //android.os.Binder
+    public class Binder extends android.os.Binder{  //
         public MyService getService() {
 
             receiver = new MyReceiver();
@@ -115,10 +115,6 @@ public class MyService extends Service {
             return MyService.this;
         }
 
-        @Override
-        public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, String aString) throws RemoteException {
-
-        }
     }
 
     public void setCallback(Callback callback) {
