@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+
 import android.databinding.DataBindingUtil;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -390,7 +391,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
         selEffectBridge = (SelEffectBridge) binding.mainUpView.getEffectBridge();
         binding.mainRl.getViewTreeObserver().addOnGlobalFocusChangeListener(this);
-        setFocuseEffect(binding.fl0);
+        setupItemBottomTag();
     }
 
     @Override
@@ -406,8 +407,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         if (bottomAppDialog != null) {
             appHandler.scanBottom();
         }
-
-
     }
 
     @Override
@@ -443,14 +442,14 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         View v = rootview.findFocus();
 
         if (v != null) {
-            setFocuseEffect(v);
+            ;//setFocuseEffect(v);
         } else if (OldView != null) {
             OldView.requestFocus();
-            setFocuseEffect(OldView);
+            //setFocuseEffect(OldView);
         } else {
             binding.fl0.setFocusable(true);
             binding.fl0.requestFocus();
-            setFocuseEffect(binding.fl0);
+            //setFocuseEffect(binding.fl0);
         }
 
 
@@ -467,7 +466,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                                 Rect rect = new Rect();
                                 root.offsetDescendantRectToMyCoords(v, rect);
                                 if (rect.left > 0 && rect.right > 0) {
-                                    setFocuseEffect(binding.fl0);
+                                    setFocuseEffect(v);
                                     break;
                                 }
 
@@ -522,8 +521,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         v.requestFocus();
         if (event.getAction() == ACTION_UP)
             handleViewKey(v, -1, true);
-        // else
-        //    setFocuseEffect(binding.fl0);
 
         return true;//super.onTouchEvent(event);
     }
@@ -820,6 +817,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bgIcon.setVisibility(View.GONE);
                 //StartServiceSendBytes(BluetoothOpen);
                 StartServiceSendBytes(BluetoothClose);
+                binding.fl11.requestFocus();
                 break;
             case R.id.fl12:
                 //同轴
@@ -870,6 +868,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bgIcon.setVisibility(View.GONE);
                 //StartServiceSendBytes(SimulationLineIn);
                 StartServiceSendBytes(SimulationLineInClose);
+                binding.fl14.requestFocus();
                 break;
             case R.id.fl15:
                 //系统播放器
@@ -886,6 +885,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bgIcon.setVisibility(View.GONE);
                 StartServiceSendBytes(UsbClose);
                 launchApp("com.android.music");
+                binding.fl15.requestFocus();
                 break;
 /*            case R.id.fl16:
                 //最后一个使用的app
@@ -907,22 +907,25 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 //QQ音乐
                 switchToOtherChanel("QQ音乐");
                 launchApp(PackageName.qqMusic);
-
+                binding.fl4.requestFocus();
                 break;
             case R.id.fl0:
                 //全民k歌
                 switchToOtherChanel("全民k歌");
                 launchApp(PackageName.qmSing);
+                binding.fl0.requestFocus();
                 break;
             case R.id.fl6:
                 //文件管理器
                 switchToOtherChanel("文件管理器");
                 launchApp("com.softwinner.TvdFileManager");
+                binding.fl6.requestFocus();
                 break;
             case R.id.fl3:
                 //我的应用
                 switchToOtherChanel(v.getClass().getName());
                 AppsActivity.lunchAppsActivity(this, MY_APP_TYPE);
+                binding.fl3.requestFocus();
                 break;
             case R.id.fl5:
                 if (null != saveType && !"".equals(saveType)) {
@@ -974,15 +977,18 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 //系统设置
                 switchToOtherChanel("系统设置");
                 openSettings();
+                binding.fl7.requestFocus();
                 break;
             case R.id.fl8:
                 //hdp 频道
                 launchApp(PackageName.hdp);
+                binding.fl8.requestFocus();
                 break;
             case R.id.fl1:
                 //腾讯视频
                 switchToOtherChanel("腾讯视频");
                 launchApp(PackageName.qqTv);
+                binding.fl1.requestFocus();
                 break;
             case R.id.ad:
                 if (web.size() > 0) {
@@ -1147,7 +1153,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv115.setImageResource(R.drawable.xse);
                 binding.fl15.requestFocus();
-                //launchApp("com.android.music");
+                launchApp("com.android.music");
             } else if (mSerialData.equals("")) {
                 //mic A开
                 binding.micA.setImageResource(R.drawable.ano);

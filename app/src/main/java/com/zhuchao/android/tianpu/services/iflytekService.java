@@ -848,7 +848,7 @@ public class iflytekService extends AppService {
         //adb shell am broadcast -a com.iflytek.xiri.init.start
 
         //获取电量
-        mMyHandler.sendEmptyMessage(1008611);
+        //mMyHandler.sendEmptyMessage(1008611);
     }
 
 
@@ -1011,7 +1011,7 @@ public class iflytekService extends AppService {
                 //intent.setAction("com.zhuchao.android.tianpu.services");
                 //sendBroadcast(intent);
             } else if (msg.what == 1008611) {
-                ServiceSendBytes(Constants.BatteryCharge);
+                //ServiceSendBytes(Constants.BatteryCharge);
             }
             msg.what = 0;
         }

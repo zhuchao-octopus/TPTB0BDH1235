@@ -35,6 +35,9 @@ import utils.ChangeTool;
 import utils.MySerialPort;
 
 public class MyService extends Service {
+    private static int MicVolume = 0;
+    private static int MusicVolume = 0;
+    private static String mTopPackageName;
     private final String TAG = "MyService";
     private MySerialPort MyPortDevice = new MySerialPort(this);
     private byte[] SerialPortReceiveBuffer;
@@ -43,13 +46,9 @@ public class MyService extends Service {
     private MusicDialog dialog;
     private Sound_Effect_Dialog sdialog;
     private Mac_Dialog mdialog;
-
     private Callback actionCallback;
     private byte[] bytes;
     private int h = 0;
-
-    private static int MicVolume = 0;
-    private static int MusicVolume = 0;
     private MyReceiver receiver = null;
     //private String mType = "";
     private byte tbb[] = {0, 0, 0, 0};
@@ -59,8 +58,36 @@ public class MyService extends Service {
     private byte[] QueryStateK50 = {0x01, 0x01, 0x06, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x09, 0x7E};//初始状态  K50
     private boolean isCharging = false;
     private MediaPlayer mMediaPlayer = null;
-    private static String mTopPackageName;
+    private Handler handler = new Handler();
+    private Runnable r = new Runnable() {
+        @Override
+        public void run() {
+            mTopPackageName = ForegroundAppUtil.getForegroundActivityName(getApplicationContext());
+            //Toast.makeText(getApplicationContext(), foregroundActivityName, Toast.LENGTH_SHORT).show();
 
+            handler.postDelayed(r, 1000);
+        }
+    };
+
+    public static String GetTopPackageName() {
+        return mTopPackageName;
+    }
+
+    public static int getMicVolume() {
+        return MicVolume;
+    }
+
+    public static void setMicVolume(int micVolume) {
+        MicVolume = micVolume;
+    }
+
+    public static int getMusicVolume() {
+        return MusicVolume;
+    }
+
+    public static void setMusicVolume(int musicVolume) {
+        MusicVolume = musicVolume;
+    }
 
     @Override
     public void onCreate() {
@@ -102,28 +129,9 @@ public class MyService extends Service {
         return new Binder();
     }
 
-    public class Binder extends android.os.Binder{  //
-        public MyService getService() {
-
-            receiver = new MyReceiver();
-            IntentFilter filter = new IntentFilter();
-            filter.addAction("com.iflytek.xiri2.hal.volume");
-            filter.addAction("com.iflytek.xiri2.hal.iflytekService");
-            registerReceiver(receiver, filter);
-
-            return MyService.this;
-        }
-
-    }
-
     public void setActionCallback(Callback actionCallback) {
         this.actionCallback = actionCallback;
     }
-
-    public static interface Callback {
-        void onDataChange(String data);
-    }
-
 
     @Override
     public void onDestroy() {
@@ -135,40 +143,6 @@ public class MyService extends Service {
         //handler.postDelayed(r, 1000);
         return START_STICKY;
     }
-
-
-    private Handler handler = new Handler();
-    private Runnable r = new Runnable() {
-        @Override
-        public void run() {
-            mTopPackageName = ForegroundAppUtil.getForegroundActivityName(getApplicationContext());
-            //Toast.makeText(getApplicationContext(), foregroundActivityName, Toast.LENGTH_SHORT).show();
-
-            handler.postDelayed(r, 1000);
-        }
-    };
-
-    public static String GetTopPackageName() {
-        return mTopPackageName;
-    }
-
-
-    public static int getMicVolume() {
-        return MicVolume;
-    }
-
-    public static void setMicVolume(int micVolume) {
-        MicVolume = micVolume;
-    }
-
-    public static int getMusicVolume() {
-        return MusicVolume;
-    }
-
-    public static void setMusicVolume(int musicVolume) {
-        MusicVolume = musicVolume;
-    }
-
 
     private void playMusic(final Context c, final int resID) {
 
@@ -192,14 +166,19 @@ public class MyService extends Service {
         Log.i(TAG, "playMusic" + resID);
     }
 
-    //private void playMyMusic(String filePath)
-    //{
-    // Video mvideo = new Video(filePath);
-    //}
-
     private void CheckSerialPortEvent() {
         //串口数据监听事件
         MyPortDevice.setOnDataReceiveListener(new MySerialPort.OnDataReceiveListener() {
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+
+                    if (lo.length() >= 16) {
+                        VolumeChange(lo);
+                    }
+                }
+            };
+
             @Override
             public void onDataReceive(Context context, byte[] buffer, int size) {
                 SerialPortReceiveBuffer = buffer;
@@ -318,17 +297,6 @@ public class MyService extends Service {
                 }
             }
 
-
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-
-                    if (lo.length() >= 16) {
-                        VolumeChange(lo);
-                    }
-                }
-            };
-
         });
     }
 
@@ -398,6 +366,11 @@ public class MyService extends Service {
 
     }
 
+    //private void playMyMusic(String filePath)
+    //{
+    // Video mvideo = new Video(filePath);
+    //}
+
     private boolean isTopActivity(String packageName) {
         ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> tasksInfo = activityManager.getRunningTasks(5);
@@ -453,6 +426,62 @@ public class MyService extends Service {
 
     }
 
+    private void setVolume(int i) {
+        tbb = utils.ChangeTool.intToBytes(i);
+
+        SetMusicVolume[7] = tbb[3];
+        SetMusicVolume[8] = tbb[2];
+        SetMusicVolume[9] = utils.ChangeTool.BytesAdd(SetMusicVolume, 9);
+
+        SetMusicVolumeK50[7] = tbb[3];
+        SetMusicVolumeK50[8] = tbb[2];
+        SetMusicVolumeK50[9] = utils.ChangeTool.BytesAdd(SetMusicVolumeK50, 9);
+
+
+        MyPortDevice.sendBuffer(SetMusicVolume);
+        MyPortDevice.sendBuffer(SetMusicVolumeK50);
+        //Log.e("MyPortDevice", utils.ChangeTool.ByteArrToHexStr(bytes, 0, bytes.length));
+    }
+
+    public Boolean IsTopActivtyFromLolipopOnwards(String PackageName) {
+        String topPackageName;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            UsageStatsManager mUsageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
+            long time = System.currentTimeMillis();
+            List<UsageStats> stats = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 10, time);
+            if (stats != null) {
+                SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
+                for (UsageStats usageStats : stats) {
+                    mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
+                }
+                if (mySortedMap != null && !mySortedMap.isEmpty()) {
+                    topPackageName = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
+                    Log.e("TopPackage Name", topPackageName);
+                    if (topPackageName.equals(PackageName)) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static interface Callback {
+        void onDataChange(String data);
+    }
+
+    public class Binder extends android.os.Binder{  //
+        public MyService getService() {
+
+            receiver = new MyReceiver();
+            IntentFilter filter = new IntentFilter();
+            filter.addAction("com.iflytek.xiri2.hal.volume");
+            filter.addAction("com.iflytek.xiri2.hal.iflytekService");
+            registerReceiver(receiver, filter);
+
+            return MyService.this;
+        }
+
+    }
+
     public class MyReceiver extends BroadcastReceiver {
         //adb shell am broadcast -a com.iflytek.xiri2.hal.volume
         //adb shell am broadcast -a com.iflytek.xiri2.hal.volume --es volume 30
@@ -500,46 +529,6 @@ public class MyService extends Service {
                 sendCommand(bytes);
             }
         }
-    }
-
-
-    private void setVolume(int i) {
-        tbb = utils.ChangeTool.intToBytes(i);
-
-        SetMusicVolume[7] = tbb[3];
-        SetMusicVolume[8] = tbb[2];
-        SetMusicVolume[9] = utils.ChangeTool.BytesAdd(SetMusicVolume, 9);
-
-        SetMusicVolumeK50[7] = tbb[3];
-        SetMusicVolumeK50[8] = tbb[2];
-        SetMusicVolumeK50[9] = utils.ChangeTool.BytesAdd(SetMusicVolumeK50, 9);
-
-
-        MyPortDevice.sendBuffer(SetMusicVolume);
-        MyPortDevice.sendBuffer(SetMusicVolumeK50);
-        //Log.e("MyPortDevice", utils.ChangeTool.ByteArrToHexStr(bytes, 0, bytes.length));
-    }
-
-
-    public Boolean IsTopActivtyFromLolipopOnwards(String PackageName) {
-        String topPackageName;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            UsageStatsManager mUsageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
-            long time = System.currentTimeMillis();
-            List<UsageStats> stats = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 10, time);
-            if (stats != null) {
-                SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
-                for (UsageStats usageStats : stats) {
-                    mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
-                }
-                if (mySortedMap != null && !mySortedMap.isEmpty()) {
-                    topPackageName = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
-                    Log.e("TopPackage Name", topPackageName);
-                    if (topPackageName.equals(PackageName)) return true;
-                }
-            }
-        }
-        return false;
     }
 
 }

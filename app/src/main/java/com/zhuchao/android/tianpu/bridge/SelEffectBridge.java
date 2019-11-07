@@ -200,7 +200,6 @@ public class SelEffectBridge extends BaseEffectBridge {
 				getMainUpView().setVisibility(mIsHide ? View.INVISIBLE : View.VISIBLE);
 				// XF add（先锋TV开发(404780246)修复)
 				// BUG:5.0系统边框错位.
-				//getMainUpView().invalidate();
 				if (Utils.getSDKVersion() >= 21)
 				{
 					int newWidth = (int) (focusView.getMeasuredWidth() * scaleX);

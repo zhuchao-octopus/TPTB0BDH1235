@@ -2,15 +2,19 @@
 
 buildscript {
     repositories {
+        apply plugin: 'maven'
         mavenCentral()
         google()
         jcenter()
-        maven { url 'https://raw.githubusercontent.com/octopus-okan/libs/master' }
+        //maven { url 'https://raw.githubusercontent.com/zhuchao-octopus/OctopusFrameworkLibs/master' }
+
+       // maven {url 'https://dl.bintray.com/zhuchao-octopus/maven'}
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.2'
+        classpath 'com.android.tools.build:gradle:3.5.1'
         classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2' // add plugin
-        
+
+
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -21,10 +25,7 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url 'https://raw.githubusercontent.com/octopus-okan/libs/master' }
+        //maven { url 'https://raw.githubusercontent.com/zhuchao-octopus/OctopusFrameworkLibs/master' }
+        //maven {url 'https://dl.bintray.com/zhuchao-octopus/maven'}
     }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }

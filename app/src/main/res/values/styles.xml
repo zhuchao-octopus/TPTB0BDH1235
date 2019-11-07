@@ -1,11 +1,8 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowNoTitle">true</item>
     </style>
@@ -36,14 +33,14 @@
     <style name="BOTTOM_APP_LEFT_BTN_STYLE" parent="BOTTOM_APP_BTN_STYLE">
         <item name="android:layout_marginStart">40.0dp</item>
     </style>
-    <style name="music_dialog" parent="Animation.AppCompat.Dialog">
+    <style name="music_dialog" parent="@android:style/Theme.Dialog">
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowFrame">@null</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@drawable/u16</item>
     </style>
-    <style name="sound_effect_dialog" parent="Animation.AppCompat.Dialog">
+    <style name="sound_effect_dialog" parent="@android:style/Theme.Dialog">
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowFrame">@null</item>

@@ -489,7 +489,40 @@
                 tools:src="@drawable/xae" />
         </FrameLayout>
 
+
         <!--最后使用的应用-->
+        <FrameLayout
+            android:id="@+id/fl16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/fl5"
+            android:layout_toRightOf="@id/fl15"
+            android:clickable="true"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:focusable="true"
+            android:nextFocusRight="@id/ad"
+            android:visibility="gone">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/bg_iv116"
+                android:layout_width="83dp"
+                android:layout_height="55dp"
+                android:scaleType="fitXY"
+                fresco:failureImage="@drawable/failedbg1"
+                fresco:failureImageScaleType="fitXY"
+                fresco:placeholderImage="@drawable/nnn"
+                fresco:placeholderImageScaleType="fitXY"
+                fresco:retryImage="@drawable/failedbg1"
+                fresco:retryImageScaleType="fitXY" />
+
+            <ImageView
+                android:id="@+id/iv_lastone"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:scaleType="fitXY" />
+        </FrameLayout>
 
         <FrameLayout
             android:id="@+id/fl8"
