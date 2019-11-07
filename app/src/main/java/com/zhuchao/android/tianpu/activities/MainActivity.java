@@ -2439,7 +2439,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 isCharging = intent.getBooleanExtra("isCharge", false);
                 if (isCharging) {
                     binding.ivBattery.setImageResource(R.drawable.charge);
-                    binding.bgIv5.setVisibility(View.INVISIBLE);
+                    //binding.bgIv5.setVisibility(View.INVISIBLE);
                 }
                 else
                 {
@@ -2681,7 +2681,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
     private void switchToOtherChanel(String ChanelName) {
         binding.bgIv5.setVisibility(View.VISIBLE);
-        binding.bgIv5.setImageResource(R.drawable.bb2);
+        //binding.bgIv5.setImageResource(R.drawable.bb2);
         Log.i(TAG, "切换通道：" + ChanelName);
         StartServiceSendBytes(LastChanelApp);
     }
