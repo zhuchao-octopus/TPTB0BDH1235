@@ -27,7 +27,7 @@ android {
 
     defaultConfig {
         applicationId "com.zhuchao.android.tianpu"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 28
         versionCode 71
         versionName "7.1"
@@ -121,14 +121,16 @@ dependencies {
     implementation('com.github.bumptech.glide:glide:4.9.0') {
         exclude group: "com.android.support"
     }
+
+
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
-    //implementation 'com.zhuchao.android:libDecodeCore:+@aar'
-    //implementation 'com.zhuchao.android:libNetUtil:2.0:@aar'
-    //implementation 'com.zhuchao.android:libPlayUtil:2.1:@aar'
-    //implementation 'com.zhuchao.android:libPlaySession:2.2:@aar'
-    //implementation 'com.zhuchao.android:libVideo:1.0:@aar'
-    //implementation 'com.zhuchao.android:libDialog:1.0:@aar'
-    //implementation 'com.zhuchao.android:libCallbackEvent:1.0:@aar'
-    //implementation 'com.zhuchao.android:libFileManager:1.0:@aar'
+    implementation 'com.zhuchao.android:libDecodeCore:+@aar'
+    implementation 'com.zhuchao.android:libNetUtil:2.0:@aar'
+    implementation 'com.zhuchao.android:libPlayUtil:2.1:@aar'
+    implementation 'com.zhuchao.android:libPlaySession:2.2:@aar'
+    implementation 'com.zhuchao.android:libVideo:1.0:@aar'
+    implementation 'com.zhuchao.android:libDialog:1.0:@aar'
+    implementation 'com.zhuchao.android:libCallbackEvent:1.0:@aar'
+    implementation 'com.zhuchao.android:libFileManager:1.0:@aar'
 
 }

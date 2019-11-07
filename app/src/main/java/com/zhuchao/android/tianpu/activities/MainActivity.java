@@ -441,18 +441,12 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         View rootview = MainActivity.this.getWindow().getDecorView();
         View v = rootview.findFocus();
 
-        if (v != null) {
-            ;//setFocuseEffect(v);
-        } else if (OldView != null) {
+        if (OldView != null) {
             OldView.requestFocus();
-            //setFocuseEffect(OldView);
         } else {
             binding.fl0.setFocusable(true);
             binding.fl0.requestFocus();
-            //setFocuseEffect(binding.fl0);
         }
-
-
         new Thread() {
             @Override
             public void run() {

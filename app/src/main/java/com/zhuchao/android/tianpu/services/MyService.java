@@ -9,7 +9,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,7 +27,9 @@ import com.zhuchao.android.tianpu.utils.ForegroundAppUtil;
 import com.zhuchao.android.tianpu.views.dialogs.Mac_Dialog;
 import com.zhuchao.android.tianpu.views.dialogs.MusicDialog;
 import com.zhuchao.android.tianpu.views.dialogs.Sound_Effect_Dialog;
+import com.zhuchao.android.video.Video;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -144,26 +148,84 @@ public class MyService extends Service {
         return START_STICKY;
     }
 
-    private void playMusic(final Context c, final int resID) {
 
-        new Thread() {
-            @Override
-            public void run() {
-                if (mMediaPlayer == null) {
-                    mMediaPlayer = MediaPlayer.create(c, resID);
-                    mMediaPlayer.start();
-                } else {
-                    //mMediaPlayer.stop();
-                    mMediaPlayer.reset();
-                    mMediaPlayer.release();
-                    mMediaPlayer = null;
-                    mMediaPlayer = MediaPlayer.create(c, resID);
-                    mMediaPlayer.start();
-                }
+    Handler mMyHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    //playMusic(context, R.raw.tp00);
+                    break;
+                case 1:
+                    playMusic(null, R.raw.tp001);
+                    break;
+                case 2:
+                    playMusic(null, R.raw.tp002);
+                    break;
+                case 3:
+                    playMusic(null, R.raw.tp003);
+                    break;
+                case 4:
+                    playMusic(null, R.raw.tp004);
+                    break;
+                case 5:
+                    playMusic(null, R.raw.tp005);
+                    break;
+                case 6:
+                    playMusic(null, R.raw.tp006);
+                    break;
+                case 7:
+                    playMusic(null, R.raw.tp007);
+                    break;
+                case 8:
+                    playMusic(null, R.raw.tp008);
+                    break;
+                case 9:
+                    playMusic(null, R.raw.tp009);
+                    break;
+                case 10:
+                    playMusic(null, R.raw.tp010);
+                    break;
+                case 11:
+                    playMusic(null, R.raw.tp011);
+                    break;
+                case 12:
+                    playMusic(null, R.raw.tp012);
+                    break;
             }
-        }.start();
+        }
+
+    };
+
+    private void playMusic(final Context c, final int resID) {
+        String suri = "android.resource://" + this.getApplicationContext().getPackageName() + "/" +resID;
+        Uri uri = Uri.parse(suri);
+        AssetFileDescriptor afd = getResources().openRawResourceFd(resID);
+        Video video = new Video(suri,null,null);
+        video.with(this.getApplicationContext());
+        video.getmOPlayer().setSourceInfo(afd);
+        video.playInto(null);
+
+
+        /*if (mMediaPlayer == null) {
+            mMediaPlayer = MediaPlayer.create(this.getApplicationContext(), resID);
+            mMediaPlayer.start();
+        } else {
+            try {
+                mMediaPlayer.stop();
+                mMediaPlayer.release();
+                mMediaPlayer.setDataSource(afd);
+                mMediaPlayer.prepare();
+                mMediaPlayer.start();;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+*/
 
         Log.i(TAG, "playMusic" + resID);
+
     }
 
     private void CheckSerialPortEvent() {
@@ -192,7 +254,8 @@ public class MyService extends Service {
                 //播放特效声
                 if (buffer[2] == 0x21) {
                     byte result = buffer[5];
-                    switch (result) {
+                    mMyHandler.sendEmptyMessage(result);
+                    /*switch (result) {
                         case 0:
                             //playMusic(context, R.raw.tp00);
                             break;
@@ -232,7 +295,7 @@ public class MyService extends Service {
                         case 12:
                             playMusic(context, R.raw.tp012);
                             break;
-                    }
+                    }*/
                     return;
                 }
                 //Setting
@@ -468,7 +531,7 @@ public class MyService extends Service {
         void onDataChange(String data);
     }
 
-    public class Binder extends android.os.Binder{  //
+    public class Binder extends android.os.Binder {  //
         public MyService getService() {
 
             receiver = new MyReceiver();
@@ -523,8 +586,7 @@ public class MyService extends Service {
                     }
                 }
             }
-            if (intent.getAction().equals("com.iflytek.xiri2.hal.iflytekService"))
-            {
+            if (intent.getAction().equals("com.iflytek.xiri2.hal.iflytekService")) {
                 byte[] bytes = bundle.getByteArray("SerialData");
                 sendCommand(bytes);
             }
