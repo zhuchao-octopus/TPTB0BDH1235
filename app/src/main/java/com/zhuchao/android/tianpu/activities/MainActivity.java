@@ -534,7 +534,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                     break;
                 case KeyEvent.KEYCODE_HOME:
                 case KeyEvent.KEYCODE_BACK:
-                    //setFocuseEffect(binding.fl0);
                     binding.ivFill.setVisibility(View.GONE);
 
                     break;
@@ -2442,16 +2441,22 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                     binding.ivBattery.setImageResource(R.drawable.charge);
                     binding.bgIv5.setVisibility(View.INVISIBLE);
                 }
+                else
+                {
+                    binding.bgIv5.setVisibility(View.VISIBLE);
+                }
             } else if (action.equals(ACTION_BATTERY_INFO) && !isCharging) {
                 int value = intent.getIntExtra("value", -1);
                 binding.ivBattery.setVisibility(View.VISIBLE);
-                binding.bgIv5.setVisibility(View.INVISIBLE);
+                binding.bgIv5.setVisibility(View.VISIBLE);
 
-                if ((value < 5)) {
+                if ((value < 5))
+                {
                     binding.bgIv5.setVisibility(View.VISIBLE);
                     binding.bgIv5.setImageResource(R.drawable.battery_warnning);
                 }
-                if (value < 10) {
+                if (value < 10)
+                {
                     binding.ivBattery.setImageResource(R.drawable.lowbattery);
 
                 } else if (value <= 20)

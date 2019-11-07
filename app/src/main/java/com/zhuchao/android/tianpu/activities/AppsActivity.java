@@ -1,5 +1,6 @@
 package com.zhuchao.android.tianpu.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -28,7 +29,7 @@ import com.zhuchao.android.tianpu.utils.Utils;
  * Created by Oracle on 2017/12/1.
  */
 
-public class AppsActivity extends AppCompatActivity {
+public class AppsActivity extends Activity {
 
     private static final String TAG = AppsActivity.class.getSimpleName();
     private ActivityMyApplicationBinding binding;
