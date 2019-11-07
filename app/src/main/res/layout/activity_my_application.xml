@@ -14,7 +14,7 @@
             android:layout_width="1131.0dip"
             android:layout_height="55.0dip"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="55.0dip"
+            android:layout_marginTop="25.0dip"
             android:orientation="horizontal">
 
             <RelativeLayout
