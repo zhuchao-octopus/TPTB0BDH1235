@@ -199,7 +199,7 @@ public class MyService extends Service {
 
     private void playMusic(final Context c, final int resID) {
         String suri = "android.resource://" + this.getApplicationContext().getPackageName() + "/" +resID;
-        Uri uri = Uri.parse(suri);
+        //Uri uri = Uri.parse(suri);
         AssetFileDescriptor afd = getResources().openRawResourceFd(resID);
         Video video = new Video(suri,null,null);
         video.with(this.getApplicationContext());
@@ -224,7 +224,7 @@ public class MyService extends Service {
         }
        */
 
-        Log.i(TAG, "playMusic" + resID);
+        //Log.i(TAG, "playMusic" + resID);
 
     }
 
