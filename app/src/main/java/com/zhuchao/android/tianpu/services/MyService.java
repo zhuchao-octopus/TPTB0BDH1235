@@ -205,27 +205,6 @@ public class MyService extends Service {
         video.with(this.getApplicationContext());
         video.getmOPlayer().setSourceInfo(afd);
         video.playInto(null);
-
-
-        /*if (mMediaPlayer == null) {
-            mMediaPlayer = MediaPlayer.create(this.getApplicationContext(), resID);
-            mMediaPlayer.start();
-        } else {
-            try {
-                mMediaPlayer.stop();
-                mMediaPlayer.release();
-                mMediaPlayer.setDataSource(afd);
-                mMediaPlayer.prepare();
-                mMediaPlayer.start();;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-       */
-
-        //Log.i(TAG, "playMusic" + resID);
-
     }
 
     private void CheckSerialPortEvent() {
@@ -255,55 +234,11 @@ public class MyService extends Service {
                 if (buffer[2] == 0x21) {
                     byte result = buffer[5];
                     mMyHandler.sendEmptyMessage(result);
-                    /*switch (result) {
-                        case 0:
-                            //playMusic(context, R.raw.tp00);
-                            break;
-                        case 1:
-                            playMusic(context, R.raw.tp001);
-                            break;
-                        case 2:
-                            playMusic(context, R.raw.tp002);
-                            break;
-                        case 3:
-                            playMusic(context, R.raw.tp003);
-                            break;
-                        case 4:
-                            playMusic(context, R.raw.tp004);
-                            break;
-                        case 5:
-                            playMusic(context, R.raw.tp005);
-                            break;
-                        case 6:
-                            playMusic(context, R.raw.tp006);
-                            break;
-                        case 7:
-                            playMusic(context, R.raw.tp007);
-                            break;
-                        case 8:
-                            playMusic(context, R.raw.tp008);
-                            break;
-                        case 9:
-                            playMusic(context, R.raw.tp009);
-                            break;
-                        case 10:
-                            playMusic(context, R.raw.tp010);
-                            break;
-                        case 11:
-                            playMusic(context, R.raw.tp011);
-                            break;
-                        case 12:
-                            playMusic(context, R.raw.tp012);
-                            break;
-                    }*/
                     return;
                 }
                 //Setting
                 if (buffer[2] == 0x01) {
                     byte result = buffer[7];
-                    //Intent intent = new Intent("COMMAND_DATA");
-                    //intent.putExtra("COMMAND_DATA", 0x20);
-                    //sendBroadcast(intent);
                     if (result == 0x20) {
                         Intent in = new Intent();
                         in.setClassName("com.android.settings", "com.android.settings.Settings");
@@ -322,8 +257,6 @@ public class MyService extends Service {
                 //是否充电
                 if (buffer[2] == 0x22) {
                     byte result = buffer[7];
-                    //String s = ChangeTool.Byte2Hex(result);
-                    //Log.e("battery", "onDataReceive: " + s);
                     Intent intent = new Intent("BATTERY_CHARGE");
                     if (result == 0x01)
                         isCharging = true;
@@ -368,8 +301,7 @@ public class MyService extends Service {
         String type = volume.substring(4, 8);
         String value = volume.substring(12, 16);
         int v = Integer.valueOf(value, 16);
-        Log.i("VolumeChange", "type=" + type + "   lo=" + lo + "    h=" + h++);
-        //mType = type;
+        Log.i("VolumeChange", "type=" + type + "   lo=" + lo + "   v=" + v);
         if (type.equals("0200")) {
             //音乐音量
             if ((v >= 0) && (v <= 60)) {
@@ -384,7 +316,6 @@ public class MyService extends Service {
             }
         } else if (type.equals("0400")) {
             //音效
-            //showEffectDialog(v, type);
             switch (v) {
                 case 1:
                     showEffectDialog3(R.drawable.u20, v, "1 主持", type);
@@ -403,7 +334,8 @@ public class MyService extends Service {
                     break;
             }
 
-        } else if (type.equals("0500")) {
+        } else if (type.equals("0500"))
+        {
             if (actionCallback != null) {
                 //if(IsTopActivtyFromLolipopOnwards("com.zhuchao.android.tianpu")==false)
                 {
@@ -428,12 +360,6 @@ public class MyService extends Service {
         }
 
     }
-
-    //private void playMyMusic(String filePath)
-    //{
-    // Video mvideo = new Video(filePath);
-    //}
-
     private boolean isTopActivity(String packageName) {
         ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> tasksInfo = activityManager.getRunningTasks(5);
@@ -492,16 +418,16 @@ public class MyService extends Service {
     private void setVolume(int i) {
         tbb = utils.ChangeTool.intToBytes(i);
 
-        SetMusicVolume[7] = tbb[3];
-        SetMusicVolume[8] = tbb[2];
-        SetMusicVolume[9] = utils.ChangeTool.BytesAdd(SetMusicVolume, 9);
+        //SetMusicVolume[7] = tbb[3];
+        //SetMusicVolume[8] = tbb[2];
+        //SetMusicVolume[9] = utils.ChangeTool.BytesAdd(SetMusicVolume, 9);
 
         SetMusicVolumeK50[7] = tbb[3];
         SetMusicVolumeK50[8] = tbb[2];
         SetMusicVolumeK50[9] = utils.ChangeTool.BytesAdd(SetMusicVolumeK50, 9);
 
 
-        MyPortDevice.sendBuffer(SetMusicVolume);
+        ///MyPortDevice.sendBuffer(SetMusicVolume);
         MyPortDevice.sendBuffer(SetMusicVolumeK50);
         //Log.e("MyPortDevice", utils.ChangeTool.ByteArrToHexStr(bytes, 0, bytes.length));
     }

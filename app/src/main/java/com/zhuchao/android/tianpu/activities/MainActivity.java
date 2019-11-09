@@ -1122,7 +1122,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
             } else if (mSerialData.equals("0201050000020000000A7E") || mSerialData.equals("010105000002000000097E")) {
                 pauseMusic();
-                //最后的app
+                //最后的app  I2S 通道
                 saveType = "last";
                 isThelast = true;
                 //binding.fl16.requestFocus();
@@ -1132,6 +1132,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv115.setImageResource(R.drawable.xae);
+                //binding.fl15.requestFocus();
                 if (null != lastoneApp && !"".equals(lastoneApp)) {
                     launchApp(lastoneApp);
                 }
@@ -1150,6 +1151,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.fl15.requestFocus();
                 binding.bluetooth.setVisibility(View.INVISIBLE);
                 launchApp("com.android.music");
+
             } else if (mSerialData.equals("")) {
                 //mic A开
                 binding.micA.setImageResource(R.drawable.ano);

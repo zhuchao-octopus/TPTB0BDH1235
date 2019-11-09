@@ -76,6 +76,10 @@ public class MusicDialog extends Dialog implements SeekBar.OnSeekBarChangeListen
             imageView.setImageResource(R.drawable.u9);
             textView.setText(String.valueOf(mNowVolume));
         }
+        else
+        {
+            textView.setText(String.valueOf(mNowVolume));
+        }
         dialog.show();
         close();
     }
@@ -107,7 +111,7 @@ public class MusicDialog extends Dialog implements SeekBar.OnSeekBarChangeListen
         }
 
         types = type;
-        Log.e("music","types="+types+"     mNowVolume="+mNowVolume);
+        Log.e("music","types="+types+"     mNowVolume="+mNowVolume+"/"+direction);
         show();
     }
 
@@ -139,13 +143,7 @@ public class MusicDialog extends Dialog implements SeekBar.OnSeekBarChangeListen
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-//        Log.e("Tag","哈哈哈哈");
-//        mNowVolume = mMaxVolume * seekBar.getProgress() / seekBar.getMax();
-//        mAudioMgr.setStreamVolume(MUSIC, mNowVolume, AudioManager.FLAG_PLAY_SOUND);
-//        if (mListener != null) {
-//            mListener.onVolumeAdjust(mNowVolume);
-//        }
-//        close();
+
     }
 
     private VolumeAdjustListener mListener;
