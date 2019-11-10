@@ -3,7 +3,6 @@
 buildscript {
     repositories {
         apply plugin: 'maven'
-        mavenCentral()
         google()
         jcenter()
         //maven { url 'https://raw.githubusercontent.com/zhuchao-octopus/OctopusFrameworkLibs/master' }

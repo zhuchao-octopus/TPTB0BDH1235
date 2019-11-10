@@ -22,7 +22,7 @@ import static com.zhuchao.android.tianpu.utils.ChangeTool.ByteArrToHex;
 public class MySerialPort {
 
     private final String TAG = "MySerialPort";
-    private String DevicePath = "/dev/ttyS1";
+    private String DevicePath = "/dev/ttyS0";
     private int Baudrate = 9600;
     private Context mContext;
     //public boolean PortStatus = false; //是否打开串口标志
@@ -71,7 +71,7 @@ public class MySerialPort {
             outputStream = serialPort.getOutputStream();
 
             if(IsDecode)
-               new ReceiverThread().start(); //add by cvte
+               new DeccodeThread().start();
 
             new ReadThread().start();
         } catch (IOException e) {
@@ -200,7 +200,7 @@ public class MySerialPort {
     }
 
     //add by cvte
-    private class ReceiverThread extends Thread {
+    private class DeccodeThread extends Thread {
         @Override
         public void run() {
             super.run();
@@ -214,7 +214,8 @@ public class MySerialPort {
                             byteArrayList.clear();
                             len = 0;
                             mCurrentByte = mDataQueue.remove();
-                            if (mCurrentByte == 0x01) {
+                            if ((mCurrentByte == 0x01) || (mCurrentByte == 0x02))
+                            {
                                 byteArrayList.add(mCurrentByte);
                                 Byte aByte = mDataQueue.peek();
                                 if (aByte != null) {
