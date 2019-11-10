@@ -15,10 +15,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.zhuchao.android.tianpu.data.Constants;
 import com.zhuchao.android.tianpu.data.PackageName;
 import com.iflytek.xiri.AppService;
 import com.iflytek.xiri.Feedback;
+import com.zhuchao.android.tianpu.utils.ChangeTool;
 import com.zhuchao.android.tianpu.utils.ForegroundAppUtil;
 
 import java.io.BufferedReader;
@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class iflytekService extends AppService {
 
-    private static final String TAG = iflytekService.class.getSimpleName();
+    private static final String TAG = "iflytekService";//iflytekService.class.getSimpleName();
     private Feedback mFeedback = null;
     //private boolean bReb = false;
     private String action_Cammand = null;
@@ -108,7 +108,7 @@ public class iflytekService extends AppService {
                         @Override
                         public void run() {
                             pauseMusic();
-                            //ServiceSendBytes(LastAppOpen);
+                            //myServiceSendBytes(LastAppOpen);
                             ServiceSendBytes(LastAppClose);
                         }
                     }).start();
@@ -171,7 +171,7 @@ public class iflytekService extends AppService {
                     @Override
                     public void run() {
                         pauseMusic();
-                        //ServiceSendBytes(LastAppOpen);
+                        //myServiceSendBytes(LastAppOpen);
                         ServiceSendBytes(LastAppClose);
                     }
                 }).start();
@@ -236,7 +236,7 @@ public class iflytekService extends AppService {
                     @Override
                     public void run() {
                         pauseMusic();
-                        //ServiceSendBytes(LastAppOpen);
+                        //myServiceSendBytes(LastAppOpen);
                         ServiceSendBytes(LastAppClose);
                     }
                 }).start();
@@ -269,7 +269,7 @@ public class iflytekService extends AppService {
                     @Override
                     public void run() {
                         pauseMusic();
-                        //ServiceSendBytes(LastAppOpen);
+                        //myServiceSendBytes(LastAppOpen);
                         ServiceSendBytes(LastAppClose);
                     }
                 }).start();
@@ -392,7 +392,7 @@ public class iflytekService extends AppService {
                 @Override
                 public void run() {
                     pauseMusic();
-                    //ServiceSendBytes(LastAppOpen);
+                    //myServiceSendBytes(LastAppOpen);
                     ServiceSendBytes(LastAppClose);
                 }
             }).start();
@@ -865,17 +865,17 @@ public class iflytekService extends AppService {
 
                 MyService.setMicVolume(vv);
 
-                tbb = utils.ChangeTool.intToBytes(vv);
+                tbb = ChangeTool.intToBytes(vv);
 
                 //SetMicVolume[7] = tbb[3];
                 //SetMicVolume[8] = tbb[2];
-                //SetMicVolume[9] = utils.ChangeTool.BytesAdd(SetMicVolume, 9);
+                //SetMicVolume[9] = com.zhuchao.android.tianpu.utils.ChangeTool.BytesAdd(SetMicVolume, 9);
 
                 SetMicVolumeK50[7] = tbb[3];
                 SetMicVolumeK50[8] = tbb[2];
-                SetMicVolumeK50[9] = utils.ChangeTool.BytesAdd(SetMicVolumeK50, 9);
+                SetMicVolumeK50[9] = ChangeTool.BytesAdd(SetMicVolumeK50, 9);
 
-                //ServiceSendBytes(SetMicVolume);
+                //myServiceSendBytes(SetMicVolume);
                 ServiceSendBytes(SetMicVolumeK50);
 
             } else if (msg.what == 2) {
@@ -886,16 +886,16 @@ public class iflytekService extends AppService {
 
                 MyService.setMicVolume(vv);
 
-                tbb = utils.ChangeTool.intToBytes(vv);
+                tbb = ChangeTool.intToBytes(vv);
                 //SetMicVolume[7] = tbb[3];
                 //SetMicVolume[8] = tbb[2];
-                //SetMicVolume[9] = utils.ChangeTool.BytesAdd(SetMicVolume, 9);
+                //SetMicVolume[9] = com.zhuchao.android.tianpu.utils.ChangeTool.BytesAdd(SetMicVolume, 9);
 
                 SetMicVolumeK50[7] = tbb[3];
                 SetMicVolumeK50[8] = tbb[2];
-                SetMicVolumeK50[9] = utils.ChangeTool.BytesAdd(SetMicVolumeK50, 9);
+                SetMicVolumeK50[9] = ChangeTool.BytesAdd(SetMicVolumeK50, 9);
 
-                //ServiceSendBytes(SetMicVolume);
+                //myServiceSendBytes(SetMicVolume);
                 ServiceSendBytes(SetMicVolumeK50);
 
             } else if (msg.what == 3) {
@@ -905,17 +905,17 @@ public class iflytekService extends AppService {
                     vv = 60;
 
                 MyService.setMusicVolume(vv);
-                tbb = utils.ChangeTool.intToBytes(vv);
+                tbb = ChangeTool.intToBytes(vv);
 
                 //SetMusicVolume[7] = tbb[3];
                 //SetMusicVolume[8] = tbb[2];
-                //SetMusicVolume[9] = utils.ChangeTool.BytesAdd(SetMusicVolume, 9);
+                //SetMusicVolume[9] = com.zhuchao.android.tianpu.utils.ChangeTool.BytesAdd(SetMusicVolume, 9);
 
                 SetMusicVolumeK50[7] = tbb[3];
                 SetMusicVolumeK50[8] = tbb[2];
-                SetMusicVolumeK50[9] = utils.ChangeTool.BytesAdd(SetMusicVolumeK50, 9);
+                SetMusicVolumeK50[9] = ChangeTool.BytesAdd(SetMusicVolumeK50, 9);
 
-                //ServiceSendBytes(SetMusicVolume);
+                //myServiceSendBytes(SetMusicVolume);
                 ServiceSendBytes(SetMusicVolumeK50);
 
 
@@ -925,93 +925,93 @@ public class iflytekService extends AppService {
                     vv = 0;
 
                 MyService.setMusicVolume(vv);
-                tbb = utils.ChangeTool.intToBytes(vv);
+                tbb = ChangeTool.intToBytes(vv);
 
                 //SetMusicVolume[7] = tbb[3];
                 //SetMusicVolume[8] = tbb[2];
-                //SetMusicVolume[9] = utils.ChangeTool.BytesAdd(SetMusicVolume, 9);
+                //SetMusicVolume[9] = com.zhuchao.android.tianpu.utils.ChangeTool.BytesAdd(SetMusicVolume, 9);
 
                 SetMusicVolumeK50[7] = tbb[3];
                 SetMusicVolumeK50[8] = tbb[2];
-                SetMusicVolumeK50[9] = utils.ChangeTool.BytesAdd(SetMusicVolumeK50, 9);
+                SetMusicVolumeK50[9] = ChangeTool.BytesAdd(SetMusicVolumeK50, 9);
 
-                //ServiceSendBytes(SetMusicVolume);
+                //myServiceSendBytes(SetMusicVolume);
                 ServiceSendBytes(SetMusicVolumeK50);
 
             } else if (msg.what == 5) {
-                //ServiceSendBytes(CommandMuteOn);
+                //myServiceSendBytes(CommandMuteOn);
                 ServiceSendBytes(CommandMuteOnK50);
 
             } else if (msg.what == 55) {
-                //ServiceSendBytes(CommandMuteClose);
+                //myServiceSendBytes(CommandMuteClose);
                 ServiceSendBytes(CommandMuteCloseK50);
             } else if (msg.what == 6) {
                 //MICEffetive[7] = 1;
                 //MICEffetive[8] = 0;
-                //MICEffetive[9] = utils.ChangeTool.BytesAdd(MICEffetive, 9);
+                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.ChangeTool.BytesAdd(MICEffetive, 9);
                 MICEffetiveK50[7] = 1;
                 MICEffetiveK50[8] = 0;
-                MICEffetiveK50[9] = utils.ChangeTool.BytesAdd(MICEffetiveK50, 9);
-                //ServiceSendBytes(MICEffetive);
+                MICEffetiveK50[9] = ChangeTool.BytesAdd(MICEffetiveK50, 9);
+                //myServiceSendBytes(MICEffetive);
                 ServiceSendBytes(MICEffetiveK50);
             } else if (msg.what == 7) {
                 //MICEffetive[7] = 2;
                 //MICEffetive[8] = 0;
-                //MICEffetive[9] = utils.ChangeTool.BytesAdd(MICEffetive, 9);
+                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.ChangeTool.BytesAdd(MICEffetive, 9);
                 MICEffetiveK50[7] = 2;
                 MICEffetiveK50[8] = 0;
-                MICEffetiveK50[9] = utils.ChangeTool.BytesAdd(MICEffetiveK50, 9);
-                //ServiceSendBytes(MICEffetive);
+                MICEffetiveK50[9] = ChangeTool.BytesAdd(MICEffetiveK50, 9);
+                //myServiceSendBytes(MICEffetive);
                 ServiceSendBytes(MICEffetiveK50);
             } else if (msg.what == 8) {
                 //MICEffetive[7] = 3;
                 //MICEffetive[8] = 0;
-                //MICEffetive[9] = utils.ChangeTool.BytesAdd(MICEffetive, 9);
+                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.ChangeTool.BytesAdd(MICEffetive, 9);
                 MICEffetiveK50[7] = 3;
                 MICEffetiveK50[8] = 0;
-                MICEffetiveK50[9] = utils.ChangeTool.BytesAdd(MICEffetiveK50, 9);
-                //ServiceSendBytes(MICEffetive);
+                MICEffetiveK50[9] = ChangeTool.BytesAdd(MICEffetiveK50, 9);
+                //myServiceSendBytes(MICEffetive);
                 ServiceSendBytes(MICEffetiveK50);
             } else if (msg.what == 9) {
                 //MICEffetive[7] = 4;
                 //MICEffetive[8] = 0;
-                //MICEffetive[9] = utils.ChangeTool.BytesAdd(MICEffetive, 9);
+                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.ChangeTool.BytesAdd(MICEffetive, 9);
                 MICEffetiveK50[7] = 4;
                 MICEffetiveK50[8] = 0;
-                MICEffetiveK50[9] = utils.ChangeTool.BytesAdd(MICEffetiveK50, 9);
-                //ServiceSendBytes(MICEffetive);
+                MICEffetiveK50[9] = ChangeTool.BytesAdd(MICEffetiveK50, 9);
+                //myServiceSendBytes(MICEffetive);
                 ServiceSendBytes(MICEffetiveK50);
             } else if (msg.what == 10) {
                 //MICEffetive[7] = 5;
                 //MICEffetive[8] = 0;
-                //MICEffetive[9] = utils.ChangeTool.BytesAdd(MICEffetive, 9);
+                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.ChangeTool.BytesAdd(MICEffetive, 9);
                 MICEffetiveK50[7] = 5;
                 MICEffetiveK50[8] = 0;
-                MICEffetiveK50[9] = utils.ChangeTool.BytesAdd(MICEffetiveK50, 9);
-                //ServiceSendBytes(MICEffetive);
+                MICEffetiveK50[9] = ChangeTool.BytesAdd(MICEffetiveK50, 9);
+                //myServiceSendBytes(MICEffetive);
                 ServiceSendBytes(MICEffetiveK50);
             } else if (msg.what == 11) {
                 //MICEffetive[7] = 6;
                 //MICEffetive[8] = 0;
-                //MICEffetive[9] = utils.ChangeTool.BytesAdd(MICEffetive, 9);
+                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.ChangeTool.BytesAdd(MICEffetive, 9);
                 MICEffetiveK50[7] = 6;
                 MICEffetiveK50[8] = 0;
-                MICEffetiveK50[9] = utils.ChangeTool.BytesAdd(MICEffetiveK50, 9);
-                //ServiceSendBytes(MICEffetive);
+                MICEffetiveK50[9] = ChangeTool.BytesAdd(MICEffetiveK50, 9);
+                //myServiceSendBytes(MICEffetive);
                 ServiceSendBytes(MICEffetiveK50);
             } else if (msg.what == 12) {
-                //ServiceSendBytes(CommandStandby);
+                //myServiceSendBytes(CommandStandby);
                 ServiceSendBytes(CommandStandbyK50);
             } else if (msg.what == 100) {
                 pauseMusic();
-                //ServiceSendBytes(LastAppOpen);
+                //myServiceSendBytes(LastAppOpen);
                 ServiceSendBytes(LastAppClose);
                 //Intent intent = new Intent();
                 //intent.putExtra("_Action", "music");
                 //intent.setAction("com.zhuchao.android.tianpu.services");
                 //sendBroadcast(intent);
             } else if (msg.what == 1008611) {
-                //ServiceSendBytes(Constants.BatteryCharge);
+                //myServiceSendBytes(Constants.BatteryCharge);
             }
             msg.what = 0;
         }

@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.zhuchao.android.tianpu.utils.AppMain;
+import com.zhuchao.android.tianpu.utils.MyApplication;
 
 /**
  * Created by Oracle on 2017/12/1.
@@ -24,7 +24,7 @@ public class App implements Parcelable {
         name = in.readString();
         packageName = in.readString();
         Bitmap bitmap = in.readParcelable(getClass().getClassLoader());
-        icon = new BitmapDrawable(AppMain.res(), bitmap);
+        icon = new BitmapDrawable(MyApplication.res(), bitmap);
     }
 
     public static final Creator<App> CREATOR = new Creator<App>() {

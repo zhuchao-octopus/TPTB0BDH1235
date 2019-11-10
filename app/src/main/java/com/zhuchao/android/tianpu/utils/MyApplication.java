@@ -13,7 +13,7 @@ import com.facebook.imagepipeline.core.ImagePipelineConfig;
  * Created by Oracle on 2017/11/29.
  */
 
-public class AppMain extends Application {
+public class MyApplication extends Application {
 
     private static Context context;
 

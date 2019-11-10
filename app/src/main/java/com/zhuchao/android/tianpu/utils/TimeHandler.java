@@ -28,7 +28,7 @@ public class TimeHandler {
 
     public TimeHandler(Context context) {
         this.context = context;
-        weekArr = AppMain.res().getStringArray(R.array.week);
+        weekArr = MyApplication.res().getStringArray(R.array.week);
 //        new TimeScanTask().start();
 //        handleTime();
     }

@@ -1,4 +1,4 @@
-package utils;
+package com.zhuchao.android.tianpu.utils;
 
 import android.content.Context;
 import android.util.Log;
@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import JNIAPI.JniSerialPort;
 
-import static utils.ChangeTool.ByteArrToHex;
+import static com.zhuchao.android.tianpu.utils.ChangeTool.ByteArrToHex;
 
 /**
  * Created by WangChaowei on 2017/12/7.

@@ -31,7 +31,8 @@
 
     <application
         android:largeHeap="true"
-        android:name="com.zhuchao.android.tianpu.utils.AppMain"
+        android:name="com.zhuchao.android.tianpu.utils.MyApplication"
+
         android:allowBackup="true"
         android:persistent="true"
         android:icon="@mipmap/ic_launcher"
@@ -55,7 +56,7 @@
         </activity>
         <activity android:name="com.zhuchao.android.tianpu.activities.AppsActivity" />
         <service android:name="com.zhuchao.android.tianpu.services.MyService" android:enabled="true"/>
-        <activity android:name="com.zhuchao.android.tianpu.activities.VideoActivity"/>
+
         <service android:name="com.zhuchao.android.tianpu.services.iflytekService" >
             <intent-filter>
                 <action android:name="com.iflytek.xiri2.app.NOTIFY" />
@@ -72,7 +73,7 @@
         </receiver>-->
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="com.zhuchao.android.tianpu.fileProvider"
             android:grantUriPermissions="true"
             android:exported="false">

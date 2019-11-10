@@ -12,7 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.RemoteException;
-import android.support.v4.content.FileProvider;
+import androidx.core.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +45,7 @@ import java.util.List;
  * Created by ZTZ on 2018/3/20.
  */
 
-public class AppManager {
+public class AppsManager {
 
     /* 卸载apk */
     public static void uninstallApk(Context context, String packageName) {

@@ -131,7 +131,7 @@
             android:layout_marginTop="40dp"
             android:layout_marginRight="30.0dip"
             android:layout_toStartOf="@id/time_tv"
-            android:src="@drawable/net"
+            android:src="@drawable/netno"
             android:visibility="visible" />
 
         <TextView

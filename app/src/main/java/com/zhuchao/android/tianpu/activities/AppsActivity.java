@@ -3,25 +3,23 @@ package com.zhuchao.android.tianpu.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 
 import com.zhuchao.android.tianpu.R;
 import com.zhuchao.android.tianpu.databinding.ActivityMyApplicationBinding;
+import com.zhuchao.android.tianpu.utils.AppListHandler;
 import com.zhuchao.android.tianpu.utils.ShareAdapter;
 
 import com.zhuchao.android.tianpu.adapter.AppAdapter;
 import com.zhuchao.android.tianpu.data.App;
 
-import com.zhuchao.android.tianpu.utils.AppHandler;
 import com.zhuchao.android.tianpu.utils.PageType;
 import com.zhuchao.android.tianpu.utils.Utils;
 
@@ -33,7 +31,7 @@ public class AppsActivity extends Activity {
 
     private static final String TAG = AppsActivity.class.getSimpleName();
     private ActivityMyApplicationBinding binding;
-    private AppHandler appHandler;
+    private AppListHandler appListHandler;
     private AppAdapter appAdapter;
     private PageType pageType;
 
@@ -46,9 +44,9 @@ public class AppsActivity extends Activity {
         String pageTypeStr = getIntent().getStringExtra("type");
         pageType = TextUtils.isEmpty(pageTypeStr) ?
                 PageType.MY_APP_TYPE : PageType.valueOf(pageTypeStr);
-        appHandler = new AppHandler(AppsActivity.this, pageType);
+        appListHandler = new AppListHandler(AppsActivity.this, pageType);
         appAdapter = new AppAdapter(this);
-        appHandler.setOnScanListener(new AppHandler.OnScanListener() {
+        appListHandler.setOnScanListener(new AppListHandler.OnScanListener() {
             @Override
             public void onResponse(SparseArray<App> apps) {
                 appAdapter.setApps(apps);
@@ -62,7 +60,7 @@ public class AppsActivity extends Activity {
                 if (app != null) {
                     String packageName = app.getPackageName();
                     if (!TextUtils.isEmpty(packageName)) {
-                        appHandler.launchApp(packageName);
+                        appListHandler.launchApp(packageName);
                         if (!"com.android.music".equals(packageName)){
                             ShareAdapter.getInstance().saveStr("last_app", packageName);
                         }
@@ -87,10 +85,10 @@ public class AppsActivity extends Activity {
 
         switch (pageType) {
             case RECENT_TYPE:
-                appHandler.scanRecent();
+                appListHandler.scanRecent();
                 break;
             case MY_APP_TYPE:
-                appHandler.scan();
+                appListHandler.scan();
                 break;
         }
     }
@@ -105,7 +103,7 @@ public class AppsActivity extends Activity {
                 startActivity(in);
                 break;
             case KeyEvent.KEYCODE_G:      //天普遥控器的USB键
-                appHandler.launchApp("com.android.music");
+                appListHandler.launchApp("com.android.music");
                 break;
         }
         return super.onKeyDown(keyCode, event);
@@ -116,13 +114,13 @@ public class AppsActivity extends Activity {
         super.onStart();
 //        switch (pageType) {
 //            case RECENT_TYPE:
-//                appHandler.scanRecent();
+//                appListHandler.scanRecent();
 //                break;
 //            case MY_APP_TYPE:
-//                appHandler.scan();
+//                appListHandler.scan();
 //                break;
 //        }
-        appHandler.regAppReceiver();
+        appListHandler.regAppReceiver();
     }
 
     @Override
@@ -138,16 +136,16 @@ public class AppsActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        appHandler.unRegAppReceiver();
+        appListHandler.unRegAppReceiver();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        appHandler.release();
-        appHandler.setOnScanListener(null);
+        appListHandler.release();
+        appListHandler.setOnScanListener(null);
         appAdapter.release();
-        appHandler = null;
+        appListHandler = null;
         appAdapter = null;
         binding = null;
     }

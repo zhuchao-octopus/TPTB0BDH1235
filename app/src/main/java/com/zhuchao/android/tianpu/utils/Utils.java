@@ -37,143 +37,10 @@ public class Utils {
         context.startActivity(intent);
     }
 
-    public static String getDevID() {
-        String devID = getLanMac();
-        if (TextUtils.isEmpty(devID)) {
-            devID = getWifiMac();
-        }
-//        if (BuildConfig.DEBUG) return "28:07:0D:00:40:BD";
-        return devID;
-    }
-
-    public static String getLanMac() {
-
-        String mac = null;
-
-        try {
-
-            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-            while (interfaces.hasMoreElements()) {
-                NetworkInterface networkInterface = interfaces.nextElement();
-                String name = networkInterface.getName();
-                byte[] addr = networkInterface.getHardwareAddress();
-                if ((addr == null) || (addr.length == 0)) {
-                    continue;
-                }
-                StringBuilder buffer = new StringBuilder();
-                for (byte b : addr) {
-                    buffer.append(String.format("%02X:", b));
-                }
-                if (buffer.length() > 0) {
-                    buffer.deleteCharAt(buffer.length() - 1);
-                }
-
-                mac = buffer.toString().toLowerCase(Locale.ENGLISH);
-
-                if (name.startsWith("eth")) {
-                    if (!jyMac(mac)) {
-//						MLog.e(TAG, "mac format err");
-                        mac = "00:00:00:00:00:00";
-                    }
-                    return mac;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, "");
-        }
-
-        return "00:00:00:00:00:00";
-    }
-
-    public static String getWifiMac() {
-
-        WifiManager wifiManager = (WifiManager) AppMain.ctx().getApplicationContext()
-                .getSystemService(Context.WIFI_SERVICE);
-
-        boolean wifiInitState = wifiManager.isWifiEnabled();
-
-        String mac = null;
-
-        try {
-
-            if (!wifiInitState) {
-                boolean openWifi = wifiManager.setWifiEnabled(true);
-//				if(openWifi) {
-//					MLog.e(TAG, "open wifi OK");
-//				} else {
-//					MLog.e(TAG, "open wifi no OK");
-//				}
-            }
-
-            for (int i = 0; i < 10; i++) {
-                if (wifiManager.isWifiEnabled()) {
-//					MLog.e(TAG, "wifi state OK");
-                    break;
-                }
-//				else {
-//					MLog.e(TAG, "wifi state no OK");
-//				}
-                Thread.sleep(1000);
-            }
-
-            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-            while (interfaces.hasMoreElements()) {
-                NetworkInterface networkInterface = interfaces.nextElement();
-                String name = networkInterface.getName();
-                byte[] addr = networkInterface.getHardwareAddress();
-                if ((addr == null) || (addr.length == 0)) {
-                    continue;
-                }
-                StringBuilder buffer = new StringBuilder();
-                for (byte b : addr) {
-                    buffer.append(String.format("%02X:", b));
-                }
-                if (buffer.length() > 0) {
-                    buffer.deleteCharAt(buffer.length() - 1);
-                }
-
-                mac = buffer.toString().toLowerCase(Locale.ENGLISH);
-
-                if (name.startsWith("wlan")) {
-                    if (!jyMac(mac)) {
-                        mac = "00:00:00:00:00:00";
-                    }
-                    return mac;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, "");
-        } finally {
-            if (!wifiInitState) {
-                Log.d(TAG, "wifi close");
-                wifiManager.setWifiEnabled(false);
-            }
-        }
-
-        return "00:00:00:00:00:00";
-    }
-
-    private static boolean jyMac(String mac) {
-
-        if (TextUtils.isEmpty(mac)) {
-            return false;
-        }
-
-        /**
-         * ^ 表示行的开始
-         * $ 表示行的结束
-         * */
-        String patternMac = "^[a-f0-9]{2}(:[a-f0-9]{2}){5}$";
-
-        return Pattern.compile(patternMac).matcher(mac).find();
-    }
-
     public static int getVerCode() {
         try {
-            return AppMain.ctx().getPackageManager().
-                    getPackageInfo(AppMain.ctx().getPackageName(), 0).versionCode;
+            return MyApplication.ctx().getPackageManager().
+                    getPackageInfo(MyApplication.ctx().getPackageName(), 0).versionCode;
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
@@ -184,7 +51,7 @@ public class Utils {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             return Environment.getExternalStorageDirectory().getAbsolutePath();
         } else {
-            return AppMain.ctx().getFilesDir().getAbsolutePath();
+            return MyApplication.ctx().getFilesDir().getAbsolutePath();
         }
     }
 
@@ -202,4 +69,5 @@ public class Utils {
         } else return false;
 
     }
+
 }

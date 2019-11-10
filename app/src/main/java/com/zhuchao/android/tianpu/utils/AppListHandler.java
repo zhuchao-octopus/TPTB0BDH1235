@@ -26,9 +26,9 @@ import java.util.concurrent.Executors;
  * Created by Oracle on 2017/12/1.
  */
 
-public class AppHandler {
+public class AppListHandler {
 
-    private static final String TAG = AppHandler.class.getSimpleName();
+    private static final String TAG = AppListHandler.class.getSimpleName();
     private Context context;
     private static final String recentAppKey = "recent_apps";
     private static final String lastAppKey = "last_app";
@@ -44,7 +44,7 @@ public class AppHandler {
     private PackageManager packageManager;
     public String settings;
 
-    public AppHandler(Context context, PageType type) {
+    public AppListHandler(Context context, PageType type) {
         this.context = context;
         this.type = type;
         this.oldType = this.type;
@@ -192,8 +192,8 @@ public class AppHandler {
                 };
                 App clearApp = new App();
                 App app = null;
-                clearApp.setIcon(AppMain.res().getDrawable(R.drawable.add));
-                clearApp.setName(AppMain.res().getString(R.string.please_add));
+                clearApp.setIcon(MyApplication.res().getDrawable(R.drawable.add));
+                clearApp.setName(MyApplication.res().getString(R.string.please_add));
                 int idNum = ids.length;
                 for (int i = 0; i < idNum; i++) {
                     final int idI = ids[i];
@@ -307,12 +307,12 @@ public class AppHandler {
                 int vId = intent.getIntExtra("vId", -1);
                 if (vId >= 0) {
                     App clearApp = new App();
-                    clearApp.setIcon(AppMain.res().getDrawable(R.drawable.add));
+                    clearApp.setIcon(MyApplication.res().getDrawable(R.drawable.add));
                     if (onBottomListener != null) {
                         onBottomListener.updateBottom(vId, clearApp);
                     }
                     if (addRemoeveListener != null) {
-                        clearApp.setName(AppMain.res().getString(R.string.please_add));
+                        clearApp.setName(MyApplication.res().getString(R.string.please_add));
                         addRemoeveListener.addRemove(vId, clearApp);
                     }
                     ShareAdapter.getInstance().remove(String.valueOf(vId));

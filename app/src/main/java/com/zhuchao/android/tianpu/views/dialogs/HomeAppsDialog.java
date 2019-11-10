@@ -2,9 +2,9 @@ package com.zhuchao.android.tianpu.views.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -49,15 +49,15 @@ public class HomeAppsDialog extends Dialog {
         setContentView(binding.getRoot());
 
         if (context instanceof MainActivity) {
-            ((MainActivity) context).scan();
+            ((MainActivity) context).appListHandler.scan();
         }
 
         binding.chooseappListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, String.format("onItemClick %s", appSparseArray.get(position)));
-//                Intent intent = new Intent(AppHandler.ADD_ACTION);
-//                intent.putExtra(AppHandler.SEND_APP, appSparseArray.get(position));
+//                Intent intent = new Intent(AppListHandler.ADD_ACTION);
+//                intent.putExtra(AppListHandler.SEND_APP, appSparseArray.get(position));
 //                intent.putExtra("vId", vId);
 //                intent.setData(Uri.parse("package:www"));
 //                context.sendBroadcast(intent);
@@ -66,7 +66,7 @@ public class HomeAppsDialog extends Dialog {
                     MainActivity mainActivity = ((MainActivity) context);
                     mainActivity.updateBottom(vId, app);
                     mainActivity.addRemove(vId, app);
-                    mainActivity.appHandler.addAppToShort(app.getPackageName(), vId);
+                    mainActivity.appListHandler.addAppToShort(app.getPackageName(), vId);
                 }
                 dismiss();
             }

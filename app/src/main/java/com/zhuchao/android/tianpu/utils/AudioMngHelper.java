@@ -1,8 +1,8 @@
-package utils;
+package com.zhuchao.android.tianpu.utils;
 
 import android.content.Context;
 import android.media.AudioManager;
-import android.support.annotation.IntDef;
+import androidx.annotation.IntDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

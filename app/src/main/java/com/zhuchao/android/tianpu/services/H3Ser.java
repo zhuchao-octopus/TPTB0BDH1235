@@ -3,7 +3,7 @@ package com.zhuchao.android.tianpu.services;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Created by Oracle on 2017/12/1.

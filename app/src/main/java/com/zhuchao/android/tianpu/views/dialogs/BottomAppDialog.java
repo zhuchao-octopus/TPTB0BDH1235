@@ -2,9 +2,9 @@ package com.zhuchao.android.tianpu.views.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -23,7 +23,7 @@ import com.zhuchao.android.tianpu.bridge.SelEffectBridge;
 import com.zhuchao.android.tianpu.data.App;
 
 import com.zhuchao.android.tianpu.databinding.ActivityPullBinding;
-import com.zhuchao.android.tianpu.utils.AppMain;
+import com.zhuchao.android.tianpu.utils.MyApplication;
 
 public class BottomAppDialog extends Dialog implements View.OnClickListener, View.OnKeyListener {
 
@@ -193,15 +193,15 @@ public class BottomAppDialog extends Dialog implements View.OnClickListener, Vie
         Window window = bottomAppDialog.getWindow();
         window.setGravity(Gravity.BOTTOM);
         WindowManager.LayoutParams lp = window.getAttributes();
-        lp.y = (int) AppMain.res().getDimension(R.dimen.bottom_app_root_bottom_margin);
-        lp.width = (int) AppMain.res().getDimension(R.dimen.bottom_app_root_w);
-        lp.height = (int) AppMain.res().getDimension(R.dimen.bottom_app_root_h);
+        lp.y = (int) MyApplication.res().getDimension(R.dimen.bottom_app_root_bottom_margin);
+        lp.width = (int) MyApplication.res().getDimension(R.dimen.bottom_app_root_w);
+        lp.height = (int) MyApplication.res().getDimension(R.dimen.bottom_app_root_h);
         window.setAttributes(lp);
         window.setWindowAnimations(R.style.BOTTOM_DIALOG_ANIM);
 //        bottomAppDialog.getWindow()
 //                .setLayout(
-//                        (int) AppMain.res().getDimension(R.dimen.recent_app_root_w),
-//                        (int) AppMain.res().getDimension(R.dimen.recent_app_root_h));
+//                        (int) MyApplication.res().getDimension(R.dimen.recent_app_root_w),
+//                        (int) MyApplication.res().getDimension(R.dimen.recent_app_root_h));
         return bottomAppDialog;
     }
 

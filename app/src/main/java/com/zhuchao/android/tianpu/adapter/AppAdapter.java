@@ -10,7 +10,7 @@ import android.widget.BaseAdapter;
 
 import com.zhuchao.android.tianpu.R;
 import com.zhuchao.android.tianpu.data.App;
-import com.zhuchao.android.tianpu.utils.AppMain;
+import com.zhuchao.android.tianpu.utils.MyApplication;
 import com.zhuchao.android.tianpu.utils.GlideMgr;
 
 public class AppAdapter extends BaseAdapter {
@@ -68,12 +68,12 @@ public class AppAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             switch (this.listMode) {
                 case 0:
-                    convertView = LayoutInflater.from(AppMain.ctx()).inflate(R.layout.apps_item, null);
+                    convertView = LayoutInflater.from(MyApplication.ctx()).inflate(R.layout.apps_item, null);
                     viewHolder.iv = convertView.findViewById(R.id.app_icon);
                     viewHolder.tv = convertView.findViewById(R.id.app_title);
                     break;
                 case 1:
-                    convertView = LayoutInflater.from(AppMain.ctx()).inflate(R.layout.chooseactivity_item, null);
+                    convertView = LayoutInflater.from(MyApplication.ctx()).inflate(R.layout.chooseactivity_item, null);
                     viewHolder.iv = convertView.findViewById(R.id.activity_icon);
                     viewHolder.tv = convertView.findViewById(R.id.activity_title);
                     break;

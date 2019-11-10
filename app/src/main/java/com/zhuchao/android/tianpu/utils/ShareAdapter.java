@@ -24,7 +24,7 @@ public class ShareAdapter {
 	public static ShareAdapter getInstance() {
 		if (shareAdapter == null) {
 			shareAdapter = new ShareAdapter();
-			preferences = PreferenceManager.getDefaultSharedPreferences(AppMain.ctx());
+			preferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.ctx());
 			editor = preferences.edit();
 		}
 		return shareAdapter;

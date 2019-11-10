@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,7 +17,7 @@ import com.zhuchao.android.tianpu.R;
 import com.zhuchao.android.tianpu.activities.MainActivity;
 
 import com.zhuchao.android.tianpu.databinding.MenuDialogBinding;
-import com.zhuchao.android.tianpu.utils.AppHandler;
+import com.zhuchao.android.tianpu.utils.AppListHandler;
 import com.zhuchao.android.tianpu.utils.ShareAdapter;
 import com.zhuchao.android.tianpu.utils.Utils;
 
@@ -119,7 +119,7 @@ public class HomeAppDialog extends Dialog implements View.OnClickListener,
                 break;
             case R.id.remove:
                 clearCache();
-                Intent intent = new Intent(AppHandler.CLEAR_ACTION);
+                Intent intent = new Intent(AppListHandler.CLEAR_ACTION);
                 intent.setData(Uri.parse("package:www"));
                 intent.putExtra("vId", rId);
                 context.sendBroadcast(intent);
