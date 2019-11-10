@@ -42,7 +42,7 @@ public class AppListHandler {
     private PageType oldType;
     private ExecutorService scanExecutorService;
     private PackageManager packageManager;
-    public String settings;
+    //public String settings;
 
     public AppListHandler(Context context, PageType type) {
         this.context = context;
@@ -120,10 +120,10 @@ public class AppListHandler {
                 app.setIcon(resolveInfo.loadIcon(packageManager));
 //                    Log.e("Tag","app="+app);
                 //获取设置的包名
-                if (app.getName().equals("设置") || app.getName().equals("Settings") || app.getName().equals("settings") || app.getName().equals("Thiết lập")) {
-                    settings = app.getPackageName();
-                    Log.d("Tag", "settings=" + settings);
-                }
+                //if (app.getName().equals("设置") || app.getName().equals("Settings") || app.getName().equals("settings") || app.getName().equals("Thiết lập")) {
+                //    settings = app.getPackageName();
+                //    Log.d("Tag", "settings=" + settings);
+                //}
                 list.put(i, app);
                 saAPP = list;
                 //Log.d(TAG, app.toString());

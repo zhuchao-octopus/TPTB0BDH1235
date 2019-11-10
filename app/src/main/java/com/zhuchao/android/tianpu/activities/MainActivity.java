@@ -291,7 +291,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         appListHandler.setOnScanListener(this);
         appListHandler.setAddRemoeveListener(this);
         appListHandler.setOnBottomListener(this);
-        appListHandler.scanRecent();
+        //appListHandler.scanRecent();
         appListHandler.scan();
 
         //时间更新
@@ -344,8 +344,8 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         Log.e(TAG, "launcher is onStart");
         timeHandler.regTimeReceiver();
         appListHandler.regAppReceiver();
-        appListHandler.scanHome();//显示最近使用历史，扫描添加本地应用
-        appListHandler.scanRecent();
+        //appListHandler.scanHome();//显示最近使用历史，扫描添加本地应用
+        //appListHandler.scanRecent();
 
         if (bottomAppDialog != null) {
             appListHandler.scanBottom();
@@ -408,7 +408,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     @Override
     protected void onPause() {
         super.onPause();
-        appListHandler.scanRecent();
+        //appListHandler.scanRecent();
         appListHandler.scan();
     }
 
