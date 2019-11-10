@@ -104,7 +104,11 @@ public class MusicDialog extends Dialog implements SeekBar.OnSeekBarChangeListen
     public void adjustVolume(final int direction, boolean fromActivity, String type) {
         mNowVolume = direction;
         sb_music.setProgress(sb_music.getMax() * mNowVolume / mMaxVolume);
-        mAudioMgr.adjustStreamVolume(MUSIC, direction, AudioManager.FLAG_PLAY_SOUND);
+        try {
+            mAudioMgr.adjustStreamVolume(MUSIC, direction, AudioManager.FLAG_PLAY_SOUND);
+        } catch (IllegalArgumentException  e) {
+            e.printStackTrace();
+        }
 
         if (mListener != null && fromActivity != true) {
             mListener.onVolumeAdjust(mNowVolume);

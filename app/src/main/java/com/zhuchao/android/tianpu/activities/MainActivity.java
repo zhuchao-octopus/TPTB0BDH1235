@@ -330,7 +330,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         registerReceiver(mBootCompletedReceiver, filter);
 
 
-        //requestPermition();
+        requestPermition();
 
         selEffectBridge = (SelEffectBridge) binding.mainUpView.getEffectBridge();
         binding.mainRl.getViewTreeObserver().addOnGlobalFocusChangeListener(this);
@@ -620,9 +620,8 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
         if (Build.VERSION.SDK_INT >= 23) {
             if (!Settings.canDrawOverlays(MainActivity.this)) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + getPackageName()));
-                //startActivityForResult(intent, 10);
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, 10);
             }
         }
     }
