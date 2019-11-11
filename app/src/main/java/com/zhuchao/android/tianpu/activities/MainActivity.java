@@ -423,7 +423,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         appListHandler.setAddRemoeveListener(null);
         appListHandler.setOnScanListener(null);
         timeHandler = null;
-        netUtils.Free(null);
+        netUtils.Free();
         unregisterHomeKeyReceiver(this);
         unregisterReceiver(myReceiver);
     }
@@ -591,6 +591,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     public void showHomeAppsDialog(int rId) {
         homeAppsDialog = HomeAppsDialog.showHomeAppDialog(MainActivity.this, rId);
     }
+
     public void requestPermition() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -765,6 +766,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             tvItems[i].setVisibility(View.GONE);
         }
     }
+
     /**
      * 处理点击事件、菜单键
      *
@@ -857,7 +859,8 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 launchApp("com.android.music");
                 binding.fl15.requestFocus();
                 break;
-/*            case R.id.fl16:
+                /*
+                case R.id.fl16:
                 //最后一个使用的app
                 //binding.bgIv116.setImageResource(R.drawable.blue6);
                 binding.bgIv111.setImageResource(R.drawable.xaa);
@@ -1365,21 +1368,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         binding.adBg.startAutoPlay();
     }
 
-    public void synUpdateUI() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                binding.netIv.setVisibility(View.VISIBLE);
-
-                if (netUtils.isNetCanConnect())
-                    binding.netIv.setImageResource(R.drawable.net);
-                else
-                    binding.netIv.setImageResource(R.drawable.netno);
-            }
-        });
-
-    }
-
     private void showMACDialog(String type) {
         if (mdialog == null || mdialog.isShowing() != true) {
             mdialog = new Mac_Dialog(this);
@@ -1411,29 +1399,51 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         synUpdateUI();
     }
 
+    public void synUpdateUI() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                binding.netIv.setVisibility(View.VISIBLE);
+
+                if (netUtils.isNetCanConnect()) {
+                    if (netUtils.isWifiConnected()) {
+                        binding.netIv.setImageResource(R.drawable.wifi0);
+                    } else
+                        binding.netIv.setImageResource(R.drawable.net);
+                } else
+                    binding.netIv.setImageResource(R.drawable.netno);
+            }
+        });
+    }
+
     @Override
     public void onWifiLevelChanged(int i) {
         Log.d(TAG, "onWifiLevelChanged>>>>>>>>>>" + i);
-        //if (netUtils.getNetType() != 1) return;
 
-        switch (i) {
-            case 0:
-                binding.netIv.setImageResource(R.drawable.wifi0);
-                break;
-            case 1:
-                binding.netIv.setImageResource(R.drawable.wifi1);
-                break;
-            case 2:
-                binding.netIv.setImageResource(R.drawable.wifi2);
-                break;
-            case 3:
-                binding.netIv.setImageResource(R.drawable.wifi3);
-                break;
-            default: // 2 -> ETH
-                binding.netIv.setImageResource(R.drawable.wifi_out_of_range);
-                break;
-        }
+        if(!netUtils.isWifiConnected()) return;
 
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (i) {
+                    case 0:
+                        binding.netIv.setImageResource(R.drawable.wifi0);
+                        break;
+                    case 1:
+                        binding.netIv.setImageResource(R.drawable.wifi1);
+                        break;
+                    case 2:
+                        binding.netIv.setImageResource(R.drawable.wifi2);
+                        break;
+                    case 3:
+                        binding.netIv.setImageResource(R.drawable.wifi3);
+                        break;
+                    default: // 2 -> ETH
+                        binding.netIv.setImageResource(R.drawable.wifi_out_of_range);
+                        break;
+                }
+            }
+        });
     }
 
     // DMN DeviceModelNumber, // DID :Device ID, // CID: Custorm id, // ip: net ip , // RID: ip region,
@@ -1463,7 +1473,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
     private void checkDeviceIsAvailable(String mac) {
         String url = "";
-        if(TextUtils.isEmpty(mac)) return;
+        if (TextUtils.isEmpty(mac)) return;
         if (CustomId != -1) {
             url = host + "jhzBox/box/loadBox.do?cy_brand_id=" + DeviceModelNumber + "&mac=" + mac +
                     "&netCardMac=" + netUtils.getDeviceID() +
