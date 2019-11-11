@@ -1414,7 +1414,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     @Override
     public void onWifiLevelChanged(int i) {
         Log.d(TAG, "onWifiLevelChanged>>>>>>>>>>" + i);
-        if (netUtils.getNetType() != 1) return;
+        //if (netUtils.getNetType() != 1) return;
 
         switch (i) {
             case 0:
