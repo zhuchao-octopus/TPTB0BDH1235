@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import JNIAPI.JniSerialPort;
 
-import static com.zhuchao.android.tianpu.utils.ChangeTool.ByteArrToHex;
+import static com.zhuchao.android.tianpu.utils.TypeTool.ByteArrToHex;
 
 /**
  * Created by WangChaowei on 2017/12/7.
@@ -32,7 +32,7 @@ public class MySerialPort {
     private JniSerialPort serialPort = null;
     private InputStream inputStream = null;
     private OutputStream outputStream = null;
-    private ChangeTool changeTool = new ChangeTool();
+    private TypeTool typeTool = new TypeTool();
 
     //add by cvte start >>>
     private final ConcurrentLinkedQueue<Byte> mDataQueue = new ConcurrentLinkedQueue<>();

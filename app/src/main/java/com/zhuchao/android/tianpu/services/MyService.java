@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import com.zhuchao.android.tianpu.utils.ChangeTool;
+import com.zhuchao.android.tianpu.utils.TypeTool;
 
 import com.zhuchao.android.tianpu.utils.MySerialPort;
 import com.zhuchao.android.video.OMedia;
@@ -120,7 +120,7 @@ public class MyService extends Service {
     public void sendCommand(byte[] bytes) {
         try {
             MyPortDevice.sendBuffer(bytes);
-            Log.i("MyService.发送数据", ChangeTool.ByteArrToHexStr(bytes, 0, bytes.length));
+            Log.i("MyService.发送数据", TypeTool.ByteArrToHexStr(bytes, 0, bytes.length));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -222,7 +222,7 @@ public class MyService extends Service {
             @Override
             public void onDataReceive(Context context, byte[] buffer, int size) {
                 SerialPortReceiveBuffer = buffer;
-                lo = ChangeTool.ByteArrToHexStr(SerialPortReceiveBuffer, 0, size);
+                lo = TypeTool.ByteArrToHexStr(SerialPortReceiveBuffer, 0, size);
 
                 if (buffer[2] == 0x06) {
                     MusicVolume = buffer[7];
@@ -269,7 +269,7 @@ public class MyService extends Service {
                 //电量值
                 if (buffer[2] == 0x23) {
                     Intent intent = new Intent("BATTERY_INFO");
-                    int v = ChangeTool.HexToInt(ChangeTool.Byte2Hex(buffer[7]));
+                    int v = TypeTool.HexToInt(TypeTool.Byte2Hex(buffer[7]));
                     intent.putExtra("value", v);
                     sendBroadcast(intent);
                     Log.i("onDataReceive", lo);
@@ -279,7 +279,7 @@ public class MyService extends Service {
                 }
 
                 if (buffer[2] == 0x25) {
-                    int v = ChangeTool.HexToInt(ChangeTool.Byte2Hex(buffer[7]));
+                    int v = TypeTool.HexToInt(TypeTool.Byte2Hex(buffer[7]));
                     SystemProperties.set("ro.dsp.version", String.valueOf(v));
                     //System.setProperty("ro.dsp.version", String.valueOf(v));
                     Log.i(TAG, "SystemProperties.set(\"ro.dsp.version\", String.valueOf(v));v=" + v);
@@ -415,20 +415,20 @@ public class MyService extends Service {
     }
 
     private void setVolume(int i) {
-        tbb = ChangeTool.intToBytes(i);
+        tbb = TypeTool.intToBytes(i);
 
         //SetMusicVolume[7] = tbb[3];
         //SetMusicVolume[8] = tbb[2];
-        //SetMusicVolume[9] = com.zhuchao.android.tianpu.utils.ChangeTool.BytesAdd(SetMusicVolume, 9);
+        //SetMusicVolume[9] = com.zhuchao.android.tianpu.utils.TypeTool.BytesAdd(SetMusicVolume, 9);
 
         SetMusicVolumeK50[7] = tbb[3];
         SetMusicVolumeK50[8] = tbb[2];
-        SetMusicVolumeK50[9] = ChangeTool.BytesAdd(SetMusicVolumeK50, 9);
+        SetMusicVolumeK50[9] = TypeTool.BytesAdd(SetMusicVolumeK50, 9);
 
 
         ///MyPortDevice.sendBuffer(SetMusicVolume);
         MyPortDevice.sendBuffer(SetMusicVolumeK50);
-        //Log.e("MyPortDevice", com.zhuchao.android.tianpu.utils.ChangeTool.ByteArrToHexStr(bytes, 0, bytes.length));
+        //Log.e("MyPortDevice", com.zhuchao.android.tianpu.utils.TypeTool.ByteArrToHexStr(bytes, 0, bytes.length));
     }
 
     public Boolean IsTopActivtyFromLolipopOnwards(String PackageName) {

@@ -1,16 +1,12 @@
-package android.content.myPM;
+package android.content.mypm;
+public interface IPackageInstallObserver extends android.os.IInterface {
 
-/**
- * Created by ZTZ on 2018/4/1.
- */
-
-public interface IPackageDeleteObserver extends android.os.IInterface {
-    public abstract static class Stub extends android.os.Binder implements IPackageDeleteObserver {
+    public abstract static class Stub extends android.os.Binder implements IPackageInstallObserver {
         public Stub() {
             throw new RuntimeException("Stub!");
         }
 
-        public static IPackageDeleteObserver asInterface(android.os.IBinder obj) {
+        public static IPackageInstallObserver asInterface(android.os.IBinder obj) {
             throw new RuntimeException("Stub!");
         }
 
@@ -24,6 +20,6 @@ public interface IPackageDeleteObserver extends android.os.IInterface {
         }
     }
 
-    public abstract void packageDeleted(java.lang.String packageName, int returnCode)
+    public abstract void packageInstalled(java.lang.String packageName, int returnCode)
             throws android.os.RemoteException;
 }

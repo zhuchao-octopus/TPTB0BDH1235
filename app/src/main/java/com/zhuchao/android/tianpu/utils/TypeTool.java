@@ -6,7 +6,7 @@ import android.util.Log;
  * Created by WangChaowei on 2017/12/11.
  */
 
-public class ChangeTool {
+public class TypeTool {
     //-------------------------------------------------------
     // 判断奇数或偶数，位运算，最后一位是1则为奇数，为0是偶数
     public static int isOdd(int num) {
