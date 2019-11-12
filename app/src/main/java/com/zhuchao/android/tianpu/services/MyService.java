@@ -115,7 +115,6 @@ public class MyService extends Service {
             sendCommand(LastChanelApp);
             sendCommand(QueryStateK50);
         }
-
     }
 
     public void sendCommand(byte[] bytes) {

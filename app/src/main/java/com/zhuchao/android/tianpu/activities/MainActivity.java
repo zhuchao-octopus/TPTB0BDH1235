@@ -1407,7 +1407,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
                 if (netUtils.isNetCanConnect()) {
                     if (netUtils.isWifiConnected()) {
-                        binding.netIv.setImageResource(R.drawable.wifi0);
+                        binding.netIv.setImageResource(R.drawable.wifi3);
                     } else
                         binding.netIv.setImageResource(R.drawable.net);
                 } else
