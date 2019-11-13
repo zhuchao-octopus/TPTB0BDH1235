@@ -47,6 +47,7 @@ import com.stx.xhb.xbanner.XBanner;
 import com.stx.xhb.xbanner.transformers.Transformer;
 import com.zhuchao.android.callbackevent.NormalRequestCallBack;
 import com.zhuchao.android.databaseutil.SPreference;
+import com.zhuchao.android.libfilemanager.MyAppsManager;
 import com.zhuchao.android.netutil.NetUtils;
 import com.zhuchao.android.netutil.NetUtils.NetChangedCallBack;
 import com.zhuchao.android.netutil.OkHttpUtils;
@@ -197,6 +198,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
     private View OldView = null;
     private NetUtils netUtils = null;
+    private MyAppsManager appsManager;
 
     public static void sendKeyEvent(final int KeyCode) {
         new Thread() {     //不可在主线程中调用
@@ -221,6 +223,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         //启动服务
         StartMyService();
         netUtils = new NetUtils(MainActivity.this, this);
+        appsManager = new MyAppsManager(MainActivity.this,null);
 
         binding.fl5.setOnClickListener(this);
         //binding.fl5.setOnKeyListener(this);
@@ -316,6 +319,10 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             }
         });
 
+        selEffectBridge = (SelEffectBridge) binding.mainUpView.getEffectBridge();
+        binding.mainRl.getViewTreeObserver().addOnGlobalFocusChangeListener(this);
+
+
 
         //注册广播接收器
         myReceiver = new MyReceiver();
@@ -331,9 +338,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
 
         requestPermition();
-
-        selEffectBridge = (SelEffectBridge) binding.mainUpView.getEffectBridge();
-        binding.mainRl.getViewTreeObserver().addOnGlobalFocusChangeListener(this);
         setupItemBottomTag();
 
     }
@@ -947,6 +951,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 break;
             case R.id.fl8:
                 //hdp 频道
+                switchToOtherChanel("hdp 频道");
                 launchApp(PackageName.hdp);
                 binding.fl8.requestFocus();
                 break;

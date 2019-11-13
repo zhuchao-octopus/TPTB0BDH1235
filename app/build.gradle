@@ -124,6 +124,6 @@ dependencies {
     implementation 'com.zhuchao.android:libPlaySession:+@aar'
     implementation 'com.zhuchao.android:libVideo:+@aar'
     implementation 'com.zhuchao.android:libCallbackEvent:+@aar'
-    implementation 'com.zhuchao.android:libFileManager:+@aar'
+    implementation 'com.zhuchao.android:libFilesManager:+@aar'
     implementation 'com.zhuchao.android:libDataBaseUtil:+@aar'
 }
