@@ -386,7 +386,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        v.requestFocus();
+        //v.requestFocus();
         if (event.getAction() == ACTION_UP)
             OnMainPageViewClick(v, -1, true);
 
@@ -401,6 +401,10 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 case KeyEvent.KEYCODE_MENU:
                     //Toast.makeText(mContext, "menu1", Toast.LENGTH_SHORT).show();
                     //OnMainPageViewClick(v, keyCode, false);
+                    if(v.getId() == R.id.fl2)
+                    {
+                        ShowHotAppDialog(v.getTag(),  R.id.fl2);
+                    }
                     break;
                 case KeyEvent.KEYCODE_DPAD_DOWN:
                     //handleViewKeyDown(v);
