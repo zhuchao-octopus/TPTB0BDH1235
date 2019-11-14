@@ -23,7 +23,6 @@ import android.os.Message;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -47,16 +46,16 @@ import com.stx.xhb.xbanner.XBanner;
 import com.stx.xhb.xbanner.transformers.Transformer;
 import com.zhuchao.android.callbackevent.NormalRequestCallBack;
 import com.zhuchao.android.databaseutil.SPreference;
+import com.zhuchao.android.libfilemanager.AppsChangedCallback;
 import com.zhuchao.android.libfilemanager.MyAppsManager;
+import com.zhuchao.android.libfilemanager.bean.AppInfor;
 import com.zhuchao.android.netutil.NetUtils;
 import com.zhuchao.android.netutil.NetUtils.NetChangedCallBack;
 import com.zhuchao.android.netutil.OkHttpUtils;
 import com.zhuchao.android.tianpu.BuildConfig;
 import com.zhuchao.android.tianpu.R;
 import com.zhuchao.android.tianpu.bridge.SelEffectBridge;
-import com.zhuchao.android.tianpu.data.App;
 import com.zhuchao.android.tianpu.data.PackageName;
-import com.zhuchao.android.tianpu.data.PreInstallApkPath;
 import com.zhuchao.android.tianpu.data.json.regoem.CheckMacBean;
 import com.zhuchao.android.tianpu.data.json.regoem.Recommend3Bean;
 import com.zhuchao.android.tianpu.data.json.regoem.RecommendBean;
@@ -68,15 +67,11 @@ import com.zhuchao.android.tianpu.data.json.regoem.RemoveAppBean;
 import com.zhuchao.android.tianpu.databinding.ActivityMainBinding;
 import com.zhuchao.android.tianpu.services.MyService;
 import com.zhuchao.android.tianpu.services.iflytekService;
-import com.zhuchao.android.tianpu.utils.AppListHandler;
-import com.zhuchao.android.tianpu.utils.AppsManager;
 import com.zhuchao.android.tianpu.utils.GlideMgr;
 import com.zhuchao.android.tianpu.utils.MySerialPort;
 import com.zhuchao.android.tianpu.utils.TimeHandler;
 import com.zhuchao.android.tianpu.utils.WallperHandler;
-import com.zhuchao.android.tianpu.views.dialogs.BottomAppDialog;
-import com.zhuchao.android.tianpu.views.dialogs.HomeAppDialog;
-import com.zhuchao.android.tianpu.views.dialogs.HomeAppsDialog;
+import com.zhuchao.android.tianpu.views.dialogs.HotAppDialog;
 import com.zhuchao.android.tianpu.views.dialogs.Mac_Dialog;
 
 import java.util.ArrayList;
@@ -84,66 +79,56 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import me.jessyan.progressmanager.ProgressListener;
-import me.jessyan.progressmanager.ProgressManager;
-import me.jessyan.progressmanager.body.ProgressInfo;
-
 import static android.view.MotionEvent.ACTION_UP;
-import static com.zhuchao.android.tianpu.utils.PageType.HOME_TYPE;
+import static com.zhuchao.android.libfilemanager.MyAppsManager.ADDTOMYAPPS_ACTION;
 import static com.zhuchao.android.tianpu.utils.PageType.MY_APP_TYPE;
 import static com.zhuchao.android.tianpu.utils.PageType.RECENT_TYPE;
 
 public class MainActivity extends Activity implements OnTouchListener, OnGlobalFocusChangeListener, NetChangedCallBack,
-        View.OnClickListener, TimeHandler.OnTimeDateListener,
-        AppListHandler.OnScanListener, AppListHandler.OnAddRemoeveListener,
-        View.OnKeyListener, AppListHandler.OnBottomListener, WallperHandler.OnWallperUpdateListener, ServiceConnection {
-
+        View.OnClickListener, TimeHandler.OnTimeDateListener, WallperHandler.OnWallperUpdateListener, AppsChangedCallback,
+        View.OnKeyListener, ServiceConnection {
+    private Context mContext;
     public static final String bootVideo = "/system/media/boot.mp4";
     public static final String newBootVideo = "/system/media/new_boot.zip";
     private static final String TAG = "MainActivity";
     private static final String StartDragonTest = "1379";//测试
     private static final String StartDragonAging = "2379";//老化
     private static final String versionInfo = "3379";//版本信息
-    private static HomeWatcherReceiver mHomeKeyReceiver = null;
-    public AppListHandler appListHandler;
-    //String cacheImg = "";
+
+
+
+    private final int CustomId = -1;    //客户号  (国内)  录入版
+    private final String DeviceModelNumber = "750";//TVBOX 天谱
+    private final String host = "http://www.gztpapp.cn:8976/";    //天谱  （节流）
+    private final String lunchname = "TP0BDK70Q";
+    private final String appName = "TP0BDK70Q";      //天谱 （国内万利达）
+
+
+
+    private HomeWatcherReceiver mHomeKeyReceiver = null;
+    private MyReceiver myReceiver = null;
+    private BootCompletedReceiver mBootCompletedReceiver = null;
+
     /**
      * 获取推荐的广告列表
      */
-    HashMap<String, String> web = new HashMap<>();
-    String ClickOnTheAD = null;
+    private HashMap<String, String> web = new HashMap<>();
+    private String ClickOnTheAD = null;
     //广告视频链接
-    //String urls = null;
-    String AD_Name = null;
+    private String AD_Name = null;
 
 
-    private Mac_Dialog mdialog;
+    private Mac_Dialog mDialog;
     private ActivityMainBinding binding;
     private SelEffectBridge selEffectBridge;
     private TimeHandler timeHandler;
-    private HomeAppDialog homeAppDialog;
-    private HomeAppsDialog homeAppsDialog;
-    private BottomAppDialog bottomAppDialog = null;
-    //private boolean updateScanOK = false;
-    //private boolean marqueeScanOK = false;
+
     private List<String> imgUrls;
-    private String mSerialData;
-    //    private String img;
-    private Context mContext;
+    private String mSerialCommand;
     private int nba = 0; //清零计数
     private String TheLastSourceType = null;
-    //private String url;
-    //private boolean isFive = false;
-    //private Drawable lastApps = null;
-    //private boolean isThelast = false;
-    //private boolean isDefault = true;
-    private MyReceiver myReceiver = null;
-    private BootCompletedReceiver mBootCompletedReceiver = null;
-    /**
-     * apk的下载状态
-     * 0：没有下载过 1：下载中  2：下载完成  3：下载失败
-     */
-    //private Map<String, Integer> apkType = new HashMap<>();
+
+
     /**
      * 获取相应APP的主页面的图片
      */
@@ -162,43 +147,29 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     private TextView[] tvItems;
     private ImageView[] ImageViewList;
 
-    private int CustomId = -1;    //客户号  (国内)  录入版
-    private String DeviceModelNumber = "750";//TVBOX 天谱
-    private String host = "http://www.gztpapp.cn:8976/";    //天谱  （节流）
-    private String lunchname = "TP0BDK70Q";
-    private String appName = "TP0BDK70Q";      //天谱 （国内万利达）
-    //private String lastoneApp = null;
-    //private String removeResult;
+
     private MySerialPort serialPortUtils = new MySerialPort(this);
     private MyService myService;
-    private Handler SerialPortReceivehandler;
-    //private byte[] SerialPortReceiveBuffer;
-    //private byte[] BluetoothOpen = {0x02, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x0E, 0x7E};//蓝牙  K70 //  serialPortUtils.sendBuffer(BluetoothOpen,SizeOf(BluetoothOpen));
+    //private Handler SerialPortReceiveHandler;
+
     private byte[] BluetoothClose = {0x01, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x0D, 0x7E};//蓝牙  K50
-    private int bluetooth = 0;
-    //private byte[] CopperShaftLineIn = {0x02, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x00, 0x01, 0x0B, 0x7E};//同轴  K70
     private byte[] CopperShaftClose = {0x01, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x00, 0x01, 0x0A, 0x7E};//同轴     K50
-    private int coppershaft = 0;
-    //private byte[] OpticalFiberLineIn = {0x02, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x00, 0x02, 0x0C, 0x7E};//光纤   K70
     private byte[] OpticalFiberClose = {0x01, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x00, 0x02, 0x0B, 0x7E};//光纤    K50
-    //private int opticalfiber = 0;
-    //private byte[] SimulationLineIn = {0x02, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, (byte) 0x80, 0x00, (byte) 0x8A, 0x7E};//模拟  K70
     private byte[] SimulationLineInClose = {0x01, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, (byte) 0x80, 0x00, (byte) 0x89, 0x7E};//模拟  K50
-    //private int simulation = 0;
-    //private byte[] UsbOpen = {0x02, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x08, 0x00, 0x12, 0x7E};//USB  K70
     private byte[] UsbClose = {0x01, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x08, 0x00, 0x11, 0x7E};//USB  K50
-    //private byte[] LastAppOpen = {0x02, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x0A, 0x7E};//最后使用的app  K70
     private byte[] LastChanelApp = {0x01, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x09, 0x7E};//最后使用的app  K50
-    //private byte[] QueryState = {0x02, 0x01, 0x06, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x0A, 0x7E};//初始状态 K70 //
-    private byte[] QueryStateK50 = {0x01, 0x01, 0x06, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x09, 0x7E};//初始状态  K50
+    //private byte[] QueryStateK50 = {0x01, 0x01, 0x06, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x09, 0x7E};//初始状态  K50
+
+
     private long TimeTickCount = 0;
     private String InpputNumStr = "";
     private boolean isCharging = false;
     private boolean blutoothConnected = false;
-
     private View OldView = null;
+
     private NetUtils netUtils = null;
-    private MyAppsManager appsManager;
+    private MyAppsManager myAppsManager =null;
+
 
     public static void sendKeyEvent(final int KeyCode) {
         new Thread() {     //不可在主线程中调用
@@ -223,7 +194,12 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         //启动服务
         StartMyService();
         netUtils = new NetUtils(MainActivity.this, this);
-        appsManager = new MyAppsManager(MainActivity.this,null);
+        myAppsManager = new MyAppsManager(MainActivity.this, this);
+        myAppsManager.getFilter().add("com.zhuchao.android.tianpu");
+        myAppsManager.getFilter().add("com.wxs.scanner");
+        myAppsManager.getFilter().add("com.iflytek.xiri");
+        myAppsManager.getFilter().add("com.softwinner.dragonbox");
+        myAppsManager.getFilter().add("com.android.camera2");
 
         binding.fl5.setOnClickListener(this);
         //binding.fl5.setOnKeyListener(this);
@@ -232,7 +208,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         binding.fl3.setOnClickListener(this);
         //binding.fl3.setOnKeyListener(this);
         binding.fl4.setOnClickListener(this);
-        // binding.fl4.setOnKeyListener(this);
+        //binding.fl4.setOnKeyListener(this);
         //binding.fl2.setOnKeyListener(this);
         binding.fl2.setOnClickListener(this);
         //binding.fl7.setOnKeyListener(this);
@@ -290,38 +266,28 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         //ImageViewList = new SimpleDraweeView[]{binding.bgIv1, binding.bgIv8};
         ImageViewList = new ImageView[]{binding.bgIv1, binding.bgIv2};
 
-        appListHandler = new AppListHandler(MainActivity.this, HOME_TYPE);
-        appListHandler.setOnScanListener(this);
-        appListHandler.setAddRemoeveListener(this);
-        appListHandler.setOnBottomListener(this);
-        //appListHandler.scanRecent();
-        appListHandler.scan();
-
         //时间更新
         timeHandler = new TimeHandler(this);
         timeHandler.setOnTimeDateListener(this);
 
-        //String mac = netUtils.getMAC().toUpperCase();
-        //binding.mac.setText(String.format("MAC: %s", mac));
 
         binding.scrollTv.setText("欢迎来到天谱！Welcome to Tianpu!欢迎来到天谱！Welcome to Tianpu!欢迎来到天谱！Welcome to Tianpu!");
         binding.scrollTv.setSelected(true);
 
 
         binding.ivFill.setVisibility(View.GONE);
-        //initCache();
+
 
         binding.fl2.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                lunchHomeAppDialog(v.getTag(), R.id.fl2);
+                ShowHotAppDialog(v.getTag(), R.id.fl2);
                 return true;
             }
         });
 
         selEffectBridge = (SelEffectBridge) binding.mainUpView.getEffectBridge();
         binding.mainRl.getViewTreeObserver().addOnGlobalFocusChangeListener(this);
-
 
 
         //注册广播接收器
@@ -347,22 +313,12 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         super.onStart();
         Log.e(TAG, "launcher is onStart");
         timeHandler.regTimeReceiver();
-        appListHandler.regAppReceiver();
-        //appListHandler.scanHome();//显示最近使用历史，扫描添加本地应用
-        //appListHandler.scanRecent();
-
-        if (bottomAppDialog != null) {
-            appListHandler.scanBottom();
-        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "launcher is onStop");
-        timeHandler.unRegTimeReceiver();
-        appListHandler.unRegAppReceiver();
-        binding.adBg.stopAutoPlay();
     }
 
     @Override
@@ -412,8 +368,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     @Override
     protected void onPause() {
         super.onPause();
-        //appListHandler.scanRecent();
-        appListHandler.scan();
     }
 
     @Override
@@ -421,22 +375,18 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         super.onDestroy();
         Log.d(TAG, "onDestroy");
         timeHandler.release();
-        appListHandler.release();
-
         timeHandler.setOnTimeDateListener(null);
-        appListHandler.setAddRemoeveListener(null);
-        appListHandler.setOnScanListener(null);
         timeHandler = null;
         netUtils.Free();
         unregisterHomeKeyReceiver(this);
         unregisterReceiver(myReceiver);
+        timeHandler.unRegTimeReceiver();
+        binding.adBg.stopAutoPlay();
     }
 
     @Override
     public void onClick(View v) {
-        //v.requestFocus();
         handleViewOnClic(v, -1, true);
-        return;
     }
 
     @Override
@@ -556,30 +506,8 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         }
     }
 
-    @Override
-    public void onResponse(SparseArray<App> apps) {
-        if (homeAppsDialog != null) {
-            homeAppsDialog.loadAppData(apps);
-        }
-    }
-
-    /**
-     * 添加或者删除桌面图标
-     *
-     * @param id
-     * @param app
-     */
-    @Override
-    public void addRemove(int id, App app) {
-        switch (id) {
-            case R.id.fl2: {
-                GlideMgr.loadNormalDrawableImg(MainActivity.this,
-                        app.getIcon(), binding.ivAdd1);
-                binding.tvAdd1.setText(app.getName());
-                binding.fl2.setTag(app.getPackageName());
-                return;
-            }
-        }
+    public MyAppsManager getMyAppsManager() {
+        return myAppsManager;
     }
 
     /**
@@ -592,13 +520,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         sendBroadcast(freshIntent);
     }
 
-    public void showHomeAppsDialog(int rId) {
-        homeAppsDialog = HomeAppsDialog.showHomeAppDialog(MainActivity.this, rId);
-    }
-
     public void requestPermition() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
 
             int hasWritePermission = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
             int hasReadPermission = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -618,15 +542,36 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             }
 
             if (!permissions.isEmpty()) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE},
-                        0);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE},0);
             }
         }
 
-        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= 23)
+        {
             if (!Settings.canDrawOverlays(MainActivity.this)) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
                 startActivityForResult(intent, 10);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
+    {
+        switch (requestCode)
+        {
+            case 10: {
+                for (int i = 0; i < permissions.length; i++) {
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        System.out.println("Permissions --> " + "Permission Granted: " + permissions[i]);
+                    } else if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                        System.out.println("Permissions --> " + "Permission Denied: " + permissions[i]);
+                    }
+                }
+            }
+            break;
+            default: {
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             }
         }
     }
@@ -793,7 +738,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bgIv5.setImageResource(R.drawable.ly);
                 binding.bluetooth.setVisibility(View.VISIBLE);
                 binding.bluetooth.setImageResource(R.drawable.bluetoothno);
-                bluetooth++;
+                //bluetooth++;
                 TheLastSourceType = "蓝牙";
                 binding.bgIcon.setVisibility(View.GONE);
                 //myServiceSendBytes(BluetoothOpen);
@@ -812,7 +757,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bluetooth.setVisibility(View.GONE);
                 TheLastSourceType = "同轴";
                 binding.bgIcon.setVisibility(View.GONE);
-                coppershaft++;
+                //coppershaft++;
                 //myServiceSendBytes(CopperShaftLineIn);
                 myServiceSendBytes(CopperShaftClose);
                 break;
@@ -910,14 +855,14 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                         binding.bluetooth.setImageResource(R.drawable.bluetoothno);
                         binding.bgIcon.setVisibility(View.GONE);
 
-                        bluetooth++;
+                        //bluetooth++;
                     } else if (TheLastSourceType.equals("同轴")) {
                         binding.ivFill.setVisibility(View.VISIBLE);
                         binding.ivFill.setImageResource(R.drawable.btz);
                         binding.bluetooth.setVisibility(View.GONE);
                         binding.bgIcon.setVisibility(View.GONE);
                         onClick(binding.fl12);
-                        coppershaft++;
+                        //coppershaft++;
                     } else if (TheLastSourceType.equals("光纤")) {
                         binding.ivFill.setVisibility(View.VISIBLE);
                         binding.ivFill.setImageResource(R.drawable.bopt);
@@ -973,7 +918,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 Object obj = v.getTag();
                 if (obj == null || !isClick) {
                     switchToOtherChanel(v.getClass().getName());
-                    lunchHomeAppDialog(obj, id);
+                    ShowHotAppDialog(obj, id);
                 } else if (obj != null && isClick) {
                     launchApp(obj.toString());
                 }
@@ -986,7 +931,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     Runnable HandleSerialPortrunnable = new Runnable() {
         @Override
         public void run() {
-            if (mSerialData.equals("0201050000020000010B7E") || mSerialData.equals("0101050000020000010A7E")) {
+            if (mSerialCommand.equals("0201050000020000010B7E") || mSerialCommand.equals("0101050000020000010A7E")) {
                 pauseSystemMusic();
                 //同轴
                 TheLastSourceType = "同轴";
@@ -1004,7 +949,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 //} else
                 binding.ivFill.setImageResource(R.drawable.btz);
 
-            } else if (mSerialData.equals("0201050000020004000E7E") || mSerialData.equals("0101050000020004000D7E")) {
+            } else if (mSerialCommand.equals("0201050000020004000E7E") || mSerialCommand.equals("0101050000020004000D7E")) {
                 //蓝牙
                 pauseSystemMusic();
                 TheLastSourceType = "蓝牙";
@@ -1019,7 +964,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bgIv5.setImageResource(R.drawable.ly);
                 binding.bgIcon.setVisibility(View.GONE);
                 binding.ivFill.setImageResource(R.drawable.bly);
-            } else if (mSerialData.equals("0201050000020080008A7E") || mSerialData.equals("010105000002008000897E")) {
+            } else if (mSerialCommand.equals("0201050000020080008A7E") || mSerialCommand.equals("010105000002008000897E")) {
                 pauseSystemMusic();
                 //模拟
                 TheLastSourceType = "模拟";
@@ -1036,7 +981,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.fl14.requestFocus();
                 binding.ivFill.setImageResource(R.drawable.bmn);
                 binding.bluetooth.setVisibility(View.INVISIBLE);
-            } else if (mSerialData.equals("0201050000020000020C7E") || mSerialData.equals("0101050000020000020B7E")) {
+            } else if (mSerialCommand.equals("0201050000020000020C7E") || mSerialCommand.equals("0101050000020000020B7E")) {
                 pauseSystemMusic();
                 //光纤
                 TheLastSourceType = "光纤";
@@ -1055,7 +1000,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.ivFill.setImageResource(R.drawable.bopt);
                 binding.bluetooth.setVisibility(View.INVISIBLE);
 
-            } else if (mSerialData.equals("0201050000020000000A7E") || mSerialData.equals("010105000002000000097E")) {
+            } else if (mSerialCommand.equals("0201050000020000000A7E") || mSerialCommand.equals("010105000002000000097E")) {
                 pauseSystemMusic();
                 //最后的app  I2S 通道
                 TheLastSourceType = "last";
@@ -1069,7 +1014,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 //binding.fl15.requestFocus();
                 binding.bluetooth.setVisibility(View.INVISIBLE);
 
-            } else if (mSerialData.equals("020105000002000800127E") || mSerialData.equals("010105000002000800117E")) {
+            } else if (mSerialCommand.equals("020105000002000800127E") || mSerialCommand.equals("010105000002000800117E")) {
                 pauseSystemMusic();
                 //usb/TF
                 TheLastSourceType = "player";
@@ -1083,21 +1028,21 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bluetooth.setVisibility(View.INVISIBLE);
                 launchApp("com.android.music");
 
-            } else if (mSerialData.equals("")) {
+            } else if (mSerialCommand.equals("")) {
                 //mic A开
                 binding.micA.setImageResource(R.drawable.ano);
-            } else if (mSerialData.equals("")) {
+            } else if (mSerialCommand.equals("")) {
                 //mic A关
                 binding.micA.setVisibility(View.GONE);
-            } else if (mSerialData.equals("")) {
+            } else if (mSerialCommand.equals("")) {
                 //mic B开
                 binding.micB.setImageResource(R.drawable.bno);
-            } else if (mSerialData.equals("")) {
+            } else if (mSerialCommand.equals("")) {
                 //mic B关
                 binding.micB.setVisibility(View.GONE);
             }
 
-            if (mSerialData.equals("0201050000020004000E7E") || mSerialData.equals("0101050000020004000D7E")) {
+            if (mSerialCommand.equals("0201050000020004000E7E") || mSerialCommand.equals("0101050000020004000D7E")) {
                 if (blutoothConnected) {
                     binding.bluetooth.setVisibility(View.VISIBLE);
                     binding.bluetooth.setImageResource(R.drawable.bluetoothhave);
@@ -1113,24 +1058,23 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         MyService.Binder binder = (MyService.Binder) service;
         myService = binder.getService();
 
-        if (SerialPortReceivehandler == null) {
-            SerialPortReceivehandler = new Handler() {
+           final Handler  SerialPortReceiveHandler = new Handler() {
                 @Override
                 public void handleMessage(Message msg) {
                     super.handleMessage(msg);
                 }
             };
-        }
+
 
         myService.setActionCallback(new MyService.Callback() {
             @Override
             public void onDataChange(String data) {
-                mSerialData = data;
+                mSerialCommand = data;
                 Log.i("Callback.onDataChange", "data=" + data);
-                if (null != SerialPortReceivehandler) {
-                    SerialPortReceivehandler.post(HandleSerialPortrunnable);
+                if (null != SerialPortReceiveHandler) {
+                    SerialPortReceiveHandler.post(HandleSerialPortrunnable);
                 } else {
-                    Log.e("tag", "SerialPortReceivehandler=null");
+                    Log.e("tag", "SerialPortReceiveHandler=null");
                 }
             }
         });
@@ -1166,102 +1110,17 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     }
 
     public void launchApp(String packageName) {
-        if (PackageName.qqMusic.equals(packageName)) {
-            handleClick(packageName, PreInstallApkPath.qqMusic);
-        } else if (PackageName.qqTv.equals(packageName)) {
-            handleClick(packageName, PreInstallApkPath.qqTv);
-        } else if (PackageName.hdp.equals(packageName)) {
-            handleClick(packageName, PreInstallApkPath.hdp);
-        }
-        appListHandler.launchApp(packageName);
+
+        if (myAppsManager.IsAppExist(packageName))
+            myAppsManager.startTheApp(packageName);
+        else
+            Toast.makeText(mContext, "Not found the app you want:" + packageName, Toast.LENGTH_LONG).show();
     }
 
-    private void handleClick(String packageName, String filePath) {
-        if (!AppsManager.isInstallApp(mContext, packageName)) {
-            if (AppsManager.isSystemAppInstallOk(mContext, filePath)) {
-                Toast.makeText(mContext, "正在安装应用", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
 
-    /**
-     * 处理item点击：打开/下载app
-     *
-     * @param index
-     */
-    private void handleClick(final int index, int keyCode) {
-        if (recommendBean != null && recommendBean.getData().size() > index) {
-            final RecommendBean.DataBean dataBean = recommendBean.getData().get(index);
-            if (keyCode == KeyEvent.KEYCODE_MENU) {
-                //中间弹窗
-                Toast.makeText(mContext, "menu", Toast.LENGTH_SHORT).show();
-            } else {
-                if (AppsManager.isInstallApp(mContext, dataBean.getSyy_app_packageName())) {
-                    launchApp(dataBean.getSyy_app_packageName());
-                    CaculateclickApp(dataBean.getSyy_app_id());
-                } else {
-                    if (pbItems[index].getProgress() != 100) {
-                        if (dataBean.getStatus() != null && ((double) dataBean.getStatus()) == 0) {
-                            //app禁用
-                            if (TextUtils.isEmpty(dataBean.getSyy_app_introduce())) {
-                                Toast.makeText(mContext, R.string.maintain, Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(mContext, dataBean.getSyy_app_introduce(), Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            final String filePath = AppsManager.getAppDir() + dataBean.getSyy_app_download().substring(dataBean.getSyy_app_download().lastIndexOf("/") + 1);
+    public void ShowHotAppDialog(Object obj, int id) {
 
-                            flItems[index].setEnabled(false);
-                            tvItems[index].setText(R.string.download);
-                            tvItems[index].setVisibility(View.VISIBLE);
-                            pbItems[index].setVisibility(View.VISIBLE);
-                            ProgressManager.getInstance().addResponseListener(dataBean.getSyy_app_download(), new ProgressListener() {
-                                @Override
-                                public void onProgress(ProgressInfo progressInfo) {
-                                    pbItems[index].setProgress(progressInfo.getPercent());
-                                    if (progressInfo.isFinish()) {
-                                        AppsManager.install(mContext, filePath);
-                                    }
-                                }
-
-                                @Override
-                                public void onError(long id, Exception e) {
-
-                                }
-                            });
-                            downloadApk(dataBean, index);
-                        }
-                    } else {
-                        //已经下载过，启动安装
-                        final String filePath = AppsManager.getAppDir() + dataBean.getSyy_app_download().substring(dataBean.getSyy_app_download().lastIndexOf("/") + 1);
-                        AppsManager.install(mContext, filePath);
-                    }
-                }
-            }
-
-        }
-    }
-
-    public void lunchHomeAppDialog(Object obj, int id) {
-        homeAppDialog = HomeAppDialog.showHomeAppDialog(this,
-                obj != null ? obj.toString() : null, id);
-    }
-
-    @Override
-    public void updateBottom(int vId, App app) {
-        if (bottomAppDialog != null) {
-            bottomAppDialog.updateBottom(vId, app);
-        }
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        Log.d(TAG, "onLowMemory");
-    }
-
-    public void scanBottom() {
-        appListHandler.scanBottom();
+        HotAppDialog   mHotAppDialog = HotAppDialog.showHotAppDialog(this, obj != null ? obj.toString() : null, id);
     }
 
     private void inputNumber(String i) {
@@ -1287,31 +1146,25 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 break;
         }
 
+        boolean b=false;
+
         switch (InpputNumStr) {
             case StartDragonTest:
                 //重置输入
                 InpputNumStr = "";
                 TimeTickCount = 0;
-//                Toast.makeText(this, "启动测试:", Toast.LENGTH_SHORT).show();
-                if (AppsManager.isInstallApp(mContext, "com.wxs.scanner")) {
-//                    startActivity(new Intent().setClassName("com.kong.apptesttools", "com.kong.apptesttools.MainActivity"));
-                    startActivity(new Intent().setClassName("com.wxs.scanner", "com.wxs.scanner.activity.workstation.CheckActivity"));
-                } else {
-//                    Toast.makeText(mContext, "未安装测试App", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(mContext, R.string.no_install_app, Toast.LENGTH_SHORT).show();
-                }
-                break;
+
+                //startActivity(new Intent().setClassName("com.wxs.scanner", "com.wxs.scanner.activity.workstation.CheckActivity"));
+                b= myAppsManager.startTheApp("com.wxs.scanner");
+                if(!b)
+                break; Toast.makeText(mContext, "未安装老化测试App"+"com.wxs.scanner", Toast.LENGTH_SHORT).show();
             case StartDragonAging:
                 //重置输入
                 InpputNumStr = "";
                 TimeTickCount = 0;
-//                Toast.makeText(this, "启动老化测试:", Toast.LENGTH_SHORT).show();
-                if (AppsManager.isInstallApp(mContext, "com.softwinner.agingdragonbox")) {
-                    AppsManager.startAgingApk(mContext);
-                } else {
-//                    Toast.makeText(mContext, "未安装老化App", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(mContext, R.string.no_install_old_app, Toast.LENGTH_SHORT).show();
-                }
+                 b= myAppsManager.startTheApp("com.softwinner.agingdragonbox");
+                if(!b)
+                    break; Toast.makeText(mContext, "未安装老化测试App"+"com.wxs.scanner", Toast.LENGTH_SHORT).show();
                 break;
             case versionInfo:
                 InpputNumStr = "";
@@ -1373,14 +1226,25 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         binding.adBg.startAutoPlay();
     }
 
+
+    @Override
+    public void OnAppsChanged(String s, AppInfor appInfor) {
+       if(s.equals(ADDTOMYAPPS_ACTION))
+       {
+           GlideMgr.loadNormalDrawableImg(MainActivity.this, appInfor.getIcon(), binding.ivAdd1);
+           binding.tvAdd1.setText(appInfor.getName());
+           binding.fl2.setTag(appInfor.getPackageName());
+       }
+    }
+
     private void showMACDialog(String type) {
-        if (mdialog == null || mdialog.isShowing() != true) {
-            mdialog = new Mac_Dialog(this);
-            mdialog.setVolumeAdjustListener(MainActivity.this);
-            mdialog.setCancelable(false);
-            mdialog.show();
+        if (mDialog == null || mDialog.isShowing() != true) {
+            mDialog = new Mac_Dialog(this);
+            mDialog.setVolumeAdjustListener(MainActivity.this);
+            mDialog.setCancelable(false);
+            mDialog.show();
         }
-        mdialog.adjustVolume(true, type);
+        mDialog.adjustVolume(true, type);
     }
 
     @Override
@@ -1425,7 +1289,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     public void onWifiLevelChanged(int i) {
         Log.d(TAG, "onWifiLevelChanged>>>>>>>>>>" + i);
 
-        if(!netUtils.isWifiConnected()) return;
+        if (!netUtils.isWifiConnected()) return;
 
         runOnUiThread(new Runnable() {
             @Override
@@ -1457,8 +1321,8 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         if (CustomId != -1) {
             url = host + api +
                     "cy_brand_id=" + DeviceModelNumber +
-                    "&mac=" + DID +
-                    "&netCardMac=" + DID +
+                    "&mac=" + netUtils.getDeviceID().toUpperCase() +
+                    "&netCardMac=" + netUtils.getMAC().toUpperCase() +
                     "&CustomId=" + CID +
                     "&codeIp=" + IP +
                     "&region=" + RID +
@@ -1467,8 +1331,8 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         } else {
             url = host + api +
                     "cy_brand_id=" + DeviceModelNumber +
-                    "&mac=" + DID +
-                    "&netCardMac=" + DID +
+                    "&mac=" + netUtils.getDeviceID().toUpperCase() +
+                    "&netCardMac=" + netUtils.getMAC().toUpperCase() +
                     "&codeIp=" + IP +
                     "&region=" + RID +
                     "&lunchname=" + lunchname;
@@ -1478,16 +1342,18 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
     private void checkDeviceIsAvailable(String mac) {
         String url = "";
+
         if (TextUtils.isEmpty(mac)) return;
+
         if (CustomId != -1) {
             url = host + "jhzBox/box/loadBox.do?cy_brand_id=" + DeviceModelNumber + "&mac=" + mac +
-                    "&netCardMac=" + netUtils.getDeviceID() +
+                    "&netCardMac=" + netUtils.getMAC().toUpperCase() +
                     "&CustomId=" + CustomId +
                     "&codeIp=" + netUtils.getIP0() +
                     "&region=" + netUtils.getChineseRegion(netUtils.getLocation());
         } else {
             url = host + "jhzBox/box/loadBox.do?cy_brand_id=" + DeviceModelNumber + "&mac=" + mac +
-                    "&netCardMac=" + netUtils.getDeviceID() +
+                    "&netCardMac=" + netUtils.getMAC().toUpperCase() +
                     "&codeIp=" + netUtils.getIP0() +
                     "&region=" + netUtils.getChineseRegion(netUtils.getLocation());
         }
@@ -1514,7 +1380,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                     }
                 }
             }
-
         });
     }
 
@@ -1549,9 +1414,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                     //卸载app
                     List<String> data = removeAppBean.getData();
                     for (String pck : data) {
-                        if (AppsManager.isInstallApp(mContext, pck)) {
-                            AppsManager.uninstallApk(mContext, pck);
-                        }
+                            myAppsManager.uninstall(pck);
                     }
                 }
             }
@@ -1875,7 +1738,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
      */
     private void downloadApk(final RecommendBean.DataBean dataBean, final int index) {
         String url = dataBean.getSyy_app_download();//
-        String toFilePath = AppsManager.getAppDir() + dataBean.getSyy_app_download().substring(dataBean.getSyy_app_download().lastIndexOf("/") + 1);
+        String toFilePath = myAppsManager.getDownloadDir() + dataBean.getSyy_app_download().substring(dataBean.getSyy_app_download().lastIndexOf("/") + 1);
         OkHttpUtils.Download(url, toFilePath, dataBean.getSyy_app_packageName(), new NormalRequestCallBack() {
             @Override
             public void onRequestComplete(String s, int i) {
@@ -1902,7 +1765,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
      * @param url
      */
     private void downloadApk(final String url) {
-        String toFilePath = AppsManager.getAppDir() + url.substring(url.lastIndexOf("/") + 1);
+        String toFilePath = myAppsManager.getDownloadDir() + url.substring(url.lastIndexOf("/") + 1);
         OkHttpUtils.Download(url, toFilePath, this.getLocalClassName(), new NormalRequestCallBack() {
             @Override
             public void onRequestComplete(String s, int i) {
@@ -1910,7 +1773,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                     @Override
                     public void run() {
                         if (i >= 0) {
-                            AppsManager.install(mContext, toFilePath);
+                            myAppsManager.install(toFilePath);
                         } else {
                             Toast.makeText(mContext, R.string.download_failed, Toast.LENGTH_SHORT).show();
                         }
@@ -1926,18 +1789,13 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         public void onReceive(Context context, Intent intent) {
             final String pull_from = "52129";
             Bundle bundle = intent.getExtras();
-
             if (bundle == null) return;
-
             String _action = bundle.getString("_Action");
-
 
             if (_action == null) return;
 
             if ((_action.contains("首页")) || (_action.contains("桌面")) || (_action.contains("主页"))) {
-
                 binding.ivFill.setVisibility(View.GONE);
-                View rootview = MainActivity.this.getWindow().getDecorView();
             } else if (_action.contains("蓝牙")) {
                 pauseSystemMusic();
                 onClick(binding.fl11);
@@ -1945,7 +1803,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             } else if ((_action.contains("同轴")) || (_action.contains("同舟"))) {
                 pauseSystemMusic();
                 onClick(binding.fl12);
-                //launchApp("com.h3launcher");
             } else if (_action.contains("光纤")) {
                 pauseSystemMusic();
                 onClick(binding.fl13);
@@ -1953,25 +1810,18 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             } else if ((_action.contains("输入")) || (_action.contains("Line in")) || (_action.contains("模拟"))) {
                 pauseSystemMusic();
                 onClick(binding.fl14);
-                //Intent i = new Intent();
-                //launchApp("com.h3launcher");
             } else if (_action.contains("USB") || _action.contains("U盘") || _action.contains("TF卡") || _action.contains("优盘") || _action.contains("卡")) {
                 onClick(binding.fl15);
                 Intent freshIntent = new Intent();
                 freshIntent.setAction("com.android.music.musicservicecommand");
                 freshIntent.putExtra("command", "play");
                 sendBroadcast(freshIntent);
-                //launchApp("com.android.music");
-                //PackageManager packageManager = getPackageManager();
-                //Intent openQQintent = new Intent();
-                //openQQintent = packageManager.getLaunchIntentForPackage("com.android.music");
             } else if (_action.contains("文件")) {
                 pauseSystemMusic();
                 onClick(binding.fl6);
                 //launchApp("com.softwinner.TvdFileManager");
             } else if (_action.contains("设置") || _action.contains("网络")) {
                 onClick(binding.fl7);
-                //openSettings();
             } else if (_action.contains("频道")) {
                 binding.ivFill.setVisibility(View.GONE);
                 onClick(binding.fl8);

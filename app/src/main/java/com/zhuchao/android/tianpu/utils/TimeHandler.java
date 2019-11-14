@@ -1,6 +1,7 @@
 package com.zhuchao.android.tianpu.utils;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -74,7 +75,7 @@ public class TimeHandler {
     private synchronized void handleTime() {
         Calendar calendar = Calendar.getInstance();
         timeBuilder.setLength(0);
-        String timeDateStr = Utils.isTime24(context)?simpleDateFormat1.format(calendar.getTime()):simpleDateFormat2.format(calendar.getTime());
+        String timeDateStr = isTime24(context)?simpleDateFormat1.format(calendar.getTime()):simpleDateFormat2.format(calendar.getTime());
         final String[] timeStr = timeDateStr.split(" ");
         int weekIndex = calendar.get(Calendar.DAY_OF_WEEK) - 1;
         String weekStr = weekIndex < 0 ? weekArr[0] : weekArr[weekIndex];
@@ -114,4 +115,19 @@ public class TimeHandler {
             handleTime();
         }
     }
+
+
+    public static boolean isTime24(Context ctx) {
+        ContentResolver cv = ctx.getContentResolver();
+        String strTimeFormat = android.provider.Settings.System.getString(cv,
+                android.provider.Settings.System.TIME_12_24);
+        if (strTimeFormat != null && strTimeFormat.equals("24")) {//strTimeFormat某些rom12小时制时会返回null
+            return true;
+        } else return false;
+
+    }
+
+
+
+
 }

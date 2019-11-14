@@ -6,10 +6,10 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.os.Build;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 
-import com.zhuchao.android.tianpu.utils.Utils;
 import com.zhuchao.android.tianpu.views.MainUpView;
 
 /**
@@ -204,7 +204,7 @@ public class OpenEffectBridge extends BaseEffectBridgeWrapper {
 
 				// XF add（先锋TV开发(404780246)修复)
 				// BUG:5.0系统边框错位.
-				if (Utils.getSDKVersion() >= 21) {
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)  {
 //					int newWidth = (int) (focusView.getMeasuredWidth() *
 //							mScaleX);
 //					int newHeight = (int) (focusView.getMeasuredHeight() *

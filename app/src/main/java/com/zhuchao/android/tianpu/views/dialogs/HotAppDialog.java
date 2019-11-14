@@ -14,32 +14,30 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.zhuchao.android.tianpu.R;
-import com.zhuchao.android.tianpu.activities.MainActivity;
 
+import com.zhuchao.android.tianpu.activities.MainActivity;
 import com.zhuchao.android.tianpu.databinding.MenuDialogBinding;
-import com.zhuchao.android.tianpu.utils.AppListHandler;
 import com.zhuchao.android.tianpu.utils.ShareAdapter;
-import com.zhuchao.android.tianpu.utils.Utils;
 
 /**
  * 菜单键的弹窗
  * Created by Oracle on 2017/12/2.
  */
 
-public class HomeAppDialog extends Dialog implements View.OnClickListener,
+public class HotAppDialog extends Dialog implements View.OnClickListener,
             View.OnTouchListener {
 
-    private static final String TAG = HomeAppDialog.class.getSimpleName();
+    private static final String TAG = HotAppDialog.class.getSimpleName();
     private MenuDialogBinding binding;
     private Context context;
     private String packageName;
     private int rId;
 
-    public HomeAppDialog(@NonNull Context context) {
+    public HotAppDialog(@NonNull Context context) {
         this(context, 0, null, -1);
     }
 
-    public HomeAppDialog(@NonNull Context context, int themeResId, String packageName, int vId) {
+    public HotAppDialog(@NonNull Context context, int themeResId, String packageName, int vId) {
         super(context, themeResId);
         this.context = context;
         this.packageName = packageName;
@@ -80,11 +78,11 @@ public class HomeAppDialog extends Dialog implements View.OnClickListener,
         }
     }
 
-    public static HomeAppDialog showHomeAppDialog(Activity activity, String packageName, int vId) {
-        HomeAppDialog homeAppDialog = new HomeAppDialog(activity, R.style.MenuDialog,
+    public static HotAppDialog showHotAppDialog(Activity activity, String packageName, int vId) {
+        HotAppDialog hotAppDialog = new HotAppDialog(activity, R.style.MenuDialog,
                 packageName, vId);
-        homeAppDialog.show();
-        return homeAppDialog;
+        hotAppDialog.show();
+        return hotAppDialog;
     }
 
     @Override
@@ -112,17 +110,17 @@ public class HomeAppDialog extends Dialog implements View.OnClickListener,
         switch (v.getId()) {
             case R.id.add:
             case R.id.replace:
-                ((MainActivity) context).showHomeAppsDialog(rId);
+                HotAppsDialog.showHotAppsDialog(context,rId);
                 break;
             case R.id.del:
-                Utils.uninstallApp(context, packageName);
+                ((MainActivity) context).getMyAppsManager().uninstall(packageName);
                 break;
             case R.id.remove:
                 clearCache();
-                Intent intent = new Intent(AppListHandler.CLEAR_ACTION);
-                intent.setData(Uri.parse("package:www"));
-                intent.putExtra("vId", rId);
-                context.sendBroadcast(intent);
+                //Intent intent = new Intent(AppListHandler.CLEAR_ACTION);
+                //intent.setData(Uri.parse("package:www"));
+                //intent.putExtra("vId", rId);
+                //context.sendBroadcast(intent);
                 break;
         }
         dismiss();

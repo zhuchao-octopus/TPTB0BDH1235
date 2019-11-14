@@ -7,12 +7,13 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 
+import com.zhuchao.android.tianpu.BuildConfig;
 import com.zhuchao.android.tianpu.utils.MyApplication;
-import com.zhuchao.android.tianpu.utils.Utils;
 import com.zhuchao.android.tianpu.views.MainUpView;
 
 public class SelEffectBridge extends BaseEffectBridge {
@@ -200,7 +201,7 @@ public class SelEffectBridge extends BaseEffectBridge {
 				getMainUpView().setVisibility(mIsHide ? View.INVISIBLE : View.VISIBLE);
 				// XF add（先锋TV开发(404780246)修复)
 				// BUG:5.0系统边框错位.
-				if (Utils.getSDKVersion() >= 21)
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
 				{
 					int newWidth = (int) (focusView.getMeasuredWidth() * scaleX);
 					int newHeight = (int) (focusView.getMeasuredHeight() *scaleY);

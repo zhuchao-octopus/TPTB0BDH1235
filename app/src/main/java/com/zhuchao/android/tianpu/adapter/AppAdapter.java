@@ -2,20 +2,22 @@ package com.zhuchao.android.tianpu.adapter;
 
 import android.content.Context;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.zhuchao.android.libfilemanager.bean.AppInfor;
 import com.zhuchao.android.tianpu.R;
-import com.zhuchao.android.tianpu.data.App;
 import com.zhuchao.android.tianpu.utils.MyApplication;
 import com.zhuchao.android.tianpu.utils.GlideMgr;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AppAdapter extends BaseAdapter {
 
-    private SparseArray<App> apps = new SparseArray<>();
+    private List<AppInfor> apps = new ArrayList<>();
 
     private int listMode = 0;
 
@@ -33,15 +35,8 @@ public class AppAdapter extends BaseAdapter {
         this.listMode = listMode;
     }
 
-    public void setApps(SparseArray<App> apps) {
-
-        if (this.apps != null) {
-            this.apps.clear();
-            this.apps = null;
-        }
-        if (apps != null) {
-            this.apps = apps.clone();
-        }
+    public void setApps(List<AppInfor> apps) {
+            this.apps = apps;
     }
 
     @Override
@@ -84,23 +79,15 @@ public class AppAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        App app = apps.get(position);
+        AppInfor app = apps.get(position);
         try {
-            Log.d("xiaolp","app = "+app+" viewHolder = "+viewHolder);
+            //Log.d("xiaolp","app = "+app+" viewHolder = "+viewHolder);
             GlideMgr.loadNormalDrawableImg(mContext, app.getIcon(), viewHolder.iv);
             viewHolder.tv.setText(app.getName());
         }catch (Exception e){
             e.printStackTrace();
         }
-//        viewHolder.iv.setImageDrawable(app.getIcon());
-
         return convertView;
     }
 
-    public void release() {
-        if (apps != null) {
-            apps.clear();
-            apps = null;
-        }
-    }
 }
