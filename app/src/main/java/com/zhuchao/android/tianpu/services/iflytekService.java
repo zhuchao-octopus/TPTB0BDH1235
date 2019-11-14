@@ -63,8 +63,8 @@ public class iflytekService extends AppService {
     //private byte[] CommandMuteClose = {0x02, 0x01, 0x01, 0x00, 0x00, 0x02, 0x00, 0x08,0x00,0x0e,0x7E};// 静音关  K70
     //private byte[] CommandMuteCloseK50 = {0x01, 0x01, 0x01, 0x00, 0x00, 0x02, 0x00, 0x08,0x00,0x0d, 0x7E};//静音关    K50
 
-    //private byte[] LastAppOpen = {0x02, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x0A, 0x7E};//最后使用的app  K70
-    private byte[] LastAppClose = {0x01, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x09, 0x7E};//最后使用的app  K50
+    //private byte[] I2SAppOpen = {0x02, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x0A, 0x7E};//最后使用的app  K70
+    private byte[] I2SAppClose = {0x01, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x09, 0x7E};//最后使用的app  K50
 
     private MyReceiver myReceiver = null;
 
@@ -141,8 +141,8 @@ public class iflytekService extends AppService {
                         @Override
                         public void run() {
                             pauseMusic();
-                            //myServiceSendBytes(LastAppOpen);
-                            SendBytesTo(LastAppClose);
+                            //myServiceSendBytes(I2SAppOpen);
+                            SendBytesTo(I2SAppClose);
                         }
                     }).start();
                     PackageManager packageManager = getPackageManager();
@@ -204,8 +204,8 @@ public class iflytekService extends AppService {
                     @Override
                     public void run() {
                         pauseMusic();
-                        //myServiceSendBytes(LastAppOpen);
-                        SendBytesTo(LastAppClose);
+                        //myServiceSendBytes(I2SAppOpen);
+                        SendBytesTo(I2SAppClose);
                     }
                 }).start();
             }
@@ -244,8 +244,8 @@ public class iflytekService extends AppService {
                     @Override
                     public void run() {
                         pauseMusic();
-                        //myServiceSendBytes(LastAppOpen);
-                        SendBytesTo(LastAppClose);
+                        //myServiceSendBytes(I2SAppOpen);
+                        SendBytesTo(I2SAppClose);
                     }
                 }).start();
                 VoiceFeedback("正在打开当贝市场");
@@ -277,8 +277,8 @@ public class iflytekService extends AppService {
                     @Override
                     public void run() {
                         pauseMusic();
-                        //myServiceSendBytes(LastAppOpen);
-                        SendBytesTo(LastAppClose);
+                        //myServiceSendBytes(I2SAppOpen);
+                        SendBytesTo(I2SAppClose);
                     }
                 }).start();
 
@@ -402,7 +402,7 @@ public class iflytekService extends AppService {
                 @Override
                 public void run() {
                     pauseMusic();
-                   SendBytesTo(LastAppClose);
+                   SendBytesTo(I2SAppClose);
                 }
             }).start();
 
@@ -969,8 +969,8 @@ public class iflytekService extends AppService {
                 SendBytesTo(CommandStandbyK50);
             } else if (msg.what == 100) {
                 pauseMusic();
-                //myServiceSendBytes(LastAppOpen);
-                SendBytesTo(LastAppClose);
+                //myServiceSendBytes(I2SAppOpen);
+                SendBytesTo(I2SAppClose);
                 //Intent intent = new Intent();
                 //intent.putExtra("_Action", "music");
                 //intent.setAction("com.zhuchao.android.tianpu.services");

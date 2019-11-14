@@ -74,7 +74,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.zhuchao.android.tianpu.fileProvider"
+            android:authorities="com.zhuchao.android.libfilemanager.fileProvider"
             android:grantUriPermissions="true"
             android:exported="false">
             <meta-data

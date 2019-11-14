@@ -2,23 +2,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao' // apply plugin
 
 android {
-    //signingConfigs {
-    //    release {
-    //        keyAlias 'tp'
-    //        keyPassword 'tp7777777'
-    //        storeFile file('/tp77.jks')
-    //        storePassword 'tp7777777'
-    //    }
-    //}
 
     compileSdkVersion 28
 
     applicationVariants.all {
         variant ->
             variant.outputs.all {
-                //def fileName = "TPDYX0${defaultConfig.versionName}.apk"
-                //def fileName = "TPHWBD${defaultConfig.versionName}.apk"
-                //def fileName = "TPHWM0${defaultConfig.versionName}.apk"
                 def fileName = "TP0BDH1235_v${defaultConfig.versionName}_${releaseTime()}.apk"
                 outputFileName = fileName
             }
@@ -29,8 +18,8 @@ android {
         applicationId "com.zhuchao.android.tianpu"
         minSdkVersion 24
         targetSdkVersion 28
-        versionCode 73
-        versionName "7.3"
+        versionCode 74
+        versionName "7.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
             moduleName "myserialport"

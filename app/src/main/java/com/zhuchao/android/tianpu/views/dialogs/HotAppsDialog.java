@@ -63,7 +63,7 @@ public class HotAppsDialog extends Dialog {
 
                 if (context instanceof MainActivity) {
                     AppInfor app = appInfors.get(position);
-                   ((MainActivity) context) .getMyAppsManager().AddToMyApp(app);
+                   ((MainActivity) context) .getMyAppsManager().addToMyApp(app);
                 }
 
                 dismiss();
