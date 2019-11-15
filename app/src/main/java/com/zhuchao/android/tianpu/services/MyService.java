@@ -22,7 +22,7 @@ import androidx.annotation.Nullable;
 
 import com.zhuchao.android.tianpu.R;
 import com.zhuchao.android.tianpu.utils.ForegroundAppUtil;
-import com.zhuchao.android.tianpu.utils.MySerialPort;
+import com.zhuchao.android.tianpu.devices.MySerialPort;
 import com.zhuchao.android.tianpu.utils.TypeTool;
 import com.zhuchao.android.tianpu.views.dialogs.Mac_Dialog;
 import com.zhuchao.android.tianpu.views.dialogs.MusicDialog;

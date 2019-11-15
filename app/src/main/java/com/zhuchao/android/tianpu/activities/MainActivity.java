@@ -69,7 +69,7 @@ import com.zhuchao.android.tianpu.databinding.ActivityMainBinding;
 import com.zhuchao.android.tianpu.services.MyService;
 import com.zhuchao.android.tianpu.services.iflytekService;
 import com.zhuchao.android.tianpu.utils.GlideMgr;
-import com.zhuchao.android.tianpu.utils.MySerialPort;
+import com.zhuchao.android.tianpu.devices.MySerialPort;
 import com.zhuchao.android.tianpu.utils.TimeHandler;
 import com.zhuchao.android.tianpu.utils.WallperHandler;
 import com.zhuchao.android.tianpu.views.dialogs.HotAppDialog;

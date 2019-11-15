@@ -18,7 +18,7 @@ public class ProperityUtils {
             final Method get = systemProperties.getMethod("set", String.class, String.class);
             return (String) get.invoke(null, key, defaultValue);
         } catch (Exception e) {
-// This should never happen
+            // This should never happen
             Log.e(TAG, "Exception while getting system property: ", e);
             return defaultValue;
         }

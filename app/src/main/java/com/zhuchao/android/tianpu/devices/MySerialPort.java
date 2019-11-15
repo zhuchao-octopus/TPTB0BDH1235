@@ -1,7 +1,9 @@
-package com.zhuchao.android.tianpu.utils;
+package com.zhuchao.android.tianpu.devices;
 
 import android.content.Context;
 import android.util.Log;
+
+import com.zhuchao.android.tianpu.utils.TypeTool;
 
 import java.io.File;
 import java.io.IOException;
