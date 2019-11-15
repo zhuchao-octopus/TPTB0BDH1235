@@ -50,6 +50,7 @@ import com.zhuchao.android.databaseutil.SPreference;
 import com.zhuchao.android.libfilemanager.AppsChangedCallback;
 import com.zhuchao.android.libfilemanager.MyAppsManager;
 import com.zhuchao.android.libfilemanager.bean.AppInfor;
+import com.zhuchao.android.libfilemanager.devices.MySerialPort;
 import com.zhuchao.android.netutil.NetUtils;
 import com.zhuchao.android.netutil.NetUtils.NetChangedCallBack;
 import com.zhuchao.android.netutil.OkHttpUtils;
@@ -69,7 +70,7 @@ import com.zhuchao.android.tianpu.databinding.ActivityMainBinding;
 import com.zhuchao.android.tianpu.services.MyService;
 import com.zhuchao.android.tianpu.services.iflytekService;
 import com.zhuchao.android.tianpu.utils.GlideMgr;
-import com.zhuchao.android.tianpu.devices.MySerialPort;
+
 import com.zhuchao.android.tianpu.utils.TimeHandler;
 import com.zhuchao.android.tianpu.utils.WallperHandler;
 import com.zhuchao.android.tianpu.views.dialogs.HotAppDialog;
@@ -147,7 +148,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     private ImageView[] ImageViewList;
 
 
-    private MySerialPort serialPortUtils = new MySerialPort(this);
+    //private MySerialPort serialPortUtils = new MySerialPort(this);
     private MyService myService;
     //private Handler SerialPortReceiveHandler;
 

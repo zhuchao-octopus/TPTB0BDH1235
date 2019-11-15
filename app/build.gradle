@@ -45,9 +45,6 @@ android {
         //    version '3.10.2'
         //    path "src/main/cpp/CMakeLists.txt"
         //}
-        ndkBuild {
-            // path 'src/main/jni/Android.mk'
-        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -72,11 +69,6 @@ greendao {
     targetGenDir 'src/main/java' //设置DaoMaster、DaoSession、Dao目录
 }
 
-
-task copyJniLibs(type: Copy) {
-    from fileTree(dir: file('build/intermediates/ndkbuild/debug/obj/local'), include: '*/*.so')
-    into file('src/main/jniLibs')
-}
 
 
 dependencies {
