@@ -18,6 +18,8 @@ package JNIAPI;
 
 import android.util.Log;
 
+import com.zhuchao.android.libfilemanager.FilesManager;
+
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -33,18 +35,20 @@ public class JniSerialPort {
     /*
      * Do not remove or rename the field mFd: it is used by native method close();
      */
-    private FileDescriptor mFd;
-    private FileInputStream mFileInputStream;
-    private FileOutputStream mFileOutputStream;
+    private FileDescriptor mFd=null;
+    private FileInputStream mFileInputStream=null;
+    private FileOutputStream mFileOutputStream=null;
 
     public JniSerialPort(File device, int baudrate, int flags) throws SecurityException, IOException {
 
         /* Check access permission */
-        if (!device.canRead() || !device.canWrite()) {
+        if (!device.canRead() || !device.canWrite())
+        {
+            if(!FilesManager.isExists("/system/bin/su"))
+                return ;
             try {
                 /* Missing read/write permission, trying to chmod the file */
-                Process su;
-                su = Runtime.getRuntime().exec("/system/bin/su");
+                Process su = Runtime.getRuntime().exec("/system/bin/su");
                 String cmd = "chmod 666 " + device.getAbsolutePath() + "\n"  + "exit\n";
                 su.getOutputStream().write(cmd.getBytes());
                 if ((su.waitFor() != 0) || !device.canRead() || !device.canWrite()) {
@@ -55,10 +59,16 @@ public class JniSerialPort {
                 //throw new SecurityException();
             }
         }
-        mFd = open(device.getAbsolutePath(), baudrate, flags);
+
+        try {
+            mFd = open(device.getAbsolutePath(), baudrate, flags);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         if (mFd == null) {
             Log.e(TAG, "native open returns null");
-            throw new IOException();
+            //throw new IOException();
         }
         mFileInputStream = new FileInputStream(mFd);
         mFileOutputStream = new FileOutputStream(mFd);
@@ -73,7 +83,13 @@ public class JniSerialPort {
         return mFileOutputStream;
     }
 
-
+    public boolean isDeviceReady()
+    {
+        if(mFd!=null && mFileInputStream !=null && mFileOutputStream!=null)
+            return true;
+        else
+            return false;
+    }
 
 
     // JNI

@@ -59,27 +59,32 @@ public class MySerialPort {
      * @return serialPort串口对象
      */
     public boolean openPort(String DevicePath, int Baudrate, boolean IsDecode) {
-           this.DevicePath = DevicePath;
-           this.Baudrate = Baudrate;
-           this.IsDecode = IsDecode;
+        this.DevicePath = DevicePath;
+        this.Baudrate = Baudrate;
+        this.IsDecode = IsDecode;
 
         try {
             serialPort = new JniSerialPort(new File(this.DevicePath), this.Baudrate, 0);
-            //PortStatus = true;
+        } catch (IOException e) {
+            //PortStatus = false;
+            Log.e(TAG, "串口打开失败>>>>>>>JniSerialPort fail:" + e.toString());
+            return false;
+        }
 
+        if (serialPort.isDeviceReady()) {
             inputStream = serialPort.getInputStream();
             outputStream = serialPort.getOutputStream();
 
-            if(IsDecode)
-               new DeccodeThread().start();
+            if (IsDecode)
+                new DeccodeThread().start();
 
             new ReadThread().start();
-        } catch (IOException e) {
-            //PortStatus = false;
-            Log.e(TAG, "openPort: 打开串口异常：" + e.toString());
+        } else {
+            Log.e(TAG, "串口无法工作>>>>>");
             return false;
         }
-        Log.e(TAG, "openPort: 成功打开串口");
+
+        Log.d(TAG, "成功打开串口>>>>>>>>>");
         threadStatus = true; //线程状态
         return true;
     }
@@ -178,16 +183,14 @@ public class MySerialPort {
                 int size; //读取数据的大小
                 try {
                     size = inputStream.read(buffer);
-                    if (size > 0)
-                    {
+                    if (size > 0) {
                         //Log.e(TAG, "ReadThread: 收到数据："+String.valueOf(size)+"|" + ByteArrToHex(buffer));
 
-                        if(IsDecode) {
+                        if (IsDecode) {
                             for (int i = 0; i < size; i++)
                                 mDataQueue.add(buffer[i]);
-                        }else
-                        {
-                            onDataReceiveListener.onDataReceive(mContext,buffer, size);
+                        } else {
+                            onDataReceiveListener.onDataReceive(mContext, buffer, size);
                         }
 
                     }
@@ -214,8 +217,7 @@ public class MySerialPort {
                             byteArrayList.clear();
                             len = 0;
                             mCurrentByte = mDataQueue.remove();
-                            if ((mCurrentByte == 0x01) || (mCurrentByte == 0x02))
-                            {
+                            if ((mCurrentByte == 0x01) || (mCurrentByte == 0x02)) {
                                 byteArrayList.add(mCurrentByte);
                                 Byte aByte = mDataQueue.peek();
                                 if (aByte != null) {
@@ -338,7 +340,7 @@ public class MySerialPort {
                                 }
                                 // TODO: 2019/6/19 process data here.
                                 Log.i(TAG, "Dispatch Command: " + ByteArrToHex(cmd_pkt));
-                                onDataReceiveListener.onDataReceive(mContext,cmd_pkt, cmd_len);
+                                onDataReceiveListener.onDataReceive(mContext, cmd_pkt, cmd_len);
                             } else {
                                 len = 0;
                                 byteArrayList.clear();
@@ -360,7 +362,7 @@ public class MySerialPort {
     public OnDataReceiveListener onDataReceiveListener = null;
 
     public static interface OnDataReceiveListener {
-        public void onDataReceive(Context context,byte[] buffer, int size);
+        public void onDataReceive(Context context, byte[] buffer, int size);
     }
 
     public void setOnDataReceiveListener(OnDataReceiveListener dataReceiveListener) {
