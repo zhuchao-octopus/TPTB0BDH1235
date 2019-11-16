@@ -1064,6 +1064,18 @@ public class iflytekService extends AppService {
     }
 
     private void VoiceFeedback(String str) {
+
+        if(str.equals("蓝牙"))
+        {
+            mFeedback.feedback(str, Feedback.SILENCE);
+            return;
+        }
+        if(str.equals("模拟"))
+        {
+            mFeedback.feedback(str, Feedback.SILENCE);
+            return;
+        }
+
         if (str != null)
             mFeedback.feedback(str, Feedback.DIALOG);
         else if (action_music != null)
@@ -1073,8 +1085,6 @@ public class iflytekService extends AppService {
         else
             mFeedback.feedback("关键字错误", Feedback.DIALOG);
     }
-
-
 }
 
 

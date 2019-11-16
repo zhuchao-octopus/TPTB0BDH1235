@@ -70,7 +70,8 @@ import com.zhuchao.android.tianpu.databinding.ActivityMainBinding;
 import com.zhuchao.android.tianpu.services.MyService;
 import com.zhuchao.android.tianpu.services.iflytekService;
 import com.zhuchao.android.tianpu.utils.GlideMgr;
-
+import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnGlobalFocusChangeListener;
 import com.zhuchao.android.tianpu.utils.TimeHandler;
 import com.zhuchao.android.tianpu.utils.WallperHandler;
 import com.zhuchao.android.tianpu.views.dialogs.HotAppDialog;
@@ -87,7 +88,7 @@ import static com.zhuchao.android.tianpu.utils.PageType.MY_APP_TYPE;
 import static com.zhuchao.android.tianpu.utils.PageType.RECENT_TYPE;
 
 public class MainActivity extends Activity implements OnTouchListener, OnGlobalFocusChangeListener, NetChangedCallBack, View.OnLayoutChangeListener,
-        View.OnClickListener, TimeHandler.OnTimeDateListener, WallperHandler.OnWallperUpdateListener, AppsChangedCallback,
+        View.OnClickListener, TimeHandler.OnTimeDateListener, WallperHandler.OnWallperUpdateListener, AppsChangedCallback,ViewTreeObserver.OnGlobalLayoutListener,
         View.OnKeyListener, ServiceConnection {
     private Context mContext;
     public static final String bootVideo = "/system/media/boot.mp4";
@@ -101,8 +102,8 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     private final int CustomId = -1;    //客户号  (国内)  录入版
     private final String DeviceModelNumber = "750";//TVBOX 天谱
     private final String host = "http://www.gztpapp.cn:8976/";    //天谱  （节流）
-    private final String lunchname = "TP0BDK70Q";
-    private final String appName = "TP0BDK70Q";      //天谱 （国内万利达）
+    private final String lunchname = "TP0BDH1235";
+    private final String appName = "TP0BDH1235";      //天谱 （国内万利达）
 
 
     private HomeWatcherReceiver mHomeKeyReceiver = null;
@@ -556,6 +557,25 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     }
 
     @Override
+    public void onGlobalLayout() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                View rootview = MainActivity.this.getWindow().getDecorView();
+                View v = rootview.findFocus();
+                if (v != null) {
+                    ViewGroup root = (ViewGroup) rootview;
+                    Rect rect = new Rect();
+                    root.offsetDescendantRectToMyCoords(v, rect);
+                    if (rect.left > 0 && rect.right > 0) {
+                        setFocuseEffect(v);
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
     public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
         runOnUiThread(new Runnable() {
             @Override
@@ -583,9 +603,11 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         int focusVId = newFocus.getId();
 
         if (focusVId == R.id.fl7) {
+            String mac = netUtils.getMAC().toUpperCase();
+            binding.mac.setText(String.format("MAC: %s", mac));
             binding.mac.setVisibility(View.VISIBLE);
         } else {
-            //binding.mac.setVisibility(View.INVISIBLE);
+            binding.mac.setVisibility(View.INVISIBLE);
         }
 
         OldView = newFocus;
@@ -1721,7 +1743,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
      * 检查更新版本
      */
     private void checkSoftwareVersion() {
-        String url = getMyUrl("jhzBox/box/appOnlineVersion.do?versionNum=" + BuildConfig.VERSION_NAME + "&cy_versions_name=" + appName, DeviceModelNumber, netUtils.getDeviceID().toUpperCase(), CustomId, netUtils.getIP0(), netUtils.getChineseRegion(netUtils.getLocation()), lunchname);
+        String url = getMyUrl("jhzBox/box/appOnlineVersion.do?versionNum=" + BuildConfig.VERSION_NAME + "&cy_versions_name=" + appName + "&", DeviceModelNumber, netUtils.getDeviceID().toUpperCase(), CustomId, netUtils.getIP0(), netUtils.getChineseRegion(netUtils.getLocation()), lunchname);
         OkHttpUtils.request(url, new NormalRequestCallBack() {
             @Override
             public void onRequestComplete(String s, int i) {
