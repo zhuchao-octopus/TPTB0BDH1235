@@ -31,6 +31,8 @@ import com.zhuchao.android.video.OMedia;
 
 import java.util.List;
 
+import static com.zhuchao.android.tianpu.utils.TypeTool.CheckSumBytesAdd;
+
 public class MyService extends Service {
     private static int MicVolume = 0;
     private static int MusicVolume = 0;
@@ -107,6 +109,7 @@ public class MyService extends Service {
             CheckSerialPortEvent();
 
             sendCommand(I2SChanelApp);
+            QueryStateK50[9] = TypeTool.CheckSumBytesAdd(QueryStateK50, 9);
             sendCommand(QueryStateK50);
         }
     }
@@ -194,10 +197,8 @@ public class MyService extends Service {
         String suri = "android.resource://" + this.getApplicationContext().getPackageName() + "/" + resID;
         //Uri uri = Uri.parse(suri);
         AssetFileDescriptor afd = getResources().openRawResourceFd(resID);
-        OMedia video = new OMedia(suri, null, null);
-        video.with(this.getApplicationContext());
-        video.getmOPlayer().setSourceInfo(afd);
-        video.playInto(null);
+        OMedia audio = new OMedia();
+        audio.with(this.getApplicationContext()).play(afd);
     }
 
     private void CheckSerialPortEvent() {
@@ -400,11 +401,11 @@ public class MyService extends Service {
 
         //SetMusicVolume[7] = tbb[3];
         //SetMusicVolume[8] = tbb[2];
-        //SetMusicVolume[9] = com.zhuchao.android.tianpu.utils.TypeTool.BytesAdd(SetMusicVolume, 9);
+        //SetMusicVolume[9] = com.zhuchao.android.tianpu.utils.TypeTool.CheckSumBytesAdd(SetMusicVolume, 9);
 
         SetMusicVolumeK50[7] = tbb[3];
         SetMusicVolumeK50[8] = tbb[2];
-        SetMusicVolumeK50[9] = TypeTool.BytesAdd(SetMusicVolumeK50, 9);
+        SetMusicVolumeK50[9] = CheckSumBytesAdd(SetMusicVolumeK50, 9);
 
 
         ///MyPortDevice.sendBuffer(SetMusicVolume);

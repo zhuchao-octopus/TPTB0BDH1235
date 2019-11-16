@@ -834,11 +834,11 @@ public class iflytekService extends AppService {
 
                 //SetMicVolume[7] = tbb[3];
                 //SetMicVolume[8] = tbb[2];
-                //SetMicVolume[9] = com.zhuchao.android.tianpu.utils.TypeTool.BytesAdd(SetMicVolume, 9);
+                //SetMicVolume[9] = com.zhuchao.android.tianpu.utils.TypeTool.CheckSumBytesAdd(SetMicVolume, 9);
 
                 SetMicVolumeK50[7] = tbb[3];
                 SetMicVolumeK50[8] = tbb[2];
-                SetMicVolumeK50[9] = TypeTool.BytesAdd(SetMicVolumeK50, 9);
+                SetMicVolumeK50[9] = TypeTool.CheckSumBytesAdd(SetMicVolumeK50, 9);
 
                 //myServiceSendBytes(SetMicVolume);
                 SendBytesTo(SetMicVolumeK50);
@@ -854,11 +854,11 @@ public class iflytekService extends AppService {
                 tbb = TypeTool.intToBytes(vv);
                 //SetMicVolume[7] = tbb[3];
                 //SetMicVolume[8] = tbb[2];
-                //SetMicVolume[9] = com.zhuchao.android.tianpu.utils.TypeTool.BytesAdd(SetMicVolume, 9);
+                //SetMicVolume[9] = com.zhuchao.android.tianpu.utils.TypeTool.CheckSumBytesAdd(SetMicVolume, 9);
 
                 SetMicVolumeK50[7] = tbb[3];
                 SetMicVolumeK50[8] = tbb[2];
-                SetMicVolumeK50[9] = TypeTool.BytesAdd(SetMicVolumeK50, 9);
+                SetMicVolumeK50[9] = TypeTool.CheckSumBytesAdd(SetMicVolumeK50, 9);
 
                 //myServiceSendBytes(SetMicVolume);
                 SendBytesTo(SetMicVolumeK50);
@@ -874,11 +874,11 @@ public class iflytekService extends AppService {
 
                 //SetMusicVolume[7] = tbb[3];
                 //SetMusicVolume[8] = tbb[2];
-                //SetMusicVolume[9] = com.zhuchao.android.tianpu.utils.TypeTool.BytesAdd(SetMusicVolume, 9);
+                //SetMusicVolume[9] = com.zhuchao.android.tianpu.utils.TypeTool.CheckSumBytesAdd(SetMusicVolume, 9);
 
                 SetMusicVolumeK50[7] = tbb[3];
                 SetMusicVolumeK50[8] = tbb[2];
-                SetMusicVolumeK50[9] = TypeTool.BytesAdd(SetMusicVolumeK50, 9);
+                SetMusicVolumeK50[9] = TypeTool.CheckSumBytesAdd(SetMusicVolumeK50, 9);
 
                 //myServiceSendBytes(SetMusicVolume);
                 SendBytesTo(SetMusicVolumeK50);
@@ -894,11 +894,11 @@ public class iflytekService extends AppService {
 
                 //SetMusicVolume[7] = tbb[3];
                 //SetMusicVolume[8] = tbb[2];
-                //SetMusicVolume[9] = com.zhuchao.android.tianpu.utils.TypeTool.BytesAdd(SetMusicVolume, 9);
+                //SetMusicVolume[9] = com.zhuchao.android.tianpu.utils.TypeTool.CheckSumBytesAdd(SetMusicVolume, 9);
 
                 SetMusicVolumeK50[7] = tbb[3];
                 SetMusicVolumeK50[8] = tbb[2];
-                SetMusicVolumeK50[9] = TypeTool.BytesAdd(SetMusicVolumeK50, 9);
+                SetMusicVolumeK50[9] = TypeTool.CheckSumBytesAdd(SetMusicVolumeK50, 9);
 
                 //myServiceSendBytes(SetMusicVolume);
                 SendBytesTo(SetMusicVolumeK50);
@@ -913,55 +913,55 @@ public class iflytekService extends AppService {
             } else if (msg.what == 6) {
                 //MICEffetive[7] = 1;
                 //MICEffetive[8] = 0;
-                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.TypeTool.BytesAdd(MICEffetive, 9);
+                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.TypeTool.CheckSumBytesAdd(MICEffetive, 9);
                 MICEffetiveK50[7] = 1;
                 MICEffetiveK50[8] = 0;
-                MICEffetiveK50[9] = TypeTool.BytesAdd(MICEffetiveK50, 9);
+                MICEffetiveK50[9] = TypeTool.CheckSumBytesAdd(MICEffetiveK50, 9);
                 //myServiceSendBytes(MICEffetive);
                 SendBytesTo(MICEffetiveK50);
             } else if (msg.what == 7) {
                 //MICEffetive[7] = 2;
                 //MICEffetive[8] = 0;
-                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.TypeTool.BytesAdd(MICEffetive, 9);
+                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.TypeTool.CheckSumBytesAdd(MICEffetive, 9);
                 MICEffetiveK50[7] = 2;
                 MICEffetiveK50[8] = 0;
-                MICEffetiveK50[9] = TypeTool.BytesAdd(MICEffetiveK50, 9);
+                MICEffetiveK50[9] = TypeTool.CheckSumBytesAdd(MICEffetiveK50, 9);
                 //myServiceSendBytes(MICEffetive);
                 SendBytesTo(MICEffetiveK50);
             } else if (msg.what == 8) {
                 //MICEffetive[7] = 3;
                 //MICEffetive[8] = 0;
-                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.TypeTool.BytesAdd(MICEffetive, 9);
+                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.TypeTool.CheckSumBytesAdd(MICEffetive, 9);
                 MICEffetiveK50[7] = 3;
                 MICEffetiveK50[8] = 0;
-                MICEffetiveK50[9] = TypeTool.BytesAdd(MICEffetiveK50, 9);
+                MICEffetiveK50[9] = TypeTool.CheckSumBytesAdd(MICEffetiveK50, 9);
                 //myServiceSendBytes(MICEffetive);
                 SendBytesTo(MICEffetiveK50);
             } else if (msg.what == 9) {
                 //MICEffetive[7] = 4;
                 //MICEffetive[8] = 0;
-                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.TypeTool.BytesAdd(MICEffetive, 9);
+                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.TypeTool.CheckSumBytesAdd(MICEffetive, 9);
                 MICEffetiveK50[7] = 4;
                 MICEffetiveK50[8] = 0;
-                MICEffetiveK50[9] = TypeTool.BytesAdd(MICEffetiveK50, 9);
+                MICEffetiveK50[9] = TypeTool.CheckSumBytesAdd(MICEffetiveK50, 9);
                 //myServiceSendBytes(MICEffetive);
                 SendBytesTo(MICEffetiveK50);
             } else if (msg.what == 10) {
                 //MICEffetive[7] = 5;
                 //MICEffetive[8] = 0;
-                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.TypeTool.BytesAdd(MICEffetive, 9);
+                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.TypeTool.CheckSumBytesAdd(MICEffetive, 9);
                 MICEffetiveK50[7] = 5;
                 MICEffetiveK50[8] = 0;
-                MICEffetiveK50[9] = TypeTool.BytesAdd(MICEffetiveK50, 9);
+                MICEffetiveK50[9] = TypeTool.CheckSumBytesAdd(MICEffetiveK50, 9);
                 //myServiceSendBytes(MICEffetive);
                 SendBytesTo(MICEffetiveK50);
             } else if (msg.what == 11) {
                 //MICEffetive[7] = 6;
                 //MICEffetive[8] = 0;
-                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.TypeTool.BytesAdd(MICEffetive, 9);
+                //MICEffetive[9] = com.zhuchao.android.tianpu.utils.TypeTool.CheckSumBytesAdd(MICEffetive, 9);
                 MICEffetiveK50[7] = 6;
                 MICEffetiveK50[8] = 0;
-                MICEffetiveK50[9] = TypeTool.BytesAdd(MICEffetiveK50, 9);
+                MICEffetiveK50[9] = TypeTool.CheckSumBytesAdd(MICEffetiveK50, 9);
                 //myServiceSendBytes(MICEffetive);
                 SendBytesTo(MICEffetiveK50);
             } else if (msg.what == 12) {

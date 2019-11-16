@@ -48,7 +48,7 @@ public class TypeTool {
         return String.format("%02x", new Object[]{inByte}).toUpperCase();
     }
 
-    public static byte BytesAdd(byte[] inBytArr,int count)
+    public static byte CheckSumBytesAdd(byte[] inBytArr, int count)
     {
         byte aa=0;
 
