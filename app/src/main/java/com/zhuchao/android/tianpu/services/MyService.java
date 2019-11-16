@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.AssetFileDescriptor;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,7 +23,6 @@ import com.zhuchao.android.libfilemanager.devices.MySerialPort;
 import com.zhuchao.android.tianpu.R;
 import com.zhuchao.android.tianpu.utils.ForegroundAppUtil;
 import com.zhuchao.android.tianpu.utils.TypeTool;
-import com.zhuchao.android.tianpu.views.dialogs.Mac_Dialog;
 import com.zhuchao.android.tianpu.views.dialogs.MusicDialog;
 import com.zhuchao.android.tianpu.views.dialogs.Sound_Effect_Dialog;
 import com.zhuchao.android.video.OMedia;
@@ -34,43 +32,30 @@ import java.util.List;
 import static com.zhuchao.android.tianpu.utils.TypeTool.CheckSumBytesAdd;
 
 public class MyService extends Service {
+    private final String TAG = "MyService";
     private static int MicVolume = 0;
     private static int MusicVolume = 0;
-    private static String mTopPackageName;
-    private final String TAG = "MyService";
+    //private static String mTopPackageName;
+
     private MySerialPort myPortDevice = new MySerialPort(this);
     private byte[] SerialPortReceiveBuffer;
     private String data;
-    private Handler SerialPortReceivehandler;
+    private Handler PortReceiveHandle;
     private MusicDialog dialog;
-    private Sound_Effect_Dialog sdialog;
-    private Mac_Dialog mdialog;
+    private Sound_Effect_Dialog sDialog;
+    //private Mac_Dialog mdialog;
     private Callback actionCallback;
-    private byte[] bytes;
-    private int h = 0;
+    //private byte[] bytes;
+    //private int h = 0;
     private MyReceiver myReceiver = null;
     //private String mType = "";
     private byte tbb[] = {0, 0, 0, 0};
-    private byte[] SetMusicVolume = {0x02, 0x01, 0x02, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x0b, 0x7E};//设置音乐音量  K70//
+    //private byte[] SetMusicVolume = {0x02, 0x01, 0x02, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x0b, 0x7E};//设置音乐音量  K70//
     private byte[] SetMusicVolumeK50 = {0x01, 0x01, 0x02, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x0a, 0x7E};//设置音乐音量  K50
     private byte[] I2SChanelApp = {0x01, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x09, 0x7E};//最后使用的app  K50
     private byte[] QueryStateK50 = {0x01, 0x01, 0x06, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x09, 0x7E};//初始状态  K50
     private boolean isCharging = false;
-    private MediaPlayer mMediaPlayer = null;
-    private Handler handler = new Handler();
-    private Runnable r = new Runnable() {
-        @Override
-        public void run() {
-            mTopPackageName = ForegroundAppUtil.getForegroundActivityName(getApplicationContext());
-            //Toast.makeText(getApplicationContext(), foregroundActivityName, Toast.LENGTH_SHORT).show();
 
-            handler.postDelayed(r, 1000);
-        }
-    };
-
-    public static String GetTopPackageName() {
-        return mTopPackageName;
-    }
 
     public static int getMicVolume() {
         return MicVolume;
@@ -92,7 +77,7 @@ public class MyService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        SerialPortReceivehandler = new Handler() {
+        PortReceiveHandle = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
@@ -102,8 +87,7 @@ public class MyService extends Service {
         //boolean bRet = myPortDevice.openPort("/dev/ttyS0", 9600, true);
         boolean bRet = myPortDevice.openPort("/dev/ttyS1", 9600, true);
 
-        if (bRet)
-        {
+        if (bRet) {
             CheckSerialPortEvent();
             sendCommand(I2SChanelApp);
             QueryStateK50[9] = TypeTool.CheckSumBytesAdd(QueryStateK50, 9);
@@ -114,10 +98,15 @@ public class MyService extends Service {
     public void sendCommand(byte[] bytes) {
         try {
             myPortDevice.sendBuffer(bytes);
-            Log.i("MyService "+myPortDevice.getDevicePath()+" 发送数据:", TypeTool.ByteArrToHexStr(bytes, 0, bytes.length));
+            Log.i("MyService " + myPortDevice.getDevicePath() + " 发送数据:", TypeTool.ByteArrToHexStr(bytes, 0, bytes.length));
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Nullable
@@ -126,19 +115,9 @@ public class MyService extends Service {
         return new Binder();
     }
 
-    public void setActionCallback(Callback actionCallback) {
-        this.actionCallback = actionCallback;
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        //handler.postDelayed(r, 1000);
-        return START_STICKY;
     }
 
 
@@ -189,14 +168,6 @@ public class MyService extends Service {
         }
 
     };
-
-    private void playMusic(final Context c, final int resID) {
-        String suri = "android.resource://" + this.getApplicationContext().getPackageName() + "/" + resID;
-        //Uri uri = Uri.parse(suri);
-        AssetFileDescriptor afd = getResources().openRawResourceFd(resID);
-        OMedia audio = new OMedia();
-        audio.with(this.getApplicationContext()).play(afd);
-    }
 
     private void CheckSerialPortEvent() {
         //串口数据监听事件
@@ -278,8 +249,8 @@ public class MyService extends Service {
                 }
 
 
-                if (null != SerialPortReceivehandler) {
-                    SerialPortReceivehandler.post(runnable);
+                if (null != PortReceiveHandle) {
+                    PortReceiveHandle.post(runnable);
                 } else {
                     Log.i("onDataReceive", "Data lost");
                 }
@@ -373,41 +344,34 @@ public class MyService extends Service {
     }
 
     private void showEffectDialog(int direction, String type) {
-        if (sdialog == null || sdialog.isShowing() != true) {
-            sdialog = new Sound_Effect_Dialog(this);
-            //sdialog.setVolumeAdjustListener();
-            sdialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-            sdialog.show();
+        if (sDialog == null || sDialog.isShowing() != true) {
+            sDialog = new Sound_Effect_Dialog(this);
+            //sDialog.setVolumeAdjustListener();
+            sDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+            sDialog.show();
         }
-        sdialog.adjustVolume(direction, true, type);
+        sDialog.adjustVolume(direction, true, type);
     }
 
     private void showEffectDialog3(int resID, int v, String Str, String type) {
-        if (sdialog == null || sdialog.isShowing() != true) {
-            sdialog = new Sound_Effect_Dialog(this);
-            sdialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-            sdialog.show();
+        if (sDialog == null || sDialog.isShowing() != true) {
+            sDialog = new Sound_Effect_Dialog(this);
+            sDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+            sDialog.show();
         }
-        sdialog.adjustVolume(v, true, type);
-        sdialog.setContentValue(resID, Str);
+        sDialog.adjustVolume(v, true, type);
+        sDialog.setContentValue(resID, Str);
 
     }
 
     private void setVolume(int i) {
         tbb = TypeTool.intToBytes(i);
 
-        //SetMusicVolume[7] = tbb[3];
-        //SetMusicVolume[8] = tbb[2];
-        //SetMusicVolume[9] = com.zhuchao.android.tianpu.utils.TypeTool.CheckSumBytesAdd(SetMusicVolume, 9);
-
         SetMusicVolumeK50[7] = tbb[3];
         SetMusicVolumeK50[8] = tbb[2];
         SetMusicVolumeK50[9] = CheckSumBytesAdd(SetMusicVolumeK50, 9);
 
-
-        ///myPortDevice.sendBuffer(SetMusicVolume);
         myPortDevice.sendBuffer(SetMusicVolumeK50);
-        //Log.e("myPortDevice", com.zhuchao.android.tianpu.utils.TypeTool.ByteArrToHexStr(bytes, 0, bytes.length));
     }
 
     private boolean isTopActivity(String packageName) {
@@ -431,7 +395,19 @@ public class MyService extends Service {
         return false;
     }
 
-    public static interface Callback {
+    public void setActionCallback(Callback actionCallback) {
+        this.actionCallback = actionCallback;
+    }
+
+    private void playMusic(final Context c, final int resID) {
+        String suri = "android.resource://" + this.getApplicationContext().getPackageName() + "/" + resID;
+        //Uri uri = Uri.parse(suri);
+        AssetFileDescriptor afd = getResources().openRawResourceFd(resID);
+        OMedia audio = new OMedia();
+        audio.with(this.getApplicationContext()).play(afd);
+    }
+
+    public interface Callback {
         void onDataChange(String data);
     }
 
