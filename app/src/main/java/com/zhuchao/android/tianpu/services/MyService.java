@@ -38,7 +38,7 @@ public class MyService extends Service {
     private static int MusicVolume = 0;
     private static String mTopPackageName;
     private final String TAG = "MyService";
-    private MySerialPort MyPortDevice = new MySerialPort(this);
+    private MySerialPort myPortDevice = new MySerialPort(this);
     private byte[] SerialPortReceiveBuffer;
     private String data;
     private Handler SerialPortReceivehandler;
@@ -48,7 +48,7 @@ public class MyService extends Service {
     private Callback actionCallback;
     private byte[] bytes;
     private int h = 0;
-    private MyReceiver receiver = null;
+    private MyReceiver myReceiver = null;
     //private String mType = "";
     private byte tbb[] = {0, 0, 0, 0};
     private byte[] SetMusicVolume = {0x02, 0x01, 0x02, 0x00, 0x00, 0x02, 0x00, 0x04, 0x00, 0x0b, 0x7E};//设置音乐音量  K70//
@@ -99,15 +99,12 @@ public class MyService extends Service {
             }
         };
 
-        //boolean bRet = MyPortDevice.openPort("/dev/ttyS0", 9600, true);
-        boolean bRet = MyPortDevice.openPort("/dev/ttyS1", 9600, true);
+        //boolean bRet = myPortDevice.openPort("/dev/ttyS0", 9600, true);
+        boolean bRet = myPortDevice.openPort("/dev/ttyS1", 9600, true);
 
-        if (bRet == false) {
-            Log.e("Service", "onCreate：串口打开失败！！！！！");
-        } else {
-            Log.e("Service", "onCreate：串口打开成功！！！！！");
+        if (bRet)
+        {
             CheckSerialPortEvent();
-
             sendCommand(I2SChanelApp);
             QueryStateK50[9] = TypeTool.CheckSumBytesAdd(QueryStateK50, 9);
             sendCommand(QueryStateK50);
@@ -116,8 +113,8 @@ public class MyService extends Service {
 
     public void sendCommand(byte[] bytes) {
         try {
-            MyPortDevice.sendBuffer(bytes);
-            Log.i("MyService.发送数据", TypeTool.ByteArrToHexStr(bytes, 0, bytes.length));
+            myPortDevice.sendBuffer(bytes);
+            Log.i("MyService "+myPortDevice.getDevicePath()+" 发送数据:", TypeTool.ByteArrToHexStr(bytes, 0, bytes.length));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -203,7 +200,7 @@ public class MyService extends Service {
 
     private void CheckSerialPortEvent() {
         //串口数据监听事件
-        MyPortDevice.setOnDataReceiveListener(new MySerialPort.OnDataReceiveListener() {
+        myPortDevice.setOnDataReceiveListener(new MySerialPort.OnDataReceiveListener() {
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
@@ -408,9 +405,9 @@ public class MyService extends Service {
         SetMusicVolumeK50[9] = CheckSumBytesAdd(SetMusicVolumeK50, 9);
 
 
-        ///MyPortDevice.sendBuffer(SetMusicVolume);
-        MyPortDevice.sendBuffer(SetMusicVolumeK50);
-        //Log.e("MyPortDevice", com.zhuchao.android.tianpu.utils.TypeTool.ByteArrToHexStr(bytes, 0, bytes.length));
+        ///myPortDevice.sendBuffer(SetMusicVolume);
+        myPortDevice.sendBuffer(SetMusicVolumeK50);
+        //Log.e("myPortDevice", com.zhuchao.android.tianpu.utils.TypeTool.ByteArrToHexStr(bytes, 0, bytes.length));
     }
 
     private boolean isTopActivity(String packageName) {
@@ -441,11 +438,11 @@ public class MyService extends Service {
     public class Binder extends android.os.Binder {  //
         public MyService getService() {
 
-            receiver = new MyReceiver();
+            myReceiver = new MyReceiver();
             IntentFilter filter = new IntentFilter();
             filter.addAction("com.iflytek.xiri2.hal.volume");
             filter.addAction("com.iflytek.xiri2.hal.iflytekService");
-            registerReceiver(receiver, filter);
+            registerReceiver(myReceiver, filter);
             return MyService.this;
         }
 
