@@ -30,6 +30,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalFocusChangeListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -50,7 +51,6 @@ import com.zhuchao.android.databaseutil.SPreference;
 import com.zhuchao.android.libfilemanager.AppsChangedCallback;
 import com.zhuchao.android.libfilemanager.MyAppsManager;
 import com.zhuchao.android.libfilemanager.bean.AppInfor;
-import com.zhuchao.android.libfilemanager.devices.MySerialPort;
 import com.zhuchao.android.netutil.NetUtils;
 import com.zhuchao.android.netutil.NetUtils.NetChangedCallBack;
 import com.zhuchao.android.netutil.OkHttpUtils;
@@ -70,8 +70,7 @@ import com.zhuchao.android.tianpu.databinding.ActivityMainBinding;
 import com.zhuchao.android.tianpu.services.MyService;
 import com.zhuchao.android.tianpu.services.iflytekService;
 import com.zhuchao.android.tianpu.utils.GlideMgr;
-import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnGlobalFocusChangeListener;
+import com.zhuchao.android.tianpu.utils.ScreenUtils;
 import com.zhuchao.android.tianpu.utils.TimeHandler;
 import com.zhuchao.android.tianpu.utils.WallperHandler;
 import com.zhuchao.android.tianpu.views.dialogs.HotAppDialog;
@@ -87,8 +86,8 @@ import static com.zhuchao.android.libfilemanager.MyAppsManager.ADDTOMYAPPS_ACTIO
 import static com.zhuchao.android.tianpu.utils.PageType.MY_APP_TYPE;
 import static com.zhuchao.android.tianpu.utils.PageType.RECENT_TYPE;
 
-public class MainActivity extends Activity implements OnTouchListener, OnGlobalFocusChangeListener, NetChangedCallBack, View.OnLayoutChangeListener,
-        View.OnClickListener, TimeHandler.OnTimeDateListener, WallperHandler.OnWallperUpdateListener, AppsChangedCallback,ViewTreeObserver.OnGlobalLayoutListener,
+public class MainActivity extends Activity implements OnTouchListener, OnGlobalFocusChangeListener, NetChangedCallBack,
+        View.OnClickListener, TimeHandler.OnTimeDateListener, WallperHandler.OnWallperUpdateListener, AppsChangedCallback, ViewTreeObserver.OnGlobalLayoutListener,
         View.OnKeyListener, ServiceConnection {
     private Context mContext;
     public static final String bootVideo = "/system/media/boot.mp4";
@@ -171,7 +170,8 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     private NetUtils netUtils = null;
     private MyAppsManager myAppsManager = null;
 
-
+    private int mMainLayoutHeight = 0;
+    //private int mNavigateStatus = 0;
     public static void sendKeyEvent(final int KeyCode) {
         new Thread() {     //不可在主线程中调用
             public void run() {
@@ -260,6 +260,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         binding.ad.setOnTouchListener(this);
 
         binding.mainRl.getViewTreeObserver().addOnGlobalFocusChangeListener(this);
+        binding.mainRl.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
         flItems = new FrameLayout[]{binding.fl1, binding.fl2, binding.fl4};//需要下载k歌，腾讯视频，qq音乐
         pbItems = new ProgressBar[]{binding.progressBar1, binding.progressBar2, binding.progressBar9};
@@ -324,6 +325,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     @Override
     protected void onResume() {
         super.onResume();
+
         pauseSystemMusic();
         binding.adBg.startAutoPlay();
         registerHomeKeyReceiver(this);
@@ -403,9 +405,8 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 case KeyEvent.KEYCODE_MENU:
                     //Toast.makeText(mContext, "menu1", Toast.LENGTH_SHORT).show();
                     //OnMainPageViewClick(v, keyCode, false);
-                    if(v.getId() == R.id.fl2)
-                    {
-                        ShowHotAppDialog(v.getTag(),  R.id.fl2);
+                    if (v.getId() == R.id.fl2) {
+                        ShowHotAppDialog(v.getTag(), R.id.fl2);
                     }
                     break;
                 case KeyEvent.KEYCODE_DPAD_DOWN:
@@ -558,40 +559,34 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
     @Override
     public void onGlobalLayout() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                View rootview = MainActivity.this.getWindow().getDecorView();
-                View v = rootview.findFocus();
-                if (v != null) {
-                    ViewGroup root = (ViewGroup) rootview;
-                    Rect rect = new Rect();
-                    root.offsetDescendantRectToMyCoords(v, rect);
-                    if (rect.left > 0 && rect.right > 0) {
-                        setFocuseEffect(v);
-                    }
-                }
-            }
-        });
-    }
+        if (mMainLayoutHeight <= 100)
+           mMainLayoutHeight = binding.mainRl.getHeight();
 
-    @Override
-    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                View rootview = MainActivity.this.getWindow().getDecorView();
-                View v = rootview.findFocus();
-                if (v != null) {
-                    ViewGroup root = (ViewGroup) rootview;
-                    Rect rect = new Rect();
-                    root.offsetDescendantRectToMyCoords(v, rect);
-                    if (rect.left > 0 && rect.right > 0) {
-                        setFocuseEffect(v);
-                    }
+        int height = binding.mainRl.getHeight();
+        int sHeight = ScreenUtils.getNavigationBarHeight(this);
+        if (Math.abs ((mMainLayoutHeight - height)) == sHeight) {
+            //mNavigateStatus = 1;
+            mMainLayoutHeight = binding.mainRl.getHeight();
+            new Thread() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        View rootview = MainActivity.this.getWindow().getDecorView();
+                        View v = rootview.findFocus();
+                        @Override
+                        public void run() {
+                            if (v != null) {
+                                Rect rect = new Rect();
+                                ((ViewGroup) rootview).offsetDescendantRectToMyCoords(v, rect);
+                                if (rect.left > 0 && rect.right > 0) {
+                                    setFocuseEffect(v);
+                                }
+                            }
+                        }
+                    });
                 }
-            }
-        });
+            }.start();
+        }
     }
 
 
