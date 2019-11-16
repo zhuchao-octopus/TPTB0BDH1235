@@ -621,6 +621,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 selEffectBridge.setUpRectResource(R.drawable.home_sel_btn0);
                 selEffectBridge.setVisibleWidget(false);
                 binding.mainUpView.setFocusView(newFocus, oldFocus, 1.1f);
+                if(oldFocus !=null)
+                oldFocus.animate().scaleX(1.0f).scaleY(1.0f).start();
+                newFocus.animate().scaleX(1.2f).scaleY(1.2f).start();
                 newFocus.bringToFront();
                 break;
             case R.id.fl5: //中央
