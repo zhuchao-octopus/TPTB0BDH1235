@@ -16,7 +16,7 @@
 			android:layout_height="match_parent"
 			android:scaleType="fitXY"
 			android:src="@drawable/battery_warnning"
-			android:visibility="gone" />
+			android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/iv_bg"
