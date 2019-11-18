@@ -10,6 +10,13 @@
         android:fitsSystemWindows="true"
         android:focusable="true">
 
+		<ImageView
+			android:id="@+id/iv_bwi"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:scaleType="fitXY"
+			android:src="@drawable/battery_warnning"
+			android:visibility="gone" />
 
         <ImageView
             android:id="@+id/iv_bg"

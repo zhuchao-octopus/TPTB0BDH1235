@@ -617,13 +617,13 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             case R.id.fl3:
             case R.id.fl6:
             case R.id.fl7:
-            case R.id.fl8:
+            case R.id.fl8://最下面一排
                 selEffectBridge.setUpRectResource(R.drawable.home_sel_btn0);
                 selEffectBridge.setVisibleWidget(false);
                 binding.mainUpView.setFocusView(newFocus, oldFocus, 1.1f);
-                if(oldFocus !=null)
+                /*if(oldFocus !=null)
                 oldFocus.animate().scaleX(1.0f).scaleY(1.0f).start();
-                newFocus.animate().scaleX(1.2f).scaleY(1.2f).start();
+                newFocus.animate().scaleX(1.2f).scaleY(1.2f).start();*/
                 newFocus.bringToFront();
                 break;
             case R.id.fl5: //中央
@@ -639,6 +639,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 selEffectBridge.setUpRectResource(R.drawable.bgmbgm);
                 selEffectBridge.setVisibleWidget(false);
                 binding.mainUpView.setFocusView(newFocus, oldFocus, 1.1f);
+                /*if(oldFocus !=null)
+                    oldFocus.animate().scaleX(1.0f).scaleY(1.0f).start();
+                newFocus.animate().scaleX(1.2f).scaleY(1.2f).start();*/
                 newFocus.bringToFront();
                 break;
 
@@ -649,8 +652,13 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 newFocus.bringToFront();
                 break;
             case R.id.fl14:
-            case R.id.fl15:
                 selEffectBridge.setUpRectResource(R.drawable.home_sel_btn1);
+                selEffectBridge.setVisibleWidget(false);
+                binding.mainUpView.setFocusView(newFocus, oldFocus, 1.0f);
+                newFocus.bringToFront();
+                break;
+            case R.id.fl15:
+                selEffectBridge.setUpRectResource(R.drawable.right);
                 selEffectBridge.setVisibleWidget(false);
                 binding.mainUpView.setFocusView(newFocus, oldFocus, 1.0f);
                 newFocus.bringToFront();
@@ -866,7 +874,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bgIv111.setImageResource(R.drawable.xaa);
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv115.setImageResource(R.drawable.xae);
-                binding.bgIv5.setImageResource(R.drawable.tz);
+                //binding.bgIv5.setImageResource(R.drawable.tz);
                 binding.bluetooth.setVisibility(View.GONE);
                 TheLastSourceType = "同轴";
                 binding.bgIcon.setVisibility(View.GONE);
@@ -881,7 +889,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv115.setImageResource(R.drawable.xae);
-                binding.bgIv5.setImageResource(R.drawable.opt);
+                //binding.bgIv5.setImageResource(R.drawable.opt);
                 binding.bluetooth.setVisibility(View.GONE);
                 TheLastSourceType = "光纤";
                 binding.bgIcon.setVisibility(View.GONE);
@@ -943,7 +951,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                         binding.bluetooth.setVisibility(View.VISIBLE);
                         binding.bluetooth.setImageResource(R.drawable.bluetoothno);
                         binding.bgIcon.setVisibility(View.GONE);
-                    } else if (TheLastSourceType.equals("同轴")) {
+                    /*} else if (TheLastSourceType.equals("同轴")) {
                         binding.ivFill.setVisibility(View.VISIBLE);
                         binding.ivFill.setImageResource(R.drawable.btz);
                         binding.bluetooth.setVisibility(View.GONE);
@@ -953,7 +961,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                         binding.ivFill.setVisibility(View.VISIBLE);
                         binding.ivFill.setImageResource(R.drawable.bopt);
                         binding.bluetooth.setVisibility(View.GONE);
-                        binding.bgIcon.setVisibility(View.GONE);
+                        binding.bgIcon.setVisibility(View.GONE);*/
                     } else if (TheLastSourceType.equals("模拟")) {
                         binding.ivFill.setVisibility(View.VISIBLE);
                         binding.ivFill.setImageResource(R.drawable.bmn);
@@ -1024,7 +1032,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bgIv115.setImageResource(R.drawable.xae);
                 binding.bgIcon.setVisibility(View.GONE);
 
-                binding.bgIv5.setImageResource(R.drawable.mn);
+                //binding.bgIv5.setImageResource(R.drawable.mn);
                 binding.fl14.requestFocus();
                 binding.ivFill.setImageResource(R.drawable.bmn);
                 binding.bluetooth.setVisibility(View.INVISIBLE);
@@ -1041,7 +1049,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bgIv115.setImageResource(R.drawable.xae);
                 binding.bgIcon.setVisibility(View.GONE);
 
-                binding.bgIv5.setImageResource(R.drawable.opt);
+                //binding.bgIv5.setImageResource(R.drawable.opt);
                 binding.fl13.requestFocus();
                 //}else
                 binding.ivFill.setImageResource(R.drawable.bopt);
@@ -1861,7 +1869,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 pauseSystemMusic();
                 onClick(binding.fl13);
                 //launchApp("com.h3launcher");
-            } else if ((_action.contains("输入")) || (_action.contains("Line in")) || (_action.contains("模拟"))) {
+             } else if ((_action.contains("输入")) || (_action.contains("Line in")) || (_action.contains("模拟"))) {
                 pauseSystemMusic();
                 onClick(binding.fl14);
             } else if (_action.contains("USB") || _action.contains("U盘") || _action.contains("TF卡") || _action.contains("优盘") || _action.contains("卡")) {
@@ -1934,18 +1942,18 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 isCharging = intent.getBooleanExtra("isCharge", false);
                 if (isCharging) {
                     binding.ivBattery.setImageResource(R.drawable.charge);
-                    //binding.bgIv5.setVisibility(View.INVISIBLE);
+                    binding.ivBwi.setVisibility(View.INVISIBLE);
                 } else {
-                    binding.bgIv5.setVisibility(View.VISIBLE);
+                    binding.ivBwi.setVisibility(View.VISIBLE);
                 }
             } else if (action.equals(ACTION_BATTERY_INFO) && !isCharging) {
                 int value = intent.getIntExtra("value", -1);
                 binding.ivBattery.setVisibility(View.VISIBLE);
-                binding.bgIv5.setVisibility(View.VISIBLE);
+                binding.ivBwi.setVisibility(View.VISIBLE);
 
                 if ((value < 5)) {
-                    binding.bgIv5.setVisibility(View.VISIBLE);
-                    binding.bgIv5.setImageResource(R.drawable.battery_warnning);
+                    binding.ivBwi.setVisibility(View.VISIBLE);
+                    binding.ivBwi.setImageResource(R.drawable.battery_warnning);
                 }
                 if (value < 10) {
                     binding.ivBattery.setImageResource(R.drawable.lowbattery);

@@ -1065,12 +1065,12 @@ public class iflytekService extends AppService {
 
     private void VoiceFeedback(String str) {
 
-        if(str.equals("蓝牙"))
+        if(str.contains("蓝牙"))
         {
             mFeedback.feedback(str, Feedback.SILENCE);
             return;
         }
-        if(str.equals("模拟"))
+        if(str.contains("模拟"))
         {
             mFeedback.feedback(str, Feedback.SILENCE);
             return;
