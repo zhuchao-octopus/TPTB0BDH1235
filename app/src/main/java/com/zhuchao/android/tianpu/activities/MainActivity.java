@@ -171,6 +171,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     private MyAppsManager myAppsManager = null;
 
     private int mMainLayoutHeight = 0;
+
     //private int mNavigateStatus = 0;
     public static void sendKeyEvent(final int KeyCode) {
         new Thread() {     //不可在主线程中调用
@@ -560,11 +561,11 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     @Override
     public void onGlobalLayout() {
         if (mMainLayoutHeight <= 100)
-           mMainLayoutHeight = binding.mainRl.getHeight();
+            mMainLayoutHeight = binding.mainRl.getHeight();
 
         int height = binding.mainRl.getHeight();
         int sHeight = ScreenUtils.getNavigationBarHeight(this);
-        if (Math.abs ((mMainLayoutHeight - height)) == sHeight) {
+        if (Math.abs((mMainLayoutHeight - height)) == sHeight) {
             //mNavigateStatus = 1;
             mMainLayoutHeight = binding.mainRl.getHeight();
             new Thread() {
@@ -573,6 +574,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                     runOnUiThread(new Runnable() {
                         View rootview = MainActivity.this.getWindow().getDecorView();
                         View v = rootview.findFocus();
+
                         @Override
                         public void run() {
                             if (v != null) {
@@ -1869,7 +1871,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 pauseSystemMusic();
                 onClick(binding.fl13);
                 //launchApp("com.h3launcher");
-             } else if ((_action.contains("输入")) || (_action.contains("Line in")) || (_action.contains("模拟"))) {
+            } else if ((_action.contains("输入")) || (_action.contains("Line in")) || (_action.contains("模拟"))) {
                 pauseSystemMusic();
                 onClick(binding.fl14);
             } else if (_action.contains("USB") || _action.contains("U盘") || _action.contains("TF卡") || _action.contains("优盘") || _action.contains("卡")) {
@@ -1915,15 +1917,11 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             //Log.i(LOG_TAG, "onReceive: action: " + action);
-            if (action.equals(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)) {
-                // android.intent.action.CLOSE_SYSTEM_DIALOGS
+            if (action.equals(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
+            {
                 String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
-
-                //Log.i(LOG_TAG, "reason: " + reason);
-
                 if (SYSTEM_DIALOG_REASON_HOME_KEY.equals(reason)) {
                     // 短按Home键
-                    //Log.i(LOG_TAG, "homekey");
                     binding.ivFill.setVisibility(View.GONE);
                 } else if (SYSTEM_DIALOG_REASON_RECENT_APPS.equals(reason)) {
                     // 长按Home键 或者 activity切换键
@@ -1931,14 +1929,16 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                     //binding.ivFill.setVisibility(View.GONE);
                 } else if (SYSTEM_DIALOG_REASON_LOCK.equals(reason)) {
                     // 锁屏
-                    //binding.ivFill.setVisibility(View.GONE);
                     //Log.i(LOG_TAG, "lock");
                 } else if (SYSTEM_DIALOG_REASON_ASSIST.equals(reason)) {
                     // samsung 长按Home键
                     binding.ivFill.setVisibility(View.GONE);
-                    //Log.i(LOG_TAG, "assist");
                 }
-            } else if (action.equals(ACTION_BATTERY_CHARGE)) {
+                return;
+            }
+
+            if (action.equals(ACTION_BATTERY_CHARGE))
+            {
                 isCharging = intent.getBooleanExtra("isCharge", false);
                 if (isCharging) {
                     binding.ivBattery.setImageResource(R.drawable.charge);
@@ -1946,7 +1946,11 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 } else {
                     binding.ivBwi.setVisibility(View.VISIBLE);
                 }
-            } else if (action.equals(ACTION_BATTERY_INFO) && !isCharging) {
+                return;
+            }
+
+            if (action.equals(ACTION_BATTERY_INFO) && !isCharging)
+            {
                 int value = intent.getIntExtra("value", -1);
                 binding.ivBattery.setVisibility(View.VISIBLE);
                 binding.ivBwi.setVisibility(View.VISIBLE);
@@ -1954,6 +1958,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 if ((value < 5)) {
                     binding.ivBwi.setVisibility(View.VISIBLE);
                     binding.ivBwi.setImageResource(R.drawable.battery_warnning);
+                    binding.ivBwi.bringToFront();
                 }
                 if (value < 10) {
                     binding.ivBattery.setImageResource(R.drawable.lowbattery);
@@ -1967,8 +1972,11 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 else if (value > 80)
                     binding.ivBattery.setImageResource(R.drawable.cell4);
 
+                return;
+            }
 
-            } else if (action.equals("BLUTOOLTH_STATUS")) {
+            if (action.equals("BLUTOOLTH_STATUS"))
+            {
                 blutoothConnected = intent.getBooleanExtra("BLUTOOLTH_STATUS", false);
                 if (blutoothConnected) {
                     binding.bluetooth.setVisibility(View.VISIBLE);
@@ -1977,9 +1985,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                     binding.bluetooth.setVisibility(View.VISIBLE);
                     binding.bluetooth.setImageResource(R.drawable.bluetoothno);
                 }
-            } else if (action.equals("COMMAND_DATA")) {
-                openSettings();
+                return;
             }
+
         }
     }
 

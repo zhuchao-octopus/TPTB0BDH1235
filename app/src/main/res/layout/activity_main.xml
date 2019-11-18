@@ -82,7 +82,6 @@
                     android:layout_height="25.0dip"
                     android:layout_gravity="center_horizontal"
                     android:src="@drawable/icon_iv1" />
-                // 搜索
 
                 <TextView
                     android:id="@+id/top_tv1"
@@ -123,15 +122,15 @@
                 android:layout_marginRight="20.0dip"
                 android:layout_toLeftOf="@id/iv_battery" />
 
-            <ImageView
-                android:id="@+id/iv_battery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="52dp"
-                android:layout_marginRight="10dp"
-                android:layout_toLeftOf="@id/net_iv"
-                android:src="@drawable/cell4"
-                android:visibility="visible" />
+			<ImageView
+				android:id="@+id/iv_battery"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="52dp"
+				android:layout_marginRight="10dp"
+				android:layout_toLeftOf="@id/net_iv"
+				android:src="@drawable/cell1"
+				android:visibility="visible" />
 
             <ImageView
                 android:id="@+id/net_iv"
@@ -177,8 +176,6 @@
                 android:textColor="#ffffff"
                 android:textSize="40sp"
                 tools:ignore="RelativeOverlap" />
-            //深圳
-
             <TextView
                 android:id="@+id/location_tv"
                 android:layout_width="wrap_content"
