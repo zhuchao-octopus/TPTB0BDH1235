@@ -244,8 +244,7 @@ public class iflytekService extends AppService {
             return true;//已处理
         }
 
-        if (action_Cammand.contains("打开飞视浏览器"))
-        {
+        if (action_Cammand.contains("打开飞视浏览器")) {
             return true;//已处理
         }
 
@@ -253,8 +252,7 @@ public class iflytekService extends AppService {
             return true;//已处理
         }
 
-        if (action_Cammand.equals("电视直播"))
-        {
+        if (action_Cammand.equals("电视直播")) {
             if (isTopActivity("com.dianshijia.newlive")) {
                 VoiceFeedback("电视直播已经打开");
                 return true;
@@ -302,8 +300,7 @@ public class iflytekService extends AppService {
             return true;
         }
 
-        if (action_Cammand.contains("openktv"))
-        {
+        if (action_Cammand.contains("openktv")) {
 
             if (isTopActivity("com.tencent.karaoketv")) {
                 VoiceFeedback("已经在全民K歌APP");
@@ -330,8 +327,7 @@ public class iflytekService extends AppService {
             return true;
         }
 
-        if (action_Cammand.equals("music") || action_Cammand.equals("ktv"))
-        {
+        if (action_Cammand.equals("music") || action_Cammand.equals("ktv")) {
             String singer = intent.getStringExtra("singer");
             String song = intent.getStringExtra("song");
             String category = intent.getStringExtra("category");
@@ -342,8 +338,7 @@ public class iflytekService extends AppService {
             else
                 SKey = song;
 
-            if (SKey == null)
-            {
+            if (SKey == null) {
                 PackageManager packageManager = getPackageManager();
                 Intent openQQintent = new Intent();
                 openQQintent = packageManager.getLaunchIntentForPackage("com.tencent.karaoketv");
@@ -393,8 +388,7 @@ public class iflytekService extends AppService {
         }
 
 
-        if (action_Cammand.contains("PlayControl"))
-        {
+        if (action_Cammand.contains("PlayControl")) {
 
             if (isTopActivity("com.tencent.karaoketv")) {
 

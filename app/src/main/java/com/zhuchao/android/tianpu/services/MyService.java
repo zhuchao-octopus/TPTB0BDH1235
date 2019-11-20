@@ -27,6 +27,7 @@ import com.zhuchao.android.tianpu.views.dialogs.MusicDialog;
 import com.zhuchao.android.tianpu.views.dialogs.Sound_Effect_Dialog;
 import com.zhuchao.android.video.OMedia;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.zhuchao.android.tianpu.utils.TypeTool.CheckSumBytesAdd;
@@ -88,7 +89,7 @@ public class MyService extends Service {
         boolean bRet = myPortDevice.openPort("/dev/ttyS1", 9600, true);
 
         if (bRet) {
-            CheckSerialPortEvent();
+            pollingSerialPortEvent();
             sendCommand(I2SChanelApp);
             QueryStateK50[9] = TypeTool.CheckSumBytesAdd(QueryStateK50, 9);
             sendCommand(QueryStateK50);
@@ -98,7 +99,7 @@ public class MyService extends Service {
     public void sendCommand(byte[] bytes) {
         try {
             myPortDevice.sendBuffer(bytes);
-            Log.i("MyService " + myPortDevice.getDevicePath() + " 发送数据:", TypeTool.ByteArrToHexStr(bytes, 0, bytes.length));
+            Log.i(TAG, myPortDevice.getDevicePath() + "发送数据:" + TypeTool.ByteArrToHexStr(bytes, 0, bytes.length));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -129,47 +130,49 @@ public class MyService extends Service {
                     //playMusic(context, R.raw.tp00);
                     break;
                 case 1:
-                    playMusic(null, R.raw.tp001);
+                    playMusic(null, 0, "tp001.mp3");
                     break;
                 case 2:
-                    playMusic(null, R.raw.tp002);
+                    playMusic(null, 0, "tp002.mp3");
                     break;
                 case 3:
-                    playMusic(null, R.raw.tp003);
+                    playMusic(null, 0, "tp003.mp3");
                     break;
                 case 4:
-                    playMusic(null, R.raw.tp004);
+                    playMusic(null, 0, "tp004.mp3");
                     break;
                 case 5:
-                    playMusic(null, R.raw.tp005);
+                    playMusic(null, 0, "tp005.mp3");
                     break;
                 case 6:
-                    playMusic(null, R.raw.tp006);
+                    playMusic(null, 0, "tp006.mp3");
                     break;
                 case 7:
-                    playMusic(null, R.raw.tp007);
+                    playMusic(null, 0, "tp007.mp3");
                     break;
                 case 8:
-                    playMusic(null, R.raw.tp008);
+                    playMusic(null, 0, "tp008.mp3");
                     break;
                 case 9:
-                    playMusic(null, R.raw.tp009);
+                    playMusic(null, 0, "tp009.mp3");
                     break;
                 case 10:
-                    playMusic(null, R.raw.tp010);
+                    playMusic(null, 0, "tp010.mp3");
                     break;
                 case 11:
-                    playMusic(null, R.raw.tp011);
+                    playMusic(null, 0, "tp011.mp3");
                     break;
                 case 12:
-                    playMusic(null, R.raw.tp012);
+                    playMusic(null, 0, "tp012.mp3");
+                    break;
+                default:
                     break;
             }
         }
 
     };
 
-    private void CheckSerialPortEvent() {
+    private void pollingSerialPortEvent() {
         //串口数据监听事件
         myPortDevice.setOnDataReceiveListener(new MySerialPort.OnDataReceiveListener() {
             Runnable runnable = new Runnable() {
@@ -185,6 +188,7 @@ public class MyService extends Service {
             public void onDataReceive(Context context, byte[] buffer, int size) {
                 SerialPortReceiveBuffer = buffer;
                 data = TypeTool.ByteArrToHexStr(SerialPortReceiveBuffer, 0, size);
+                Log.i(TAG, "onDataReceive：" + data);
 
                 if (buffer[2] == 0x06) {
                     MusicVolume = buffer[7];
@@ -193,8 +197,7 @@ public class MyService extends Service {
                 }
                 //播放特效声
                 if (buffer[2] == 0x21) {
-                    byte result = buffer[5];
-                    mMyHandler.sendEmptyMessage(result);
+                    mMyHandler.sendEmptyMessage(buffer[5]);
                     return;
                 }
                 //Setting
@@ -236,7 +239,7 @@ public class MyService extends Service {
                     sendBroadcast(intent);
                     Log.i("onDataReceive", data);
                     if ((v <= 10) && (!isCharging))
-                        playMusic(context, R.raw.charge);
+                        playMusic(context, 0, "charge.mp3");
                     return;
                 }
 
@@ -399,12 +402,22 @@ public class MyService extends Service {
         this.actionCallback = actionCallback;
     }
 
-    private void playMusic(final Context c, final int resID) {
-        String suri = "android.resource://" + this.getApplicationContext().getPackageName() + "/" + resID;
-        //Uri uri = Uri.parse(suri);
-        AssetFileDescriptor afd = getResources().openRawResourceFd(resID);
-        OMedia audio = new OMedia();
-        audio.with(this.getApplicationContext()).play(afd);
+    private void playMusic(final Context c, final int resID, final String fileName) {
+        //String suri = "android.resource://" + this.getApplicationContext().getPackageName() + "/" + resID;
+        //AssetFileDescriptor afd = getResources().openRawResourceFd(resID);
+        AssetFileDescriptor fd = null;
+        try {
+            Log.i(TAG, fileName);
+            fd = getResources().getAssets().openFd(fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //PlayerUtil.FreeSingle();
+        if (fd != null) {
+            OMedia audio = new OMedia();
+            audio.with(this.getApplicationContext()).play(fd);
+        }
     }
 
     public interface Callback {
@@ -443,7 +456,7 @@ public class MyService extends Service {
             if (intent.getAction().equals("com.iflytek.xiri2.hal.volume")) {
                 if (data > 60) data = 60;
 
-                Log.d("MyReceiver--->", intent.getAction() + ":volume=" + data);
+                Log.i("MyReceiver--->", intent.getAction() + ":volume=" + data);
 
                 if (intent.getAction() == "com.iflytek.xiri2.hal.volume") {
                     if ((data >= 0) && (data <= 60)) {
