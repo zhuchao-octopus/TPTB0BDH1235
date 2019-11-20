@@ -54,6 +54,7 @@ import com.zhuchao.android.libfilemanager.bean.AppInfor;
 import com.zhuchao.android.netutil.NetUtils;
 import com.zhuchao.android.netutil.NetUtils.NetChangedCallBack;
 import com.zhuchao.android.netutil.OkHttpUtils;
+
 import com.zhuchao.android.tianpu.BuildConfig;
 import com.zhuchao.android.tianpu.R;
 import com.zhuchao.android.tianpu.bridge.SelEffectBridge;
@@ -278,7 +279,10 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         binding.scrollTv.setSelected(true);
         binding.ivFill.setVisibility(View.GONE);
         binding.bgIv5.setImageResource(R.drawable.bb2);
-        binding.bgIv5.setVisibility(View.VISIBLE);
+
+
+        binding.bgIv5.setOnClickListener(this);
+        binding.ivFill.setOnClickListener(this);
 
         binding.fl2.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -307,7 +311,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
         requestPermition();
         setupItemBottomTag();
-
     }
 
     @Override
@@ -374,14 +377,18 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
-        timeHandler.release();
-        timeHandler.setOnTimeDateListener(null);
-        timeHandler = null;
-        netUtils.Free();
-        unregisterHomeKeyReceiver(this);
-        unregisterReceiver(myReceiver);
-        timeHandler.unRegTimeReceiver();
-        binding.adBg.stopAutoPlay();
+        try {
+            timeHandler.release();
+            timeHandler.setOnTimeDateListener(null);
+            timeHandler = null;
+            netUtils.Free();
+            unregisterHomeKeyReceiver(this);
+            unregisterReceiver(myReceiver);
+            timeHandler.unRegTimeReceiver();
+            binding.adBg.stopAutoPlay();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -740,8 +747,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     }
 
     private void switchToOtherChanel(String ChanelName) {
-        binding.bgIv5.setVisibility(View.VISIBLE);
-        //binding.bgIv5.setImageResource(R.drawable.bb2);
         Log.i(TAG, "切换通道：" + ChanelName);
         myServiceSendBytes(LastChanelApp);
     }
@@ -764,8 +769,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
      */
     private void OnMainPageViewClick(View v, int keyCode, boolean isClick) {
         int id = v.getId();
-        binding.bgIv5.setImageResource(R.drawable.bb2);
-        binding.bgIv5.setVisibility(View.VISIBLE);
+
         Drawable drawable = myAppsManager.getAppInfor(PackageName.qqMusic).getIcon();
         switch (id) {
             case R.id.fl4:
@@ -854,84 +858,100 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 break;
             case R.id.fl11:
                 //蓝牙
+                binding.fl11.requestFocus();
+                //binding.bgIv116.setImageResource(R.drawable.nnn);
                 binding.bgIv111.setImageResource(R.drawable.xsb);
                 binding.bgIv113.setImageResource(R.drawable.xac);
-                //binding.bgIv116.setImageResource(R.drawable.nnn);
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv115.setImageResource(R.drawable.xae);
+
                 binding.bgIv5.setImageResource(R.drawable.ly);
+                binding.ivFill.setImageResource(R.drawable.bly);
                 binding.bluetooth.setVisibility(View.VISIBLE);
                 binding.bluetooth.setImageResource(R.drawable.bluetoothno);
-                TheLastSourceType = "蓝牙";
                 binding.bgIcon.setVisibility(View.GONE);
                 myServiceSendBytes(BluetoothClose);
-                binding.fl11.requestFocus();
+
+                TheLastSourceType = "蓝牙";
                 break;
             case R.id.fl12:
                 //同轴
+                binding.fl12.requestFocus();
+                //binding.bgIv116.setImageResource(R.drawable.nnn);
                 binding.bgIv112.setImageResource(R.drawable.xsa);
                 binding.bgIv113.setImageResource(R.drawable.xac);
-                //binding.bgIv116.setImageResource(R.drawable.nnn);
                 binding.bgIv111.setImageResource(R.drawable.xaa);
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv115.setImageResource(R.drawable.xae);
-                //binding.bgIv5.setImageResource(R.drawable.tz);
+
+                binding.bgIv5.setImageResource(R.drawable.tz);
+                binding.ivFill.setImageResource(R.drawable.btz);
+
                 binding.bluetooth.setVisibility(View.GONE);
-                TheLastSourceType = "同轴";
                 binding.bgIcon.setVisibility(View.GONE);
-                //myServiceSendBytes(CopperShaftLineIn);
+
                 myServiceSendBytes(CopperShaftClose);
+                TheLastSourceType = "同轴";
                 break;
             case R.id.fl13:
                 //光纤
-                binding.bgIv113.setImageResource(R.drawable.xsd);
+                binding.fl13.requestFocus();
                 //binding.bgIv116.setImageResource(R.drawable.nnn);
+                binding.bgIv113.setImageResource(R.drawable.xsd);
                 binding.bgIv111.setImageResource(R.drawable.xaa);
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv115.setImageResource(R.drawable.xae);
-                //binding.bgIv5.setImageResource(R.drawable.opt);
+
+                binding.bgIv5.setImageResource(R.drawable.opt);
+                binding.ivFill.setImageResource(R.drawable.bopt);
+
                 binding.bluetooth.setVisibility(View.GONE);
-                TheLastSourceType = "光纤";
                 binding.bgIcon.setVisibility(View.GONE);
 
+                TheLastSourceType = "光纤";
                 myServiceSendBytes(OpticalFiberClose);
                 break;
             case R.id.fl14:
                 //模拟
-                binding.bgIv114.setImageResource(R.drawable.xsc);
+                binding.fl14.requestFocus();
                 //binding.bgIv116.setImageResource(R.drawable.nnn);
+                binding.bgIv114.setImageResource(R.drawable.xsc);
                 binding.bgIv111.setImageResource(R.drawable.xaa);
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv113.setImageResource(R.drawable.xac);
                 binding.bgIv115.setImageResource(R.drawable.xae);
+
                 binding.bgIv5.setImageResource(R.drawable.mn);
+                binding.ivFill.setImageResource(R.drawable.bmn);
                 binding.bluetooth.setVisibility(View.GONE);
-                TheLastSourceType = "模拟";
                 binding.bgIcon.setVisibility(View.GONE);
-                //myServiceSendBytes(SimulationLineIn);
+
                 myServiceSendBytes(SimulationLineInClose);
-                binding.fl14.requestFocus();
+
+                TheLastSourceType = "模拟";
                 break;
             case R.id.fl15:
                 //系统播放器
-                binding.bgIv115.setImageResource(R.drawable.xse);
+                binding.fl15.requestFocus();
                 //binding.bgIv116.setImageResource(R.drawable.nnn);
+                binding.bgIv115.setImageResource(R.drawable.xse);
                 binding.bgIv111.setImageResource(R.drawable.xaa);
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv113.setImageResource(R.drawable.xac);
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv5.setImageResource(R.drawable.usbortf);
+                binding.ivFill.setImageResource(R.drawable.busbortf);
                 binding.bluetooth.setVisibility(View.GONE);
-                TheLastSourceType = "player";
                 binding.bgIcon.setVisibility(View.GONE);
                 myServiceSendBytes(UsbClose);
                 launchApp("com.android.music");
-                binding.fl15.requestFocus();
+
+                TheLastSourceType = "player";
                 break;
-                /*
-                case R.id.fl16:
+
+                /*case R.id.fl16:
                 //最后一个使用的app
                 //binding.bgIv116.setImageResource(R.drawable.blue6);
                 binding.bgIv111.setImageResource(R.drawable.xaa);
@@ -945,38 +965,46 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 switchToOtherChanel(v.getClass().getName());
                 break;*/
 
+            case R.id.iv_fill:
+                binding.ivFill.setVisibility(View.INVISIBLE);
+                binding.bgIv5.bringToFront();
+                break;
+            case R.id.bg_iv5:
+                binding.ivFill.setVisibility(View.VISIBLE);
+
+               break;
             case R.id.fl5:
-                if (!TextUtils.isEmpty(TheLastSourceType)) {
+                if (!TextUtils.isEmpty(TheLastSourceType))
+                {
                     if (TheLastSourceType.equals("蓝牙")) {
                         binding.ivFill.setVisibility(View.VISIBLE);
                         binding.ivFill.setImageResource(R.drawable.bly);
-                        binding.bluetooth.setVisibility(View.VISIBLE);
-                        binding.bluetooth.setImageResource(R.drawable.bluetoothno);
-                        binding.bgIcon.setVisibility(View.GONE);
-                    /*} else if (TheLastSourceType.equals("同轴")) {
+                        //binding.bluetooth.setVisibility(View.VISIBLE);
+                        //binding.bluetooth.setImageResource(R.drawable.bluetoothno);
+                        //binding.bgIcon.setVisibility(View.GONE);
+                    } else if (TheLastSourceType.equals("同轴")) {
                         binding.ivFill.setVisibility(View.VISIBLE);
                         binding.ivFill.setImageResource(R.drawable.btz);
-                        binding.bluetooth.setVisibility(View.GONE);
-                        binding.bgIcon.setVisibility(View.GONE);
-                        onClick(binding.fl12);
+                        //binding.bluetooth.setVisibility(View.GONE);
+                        //binding.bgIcon.setVisibility(View.GONE);
+                        //onClick(binding.fl12);
                     } else if (TheLastSourceType.equals("光纤")) {
                         binding.ivFill.setVisibility(View.VISIBLE);
                         binding.ivFill.setImageResource(R.drawable.bopt);
-                        binding.bluetooth.setVisibility(View.GONE);
-                        binding.bgIcon.setVisibility(View.GONE);*/
+                        //binding.bluetooth.setVisibility(View.GONE);
+                        //binding.bgIcon.setVisibility(View.GONE);
+
                     } else if (TheLastSourceType.equals("模拟")) {
                         binding.ivFill.setVisibility(View.VISIBLE);
                         binding.ivFill.setImageResource(R.drawable.bmn);
-                        binding.bluetooth.setVisibility(View.GONE);
-                        binding.bgIcon.setVisibility(View.GONE);
+                        //binding.bluetooth.setVisibility(View.GONE);
+                        //binding.bgIcon.setVisibility(View.GONE);
                     } else if (TheLastSourceType.equals("player")) {
                         binding.ivFill.setVisibility(View.VISIBLE);
                         binding.ivFill.setImageResource(R.drawable.busbortf);
-                        binding.bluetooth.setVisibility(View.GONE);
-                        binding.bgIcon.setVisibility(View.GONE);
-                        binding.bluetooth.setVisibility(View.GONE);
-                    } else if (TheLastSourceType.equals("last")) {
-                        binding.bluetooth.setVisibility(View.GONE);
+                        //binding.bluetooth.setVisibility(View.GONE);
+                        //binding.bgIcon.setVisibility(View.GONE);
+                        //binding.bluetooth.setVisibility(View.GONE);
                     }
                 }
                 break;
@@ -992,9 +1020,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 pauseSystemMusic();
                 //同轴
                 TheLastSourceType = "同轴";
-
                 binding.fl12.requestFocus();
-
                 binding.bgIv111.setImageResource(R.drawable.xaa);
                 binding.bgIv113.setImageResource(R.drawable.xac);
                 //binding.bgIv116.setImageResource(R.drawable.nnn);
@@ -1002,8 +1028,8 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv115.setImageResource(R.drawable.xae);
                 binding.bgIcon.setVisibility(View.GONE);
+
                 binding.bgIv5.setImageResource(R.drawable.tz);
-                //} else
                 binding.ivFill.setImageResource(R.drawable.btz);
 
             } else if (mSerialCommand.equals("0201050000020004000E7E") || mSerialCommand.equals("0101050000020004000D7E")) {
@@ -1011,16 +1037,17 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 pauseSystemMusic();
                 TheLastSourceType = "蓝牙";
 
-                binding.fl11.requestFocus();
                 binding.bgIv111.setImageResource(R.drawable.xsb);
                 binding.bgIv113.setImageResource(R.drawable.xac);
                 //binding.bgIv116.setImageResource(R.drawable.nnn);
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv115.setImageResource(R.drawable.xae);
-                binding.bgIv5.setImageResource(R.drawable.ly);
+
                 binding.bgIcon.setVisibility(View.GONE);
                 binding.ivFill.setImageResource(R.drawable.bly);
+                binding.bgIv5.setImageResource(R.drawable.ly);
+                binding.fl11.requestFocus();
             } else if (mSerialCommand.equals("0201050000020080008A7E") || mSerialCommand.equals("010105000002008000897E")) {
                 pauseSystemMusic();
                 //模拟
@@ -1032,12 +1059,14 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv114.setImageResource(R.drawable.xsc);
                 binding.bgIv115.setImageResource(R.drawable.xae);
-                binding.bgIcon.setVisibility(View.GONE);
 
-                //binding.bgIv5.setImageResource(R.drawable.mn);
-                binding.fl14.requestFocus();
-                binding.ivFill.setImageResource(R.drawable.bmn);
+                binding.bgIcon.setVisibility(View.GONE);
                 binding.bluetooth.setVisibility(View.INVISIBLE);
+
+
+                binding.bgIv5.setImageResource(R.drawable.mn);
+                binding.ivFill.setImageResource(R.drawable.bmn);
+                binding.fl14.requestFocus();
             } else if (mSerialCommand.equals("0201050000020000020C7E") || mSerialCommand.equals("0101050000020000020B7E")) {
                 pauseSystemMusic();
                 //光纤
@@ -1051,11 +1080,10 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bgIv115.setImageResource(R.drawable.xae);
                 binding.bgIcon.setVisibility(View.GONE);
 
-                //binding.bgIv5.setImageResource(R.drawable.opt);
-                binding.fl13.requestFocus();
-                //}else
+                binding.bgIv5.setImageResource(R.drawable.opt);
                 binding.ivFill.setImageResource(R.drawable.bopt);
                 binding.bluetooth.setVisibility(View.INVISIBLE);
+                binding.fl13.requestFocus();
 
             } else if (mSerialCommand.equals("0201050000020000000A7E") || mSerialCommand.equals("010105000002000000097E")) {
                 pauseSystemMusic();
@@ -1079,8 +1107,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.bgIv112.setImageResource(R.drawable.xab);
                 binding.bgIv114.setImageResource(R.drawable.xad);
                 binding.bgIv115.setImageResource(R.drawable.xse);
-                binding.fl15.requestFocus();
+
                 binding.bluetooth.setVisibility(View.INVISIBLE);
+                binding.fl15.requestFocus();
                 launchApp("com.android.music");
 
             } else if (mSerialCommand.equals("")) {
@@ -1120,7 +1149,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             }
         };
 
-
         myService.setActionCallback(new MyService.Callback() {
             @Override
             public void onDataChange(String data) {
@@ -1133,6 +1161,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 }
             }
         });
+
     }
 
     @Override
@@ -1884,9 +1913,13 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 pauseSystemMusic();
                 onClick(binding.fl6);
                 //launchApp("com.softwinner.TvdFileManager");
-            } else if (_action.contains("设置") || _action.contains("网络")) {
+            } else if (_action.contains("设置") || _action.contains("网络"))
+            {
                 onClick(binding.fl7);
-            } else if (_action.contains("频道")) {
+            }
+            else if (_action.contains("频道"))
+            {
+                pauseSystemMusic();
                 binding.ivFill.setVisibility(View.GONE);
                 onClick(binding.fl8);
             } else if ((_action.contains("全民K歌")) || (_action.contains("我要唱歌")) || (_action.contains("我想唱歌")) || (_action.contains("K歌")) || (_action.contains("KTV"))) {
@@ -1960,10 +1993,11 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                     binding.ivBwi.setImageResource(R.drawable.battery_warnning);
                     binding.ivBwi.bringToFront();
                 }
-                if (value < 10) {
-                    binding.ivBattery.setImageResource(R.drawable.lowbattery);
 
-                } else if (value <= 20)
+
+                if (value < 10)
+                    binding.ivBattery.setImageResource(R.drawable.lowbattery);
+                else if (value <= 20)
                     binding.ivBattery.setImageResource(R.drawable.cell1);
                 else if (value <= 60)
                     binding.ivBattery.setImageResource(R.drawable.cell2);
@@ -1995,7 +2029,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent != null) {
+
+            if (intent != null)
+            {
                 if (intent.getAction().equals("com.iflytek.xiri.init.start")) {
                     Intent iii;
                     iii = new Intent(MainActivity.this, iflytekService.class);

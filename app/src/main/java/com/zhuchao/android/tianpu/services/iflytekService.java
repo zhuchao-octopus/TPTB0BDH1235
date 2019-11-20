@@ -19,8 +19,8 @@ import android.util.Log;
 import com.iflytek.xiri.AppService;
 import com.iflytek.xiri.Feedback;
 import com.zhuchao.android.tianpu.data.PackageName;
-import com.zhuchao.android.tianpu.utils.TypeTool;
 import com.zhuchao.android.tianpu.utils.ForegroundAppUtil;
+import com.zhuchao.android.tianpu.utils.TypeTool;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -67,10 +67,6 @@ public class iflytekService extends AppService {
     private byte[] I2SAppClose = {0x01, 0x01, 0x05, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x09, 0x7E};//最后使用的app  K50
 
     private MyReceiver myReceiver = null;
-
-
-
-
 
 
     @Override
@@ -239,27 +235,26 @@ public class iflytekService extends AppService {
                 System.out.println("APP not found!");
                 VoiceFeedback("没有找到相关的应用");
                 return true;
-            } else {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        pauseMusic();
-                        //myServiceSendBytes(I2SAppOpen);
-                        SendBytesTo(I2SAppClose);
-                    }
-                }).start();
-                VoiceFeedback("正在打开当贝市场");
-                startActivity(toIntent);
             }
+            pauseMusic();
+            SendBytesTo(I2SAppClose);
+            VoiceFeedback("正在打开当贝市场");
+            startActivity(toIntent);
+
             return true;//已处理
         }
-        if (action_Cammand.contains("打开飞视浏览器")) {
+
+        if (action_Cammand.contains("打开飞视浏览器"))
+        {
             return true;//已处理
         }
+
         if (action_Cammand.contains("打开乐播投屏")) {
             return true;//已处理
         }
-        if (action_Cammand.equals("电视直播")) {
+
+        if (action_Cammand.equals("电视直播"))
+        {
             if (isTopActivity("com.dianshijia.newlive")) {
                 VoiceFeedback("电视直播已经打开");
                 return true;
@@ -272,19 +267,12 @@ public class iflytekService extends AppService {
                 System.out.println("APP not found!");
                 VoiceFeedback("没有找到相关的应用");
                 return true;
-            } else {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        pauseMusic();
-                        //myServiceSendBytes(I2SAppOpen);
-                        SendBytesTo(I2SAppClose);
-                    }
-                }).start();
-
-                VoiceFeedback("正在打开电视家");
-                startActivity(openQQintent);
             }
+            pauseMusic();
+            SendBytesTo(I2SAppClose);
+
+            VoiceFeedback("正在打开电视家");
+            startActivity(openQQintent);
 
 
             return true;
@@ -303,9 +291,10 @@ public class iflytekService extends AppService {
                 System.out.println("APP not found!");
                 VoiceFeedback("没有找到相关的应用");
                 return true;
-            } else {
-                pauseMusic();
             }
+
+            pauseMusic();
+            SendBytesTo(I2SAppClose);
 
             VoiceFeedback("正在打开腾讯视频");
             startMainActivity();
@@ -313,7 +302,8 @@ public class iflytekService extends AppService {
             return true;
         }
 
-        if (action_Cammand.contains("openktv")) {
+        if (action_Cammand.contains("openktv"))
+        {
 
             if (isTopActivity("com.tencent.karaoketv")) {
                 VoiceFeedback("已经在全民K歌APP");
@@ -328,19 +318,20 @@ public class iflytekService extends AppService {
                 System.out.println("APP not found!");
                 VoiceFeedback("没有找到相关的应用");
                 return true;
-            } else {
-                pauseMusic();
             }
+
+            pauseMusic();
+            SendBytesTo(I2SAppClose);
 
             VoiceFeedback("正在打开全民K歌");
             startMainActivity();
             delayAction("正在打开全民K歌");
-            //startActivity(openQQintent);
 
             return true;
         }
 
-        if (action_Cammand.equals("music") || action_Cammand.equals("ktv")) {
+        if (action_Cammand.equals("music") || action_Cammand.equals("ktv"))
+        {
             String singer = intent.getStringExtra("singer");
             String song = intent.getStringExtra("song");
             String category = intent.getStringExtra("category");
@@ -351,7 +342,8 @@ public class iflytekService extends AppService {
             else
                 SKey = song;
 
-            if (SKey == null) {
+            if (SKey == null)
+            {
                 PackageManager packageManager = getPackageManager();
                 Intent openQQintent = new Intent();
                 openQQintent = packageManager.getLaunchIntentForPackage("com.tencent.karaoketv");
@@ -367,9 +359,7 @@ public class iflytekService extends AppService {
                     VoiceFeedback("正在打开全民K歌 APP");
                     startActivity(openQQintent);
                 }
-            }
-            else
-            {
+            } else {
                 if ((singer.isEmpty()) || (singer == null)) {
                     if (isTopActivity("com.tencent.karaoketv"))
                         VoiceFeedback("正在搜索" + "歌曲" + song);
@@ -393,24 +383,18 @@ public class iflytekService extends AppService {
 
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 i.setPackage("com.tencent.karaoketv");
-                //sendBroadcast(i);
                 startActivity(i);
                 Log.d(TAG, "点歌------>" + url);
             }
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    pauseMusic();
-                   SendBytesTo(I2SAppClose);
-                }
-            }).start();
-
+            pauseMusic();
+            SendBytesTo(I2SAppClose);
             return true;
         }
 
 
-        if (action_Cammand.contains("PlayControl")) {
+        if (action_Cammand.contains("PlayControl"))
+        {
 
             if (isTopActivity("com.tencent.karaoketv")) {
 
@@ -682,7 +666,7 @@ public class iflytekService extends AppService {
                 VoiceFeedback("当前已经是在USB 播放界面");
                 return true;
             }
-
+            pauseMusic();
             startMainActivity();
             delayAction(action_music);
             VoiceFeedback(action_music);
@@ -1047,7 +1031,7 @@ public class iflytekService extends AppService {
         }
     }
 
-    public  void UpLoadVoiceCommand() {
+    public void UpLoadVoiceCommand() {
         new Thread() {     //不可在主线程中调用
             public void run() {
                 try {
@@ -1065,13 +1049,11 @@ public class iflytekService extends AppService {
 
     private void VoiceFeedback(String str) {
 
-        if(str.contains("蓝牙"))
-        {
+        if (str.contains("蓝牙")) {
             mFeedback.feedback(str, Feedback.SILENCE);
             return;
         }
-        if(str.contains("模拟"))
-        {
+        if (str.contains("模拟")) {
             mFeedback.feedback(str, Feedback.SILENCE);
             return;
         }
