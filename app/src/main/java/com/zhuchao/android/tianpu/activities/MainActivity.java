@@ -54,7 +54,6 @@ import com.zhuchao.android.libfilemanager.bean.AppInfor;
 import com.zhuchao.android.netutil.NetUtils;
 import com.zhuchao.android.netutil.NetUtils.NetChangedCallBack;
 import com.zhuchao.android.netutil.OkHttpUtils;
-
 import com.zhuchao.android.tianpu.BuildConfig;
 import com.zhuchao.android.tianpu.R;
 import com.zhuchao.android.tianpu.bridge.SelEffectBridge;
@@ -967,7 +966,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             case R.id.bg_iv5:
                 binding.ivFill.setVisibility(View.VISIBLE);
 
-               break;
+                break;
         }
 
         //getSharedPreferences("TheLastSourceType", MODE_PRIVATE).edit().putString("TheLastSourceType", TheLastSourceType).commit();
@@ -1860,7 +1859,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 //launchApp("com.h3launcher");
             } else if ((_action.contains("输入")) || (_action.contains("Line in")) || (_action.contains("模拟"))) {
                 pauseSystemMusic();
-                OnMainPageViewClick(binding.fl14,-1,true);
+                OnMainPageViewClick(binding.fl14, -1, true);
             } else if (_action.contains("USB") || _action.contains("U盘") || _action.contains("TF卡") || _action.contains("优盘") || _action.contains("卡")) {
                 onClick(binding.fl15);
                 Intent freshIntent = new Intent();
@@ -1871,12 +1870,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 pauseSystemMusic();
                 onClick(binding.fl6);
                 //launchApp("com.softwinner.TvdFileManager");
-            } else if (_action.contains("设置") || _action.contains("网络"))
-            {
+            } else if (_action.contains("设置") || _action.contains("网络")) {
                 onClick(binding.fl7);
-            }
-            else if (_action.contains("频道"))
-            {
+            } else if (_action.contains("频道")) {
                 pauseSystemMusic();
                 binding.ivFill.setVisibility(View.GONE);
                 onClick(binding.fl8);
@@ -1908,8 +1904,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             //Log.i(LOG_TAG, "onReceive: action: " + action);
-            if (action.equals(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
-            {
+            if (action.equals(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)) {
                 String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
                 if (SYSTEM_DIALOG_REASON_HOME_KEY.equals(reason)) {
                     // 短按Home键
@@ -1928,8 +1923,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 return;
             }
 
-            if (action.equals(ACTION_BATTERY_CHARGE))
-            {
+            if (action.equals(ACTION_BATTERY_CHARGE)) {
                 isCharging = intent.getBooleanExtra("isCharge", false);
                 if (isCharging) {
                     binding.ivBattery.setImageResource(R.drawable.charge);
@@ -1940,8 +1934,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 return;
             }
 
-            if (action.equals(ACTION_BATTERY_INFO) && !isCharging)
-            {
+            if (action.equals(ACTION_BATTERY_INFO) && !isCharging) {
                 int value = intent.getIntExtra("value", -1);
                 binding.ivBattery.setVisibility(View.VISIBLE);
                 binding.ivBwi.setVisibility(View.VISIBLE);
@@ -1967,8 +1960,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 return;
             }
 
-            if (action.equals("BLUTOOLTH_STATUS"))
-            {
+            if (action.equals("BLUTOOLTH_STATUS")) {
                 blutoothConnected = intent.getBooleanExtra("BLUTOOLTH_STATUS", false);
                 if (blutoothConnected) {
                     binding.bluetooth.setVisibility(View.VISIBLE);
@@ -1988,8 +1980,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            if (intent != null)
-            {
+            if (intent != null) {
                 if (intent.getAction().equals("com.iflytek.xiri.init.start")) {
                     Intent iii;
                     iii = new Intent(MainActivity.this, iflytekService.class);

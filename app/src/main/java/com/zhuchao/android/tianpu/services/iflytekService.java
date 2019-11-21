@@ -224,7 +224,7 @@ public class iflytekService extends AppService {
             return false;
         }
 
-        if (false && action_Cammand.contains("打开当贝市场")) {
+        if (false && action_Cammand.contains("当贝市场")) {
             if (isTopActivity(PackageName.dbMarket)) {
                 VoiceFeedback("当贝市场已经打开");
                 return true;
