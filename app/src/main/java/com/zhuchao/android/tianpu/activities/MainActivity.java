@@ -1092,7 +1092,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                     binding.bluetooth.setImageResource(R.drawable.bluetoothhave);
                 }
             }
-
             //getSharedPreferences("TheLastSourceType", MODE_PRIVATE).edit().putString("TheLastSourceType", TheLastSourceType).commit();
         }
     };
@@ -1853,15 +1852,15 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 onClick(binding.fl11);
                 //launchApp("com.h3launcher");
             } else if ((_action.contains("同轴")) || (_action.contains("同舟"))) {
-                pauseSystemMusic();
-                onClick(binding.fl12);
+                //pauseSystemMusic();
+                //onClick(binding.fl12);
             } else if (_action.contains("光纤")) {
-                pauseSystemMusic();
-                onClick(binding.fl13);
+                //pauseSystemMusic();
+                //onClick(binding.fl13);
                 //launchApp("com.h3launcher");
             } else if ((_action.contains("输入")) || (_action.contains("Line in")) || (_action.contains("模拟"))) {
                 pauseSystemMusic();
-                onClick(binding.fl14);
+                OnMainPageViewClick(binding.fl14,-1,true);
             } else if (_action.contains("USB") || _action.contains("U盘") || _action.contains("TF卡") || _action.contains("优盘") || _action.contains("卡")) {
                 onClick(binding.fl15);
                 Intent freshIntent = new Intent();
