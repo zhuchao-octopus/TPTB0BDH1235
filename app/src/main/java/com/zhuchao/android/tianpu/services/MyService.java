@@ -325,7 +325,8 @@ public class MyService extends Service {
 
     }
 
-    private void showVolumeDialog(int direction, String type) {
+    private void showVolumeDialog(int direction, String type)
+    {
         if (dialog == null || dialog.isShowing() != true) {
             dialog = new MusicDialog(this);
             //dialog.setVolumeAdjustListener();

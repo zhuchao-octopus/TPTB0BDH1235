@@ -46,7 +46,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 import com.stx.xhb.xbanner.XBanner;
 import com.stx.xhb.xbanner.transformers.Transformer;
-import com.zhuchao.android.callbackevent.NormalRequestCallBack;
+import com.zhuchao.android.callbackevent.NormalRequestCallback;
 import com.zhuchao.android.databaseutil.SPreference;
 import com.zhuchao.android.libfilemanager.AppsChangedCallback;
 import com.zhuchao.android.libfilemanager.MyAppsManager;
@@ -699,7 +699,8 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     }
 
     private void openSettings() {
-        if (myAppsManager.isTheAppExist("com.android.tv.settings")) {
+        if (myAppsManager.isTheAppExist("com.android.tv.settings"))
+        {
             myAppsManager.startTheApp("com.android.tv.settings");
         } else {
             myAppsManager.startTheApp("com.android.settings");
@@ -1409,7 +1410,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                     "&region=" + netUtils.getChineseRegion(netUtils.getLocation());
         }
 
-        OkHttpUtils.request(url, new NormalRequestCallBack() {
+        OkHttpUtils.request(url, new NormalRequestCallback() {
             @Override
             public void onRequestComplete(String s, int i) {
                 if (i >= 0 && !TextUtils.isEmpty(s)) {
@@ -1457,7 +1458,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
      */
     private void getRemoveApp() {
         String url = host + "jhzBox/box/unload.do?cy_brand_id=" + DeviceModelNumber;
-        OkHttpUtils.request(url, new NormalRequestCallBack() {
+        OkHttpUtils.request(url, new NormalRequestCallback() {
             @Override
             public void onRequestComplete(String s, int i) {
                 RemoveAppBean removeAppBean = new Gson().fromJson(s, RemoveAppBean.class);
@@ -1478,7 +1479,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     private void getRecommendApp() {
         //String url= "";
         String url = getMyUrl("jhzBox/box/loadPushApp.do?pitClass=01&", DeviceModelNumber, netUtils.getDeviceID().toUpperCase(), CustomId, netUtils.getIP0(), netUtils.getChineseRegion(netUtils.getLocation()), lunchname);
-        OkHttpUtils.request(url, new NormalRequestCallBack() {
+        OkHttpUtils.request(url, new NormalRequestCallback() {
             @Override
             public void onRequestComplete(String s, int i) {
                 final RecommendBean rBean = new Gson().fromJson(s, RecommendBean.class);
@@ -1524,7 +1525,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
      */
     private void getRecommendMarquee() {
         String url = getMyUrl("jhzBox/box/loadMarquee.do?", DeviceModelNumber, netUtils.getDeviceID().toUpperCase(), CustomId, netUtils.getIP0(), netUtils.getChineseRegion(netUtils.getLocation()), lunchname);
-        OkHttpUtils.request(url, new NormalRequestCallBack() {
+        OkHttpUtils.request(url, new NormalRequestCallback() {
 
             @Override
             public void onRequestComplete(String s, int i) {
@@ -1552,7 +1553,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
      */
     private void getRecommendBgImg() {
         String url = getMyUrl("jhzBox/box/backgroundImg.do?", DeviceModelNumber, netUtils.getDeviceID().toUpperCase(), CustomId, netUtils.getIP0(), netUtils.getChineseRegion(netUtils.getLocation()), lunchname);
-        OkHttpUtils.request(url, new NormalRequestCallBack() {
+        OkHttpUtils.request(url, new NormalRequestCallback() {
             @Override
             public void onRequestComplete(String s, int i) {
                 if (i < 0) return;
@@ -1586,7 +1587,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
      */
     private void getRecommendLogo() {
         String url = getMyUrl("jhzBox/box/loadLogo.do?", DeviceModelNumber, netUtils.getDeviceID().toUpperCase(), CustomId, netUtils.getIP0(), netUtils.getChineseRegion(netUtils.getLocation()), lunchname);
-        OkHttpUtils.request(url, new NormalRequestCallBack() {
+        OkHttpUtils.request(url, new NormalRequestCallback() {
             @Override
             public void onRequestComplete(String s, int i) {
                 final RecommendmarqueeBean rBean = new Gson().fromJson(s, RecommendmarqueeBean.class);
@@ -1614,7 +1615,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
     private void getRecommendAd() {
         String url = getMyUrl("jhzBox/box/loadAdv.do?", DeviceModelNumber, netUtils.getDeviceID().toUpperCase(), CustomId, netUtils.getIP0(), netUtils.getChineseRegion(netUtils.getLocation()), lunchname);
-        OkHttpUtils.request(url, new NormalRequestCallBack() {
+        OkHttpUtils.request(url, new NormalRequestCallback() {
             @Override
             public void onRequestComplete(String s, int i) {
                 if (i < 0) return;
@@ -1678,7 +1679,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 while (true) {
                     try {
                         String url = getMyUrl("jhzBox/box/onlineTime.do?&", DeviceModelNumber, netUtils.getDeviceID().toUpperCase(), CustomId, netUtils.getIP0(), netUtils.getChineseRegion(netUtils.getLocation()), lunchname);
-                        OkHttpUtils.request(url, new NormalRequestCallBack() {
+                        OkHttpUtils.request(url, new NormalRequestCallback() {
                             @Override
                             public void onRequestComplete(String s, int i) {
 
@@ -1698,7 +1699,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
      */
     private void clearData() {
         String url = getMyUrl("jhzBox/box/removeIp.do?", DeviceModelNumber, netUtils.getDeviceID().toUpperCase(), CustomId, netUtils.getIP0(), netUtils.getChineseRegion(netUtils.getLocation()), lunchname);
-        OkHttpUtils.request(url, new NormalRequestCallBack() {
+        OkHttpUtils.request(url, new NormalRequestCallback() {
             @Override
             public void onRequestComplete(String s, int i) {
 
@@ -1711,7 +1712,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
      */
     private void CaculateclickApp(String app) {
         String url = getMyUrl("jhzBox/box/appLike.do?", DeviceModelNumber, netUtils.getDeviceID().toUpperCase(), CustomId, netUtils.getIP0(), netUtils.getChineseRegion(netUtils.getLocation()), lunchname);
-        OkHttpUtils.request(url, new NormalRequestCallBack() {
+        OkHttpUtils.request(url, new NormalRequestCallback() {
             @Override
             public void onRequestComplete(String s, int i) {
 
@@ -1725,7 +1726,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
      */
     private void caculateUserclickAd(String ad_) {
         String url = getMyUrl("jhzBox/box/advLike.do?cy_advertisement_id=" + ad_ + "&", DeviceModelNumber, netUtils.getDeviceID().toUpperCase(), CustomId, netUtils.getIP0(), netUtils.getChineseRegion(netUtils.getLocation()), lunchname);
-        OkHttpUtils.request(url, new NormalRequestCallBack() {
+        OkHttpUtils.request(url, new NormalRequestCallback() {
             @Override
             public void onRequestComplete(String s, int i) {
 
@@ -1738,7 +1739,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
      */
     private void checkSoftwareVersion() {
         String url = getMyUrl("jhzBox/box/appOnlineVersion.do?versionNum=" + BuildConfig.VERSION_NAME + "&cy_versions_name=" + appName + "&", DeviceModelNumber, netUtils.getDeviceID().toUpperCase(), CustomId, netUtils.getIP0(), netUtils.getChineseRegion(netUtils.getLocation()), lunchname);
-        OkHttpUtils.request(url, new NormalRequestCallBack() {
+        OkHttpUtils.request(url, new NormalRequestCallback() {
             @Override
             public void onRequestComplete(String s, int i) {
                 if (i < 0) return;
@@ -1773,7 +1774,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
     private void getRecommendVideo() {
         String url = getMyUrl("xpBox/box/loadBoot.do?", DeviceModelNumber, netUtils.getDeviceID().toUpperCase(), CustomId, netUtils.getIP0(), netUtils.getChineseRegion(netUtils.getLocation()), lunchname);
-        OkHttpUtils.request(url, new NormalRequestCallBack() {
+        OkHttpUtils.request(url, new NormalRequestCallback() {
             @Override
             public void onRequestComplete(String s, int i) {
 
@@ -1790,7 +1791,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     private void downloadApk(final RecommendBean.DataBean dataBean, final int index) {
         String url = dataBean.getSyy_app_download();//
         String toFilePath = myAppsManager.getDownloadDir() + dataBean.getSyy_app_download().substring(dataBean.getSyy_app_download().lastIndexOf("/") + 1);
-        OkHttpUtils.Download(url, toFilePath, dataBean.getSyy_app_packageName(), new NormalRequestCallBack() {
+        OkHttpUtils.Download(url, toFilePath, dataBean.getSyy_app_packageName(), new NormalRequestCallback() {
             @Override
             public void onRequestComplete(String s, int i) {
                 runOnUiThread(new Runnable() {
@@ -1817,7 +1818,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
      */
     private void downloadApk(final String url) {
         String toFilePath = myAppsManager.getDownloadDir() + url.substring(url.lastIndexOf("/") + 1);
-        OkHttpUtils.Download(url, toFilePath, this.getLocalClassName(), new NormalRequestCallBack() {
+        OkHttpUtils.Download(url, toFilePath, this.getLocalClassName(), new NormalRequestCallback() {
             @Override
             public void onRequestComplete(String s, int i) {
                 runOnUiThread(new Runnable() {
