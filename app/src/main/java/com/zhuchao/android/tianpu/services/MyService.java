@@ -99,7 +99,7 @@ public class MyService extends Service {
     public void sendCommand(byte[] bytes) {
         try {
             myPortDevice.sendBuffer(bytes);
-            Log.i(TAG, myPortDevice.getDevicePath() + "发送数据:" + TypeTool.ByteArrToHexStr(bytes, 0, bytes.length));
+            Log.i(TAG, myPortDevice.getDevicePath() + " 发送数据:" + TypeTool.ByteArrToHexStr(bytes, 0, bytes.length));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -174,7 +174,7 @@ public class MyService extends Service {
 
     private void pollingSerialPortEvent() {
         //串口数据监听事件
-        myPortDevice.setOnDataReceiveListener(new MySerialPort.OnDataReceiveListener() {
+        myPortDevice.setOnDataReceiveCallback(new MySerialPort.OnDataReceiveListener() {
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {

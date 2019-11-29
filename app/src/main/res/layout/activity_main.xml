@@ -12,9 +12,11 @@
 
 		<ImageView
 			android:id="@+id/iv_bwi"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
+			android:layout_width="500dp"
+			android:layout_height="300dp"
 			android:scaleType="fitXY"
+			android:layout_marginTop="189dp"
+			android:layout_marginLeft="400.0dip"
 			android:src="@drawable/battery_warnning"
 			android:visibility="invisible" />
 

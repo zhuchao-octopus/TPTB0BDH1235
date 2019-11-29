@@ -40,7 +40,7 @@
                     android:layout_toRightOf="@+id/title_image"
                     android:text="@string/name_app"
                     android:textColor="@android:color/white"
-                    android:textSize="34.0sp"
+                    android:textSize="30.0sp"
                     tools:ignore="RelativeOverlap" />
             </RelativeLayout>
 
