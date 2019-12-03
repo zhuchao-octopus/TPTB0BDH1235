@@ -197,7 +197,7 @@ public class MyService extends Service {
                 }
                 //播放特效声
                 if (buffer[2] == 0x21) {
-                    mMyHandler.sendEmptyMessage(buffer[5]);
+                    mMyHandler.sendEmptyMessage(buffer[7]+1);
                     return;
                 }
                 //Setting

@@ -83,6 +83,7 @@ import java.util.Map;
 
 import static android.view.MotionEvent.ACTION_UP;
 import static com.zhuchao.android.libfilemanager.MyAppsManager.ADDTOMYAPPS_ACTION;
+import static com.zhuchao.android.libfilemanager.MyAppsManager.DELFROMMYAPPS_ACTION;
 import static com.zhuchao.android.tianpu.utils.PageType.MY_APP_TYPE;
 import static com.zhuchao.android.tianpu.utils.PageType.RECENT_TYPE;
 
@@ -365,6 +366,23 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 });
             }
         }.start();
+
+
+
+        String pkg = SPreference.getSharedPreferences(mContext, "MyAppInfors", "MyAppInfors");
+
+        if (!TextUtils.isEmpty(pkg)) {
+            //binding.ivAdd1.setImageDrawable(MyAppsManager.getDrawable(MainActivity.this, pkg));
+            GlideMgr.loadNormalDrawableImg(MainActivity.this, MyAppsManager.getDrawable(MainActivity.this, pkg), binding.ivAdd1);
+            binding.fl2.setTag(pkg);
+
+            AppInfor appIn = myAppsManager.getAppInfor(pkg);
+            if (appIn != null) {
+                GlideMgr.loadNormalDrawableImg(MainActivity.this, appIn.getIcon(), binding.ivAdd1);
+                binding.tvAdd1.setText(appIn.getName());
+                binding.fl2.setTag(appIn.getPackageName());
+            }
+        }
     }
 
     @Override
@@ -605,11 +623,13 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
         int focusVId = newFocus.getId();
 
-        if (focusVId == R.id.fl7) {
+        if (focusVId == R.id.fl7)
+        {
             String mac = netUtils.getMAC().toUpperCase();
             binding.mac.setText(String.format("MAC: %s", mac));
             binding.mac.setVisibility(View.VISIBLE);
-        } else {
+        }
+        else {
             binding.mac.setVisibility(View.INVISIBLE);
         }
 
@@ -1286,6 +1306,11 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             binding.tvAdd1.setText(appInfor.getName());
             binding.fl2.setTag(appInfor.getPackageName());
         }
+        if (s.equals(DELFROMMYAPPS_ACTION)) {
+            binding.ivAdd1.setImageResource(R.drawable.add);
+            binding.fl2.setTag(null);
+            binding.tvAdd1.setText(R.string.add);
+        }
     }
 
     @Override
@@ -1450,7 +1475,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 }
             }
         }.start();
-
     }
 
     /**
@@ -1928,9 +1952,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 isCharging = intent.getBooleanExtra("isCharge", false);
                 if (isCharging) {
                     binding.ivBattery.setImageResource(R.drawable.charge);
-                    binding.ivBwi.setVisibility(View.INVISIBLE);
+                   // binding.ivBwi.setVisibility(View.INVISIBLE);
                 } else {
-                    binding.ivBwi.setVisibility(View.VISIBLE);
+                    //binding.ivBwi.setVisibility(View.VISIBLE);
                 }
                 return;
             }
@@ -1938,13 +1962,13 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             if (action.equals(ACTION_BATTERY_INFO) && !isCharging) {
                 int value = intent.getIntExtra("value", -1);
                 binding.ivBattery.setVisibility(View.VISIBLE);
-                binding.ivBwi.setVisibility(View.VISIBLE);
+                //binding.ivBwi.setVisibility(View.VISIBLE);
 
-                if ((value < 5)) {
-                    binding.ivBwi.setVisibility(View.VISIBLE);
-                    binding.ivBwi.setImageResource(R.drawable.battery_warnning);
-                    binding.ivBwi.bringToFront();
-                }
+//                if ((value < 5)) {
+//                    binding.ivBwi.setVisibility(View.VISIBLE);
+//                    binding.ivBwi.setImageResource(R.drawable.battery_warnning);
+//                    binding.ivBwi.bringToFront();
+//                }
 
 
                 if (value < 10)

@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.zhuchao.android.libfilemanager.bean.AppInfor;
 import com.zhuchao.android.tianpu.R;
 
 import com.zhuchao.android.tianpu.activities.MainActivity;
@@ -116,7 +117,9 @@ public class HotAppDialog extends Dialog implements View.OnClickListener,
                 ((MainActivity) context).getMyAppsManager().uninstall(packageName);
                 break;
             case R.id.remove:
-                clearCache();
+                AppInfor app = ((MainActivity) context) .getMyAppsManager().getAppInfor(packageName);
+                ((MainActivity) context) .getMyAppsManager().delFromMyApp(app);
+                //clearCache();
                 //Intent intent = new Intent(AppListHandler.CLEAR_ACTION);
                 //intent.setData(Uri.parse("package:www"));
                 //intent.putExtra("vId", rId);
