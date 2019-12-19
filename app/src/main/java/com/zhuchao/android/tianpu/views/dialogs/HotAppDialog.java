@@ -3,9 +3,9 @@ package com.zhuchao.android.tianpu.views.dialogs;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
+
 import androidx.databinding.DataBindingUtil;
-import android.net.Uri;
+
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import android.text.TextUtils;
@@ -114,12 +114,13 @@ public class HotAppDialog extends Dialog implements View.OnClickListener,
                 HotAppsDialog.showHotAppsDialog(context,rId);
                 break;
             case R.id.del:
-                ((MainActivity) context).getMyAppsManager().uninstall(packageName);
+                ((MainActivity) context).getmMyAppsManager().uninstall(packageName);
                 break;
             case R.id.remove:
-                AppInfor app = ((MainActivity) context) .getMyAppsManager().getAppInfor(packageName);
-                ((MainActivity) context) .getMyAppsManager().delFromMyApp(app);
-                //clearCache();
+                AppInfor app = ((MainActivity) context) .getmMyAppsManager().getAppInfor(packageName);
+                ((MainActivity) context) .getmMyAppsManager().delFromMyApp(app);
+                ((MainActivity) context) .getmMyAppsManager().delFromMyApp(app);
+                clearCache();
                 //Intent intent = new Intent(AppListHandler.CLEAR_ACTION);
                 //intent.setData(Uri.parse("package:www"));
                 //intent.putExtra("vId", rId);

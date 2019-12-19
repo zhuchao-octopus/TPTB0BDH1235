@@ -52,7 +52,7 @@ public class HotAppsDialog extends Dialog {
 
 
         if (context instanceof MainActivity) {
-            appInfors = ((MainActivity) context).getMyAppsManager().getUserApps();
+            appInfors = ((MainActivity) context).getmMyAppsManager().getUserApps();
             loadAppData();
         }
 
@@ -63,7 +63,7 @@ public class HotAppsDialog extends Dialog {
 
                 if (context instanceof MainActivity) {
                     AppInfor app = appInfors.get(position);
-                   ((MainActivity) context) .getMyAppsManager().addToMyApp(app);
+                   ((MainActivity) context) .getmMyAppsManager().addToMyApp(app);
                 }
 
                 dismiss();

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -99,12 +100,16 @@ public class ForegroundAppUtil {
             UsageStatsManager manager = (UsageStatsManager) context.getApplicationContext().getSystemService(Context.USAGE_STATS_SERVICE);
             //UsageStatsManager.INTERVAL_WEEKLY，UsageStatsManager的参数定义了5个，具体查阅源码
             List<UsageStats> usageStatses = manager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, startTime, endTime);
+
             if (usageStatses == null || usageStatses.size() == 0) {// 没有权限，获取不到数据
                 Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.getApplicationContext().startActivity(intent);
+                //context.getApplicationContext().startActivity(intent);
+                //Toast t = Toast.makeText(context,"need permmition to access settings .", Toast.LENGTH_LONG);
+                //t.show();
                 return null;
             }
+
             return usageStatses;
         }
         return null;

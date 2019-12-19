@@ -843,7 +843,6 @@
                 android:layout_height="35dp"
                 android:layout_below="@id/ad"
                 android:layout_alignRight="@id/ad"
-                android:layout_marginTop="20dp"
                 android:text=""
                 android:textSize="20.0dip"
                 android:visibility="visible"

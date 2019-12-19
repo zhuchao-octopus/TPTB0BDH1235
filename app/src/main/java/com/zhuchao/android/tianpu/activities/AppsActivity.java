@@ -5,14 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
+import com.zhuchao.android.libfilemanager.AppsChangedCallback;
 import com.zhuchao.android.libfilemanager.MyAppsManager;
 import com.zhuchao.android.libfilemanager.bean.AppInfor;
 import com.zhuchao.android.tianpu.R;
@@ -27,7 +28,7 @@ import java.util.List;
  * Created by Oracle on 2017/12/1.
  */
 
-public class AppsActivity extends Activity {
+public class AppsActivity extends Activity implements AppsChangedCallback {
 
     private static final String TAG = AppsActivity.class.getSimpleName();
     private ActivityMyApplicationBinding binding;
@@ -47,7 +48,12 @@ public class AppsActivity extends Activity {
         //pageType = TextUtils.isEmpty(pageTypeStr) ? PageType.MY_APP_TYPE : PageType.valueOf(pageTypeStr);
         appAdapter = new AppAdapter(this);
 
+        if (mMyAppsManager != null) {
+            mMyAppsManager.setmAppsChangedCallback(this);
+        }
+
         LoadData();
+
         binding.allapps.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -60,6 +66,7 @@ public class AppsActivity extends Activity {
                 }
             }
         });
+
         binding.allapps.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -76,6 +83,7 @@ public class AppsActivity extends Activity {
     }
 
     public void LoadData() {
+        MyAppInfors = mMyAppsManager.getUserApps();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -90,6 +98,12 @@ public class AppsActivity extends Activity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.e(TAG,">>>>>>>>>>>>>>>>>>>>>>>>>>>>"+keyCode);
+        if(keyCode == KeyEvent.KEYCODE_TV_INPUT)
+        {
+            finish();
+        }
+
         return super.onKeyDown(keyCode, event);
     }
 
@@ -99,12 +113,20 @@ public class AppsActivity extends Activity {
     }
 
     @Override
-    protected void onResume() {
-        if (mMyAppsManager != null) {
-            MyAppInfors = mMyAppsManager.getUserApps();
+    protected void onResume()
+    {
+        if (mMyAppsManager != null)
+        {
+            mMyAppsManager.setmAppsChangedCallback(this);
             LoadData();
         }
         super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+            LoadData();
+        super.onRestart();
     }
 
     @Override
@@ -128,9 +150,18 @@ public class AppsActivity extends Activity {
         Intent intent = new Intent(context, AppsActivity.class);
         intent.putExtra("type", pageType.name());
         if (context instanceof MainActivity) {
-            mMyAppsManager = ((MainActivity) context).getMyAppsManager();
+            mMyAppsManager = ((MainActivity) context).getmMyAppsManager();
             //MyAppInfors = mMyAppsManager.getApps();
         }
         context.startActivity(intent);
+    }
+
+    @Override
+    public void OnAppsChanged(String s, AppInfor appInfor)
+    {
+        if (s.equals(MyAppsManager.SCANING_ACTION) )
+        {
+           LoadData();
+        }
     }
 }

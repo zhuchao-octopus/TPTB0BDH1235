@@ -82,12 +82,12 @@ import java.util.List;
 import java.util.Map;
 
 import static android.view.MotionEvent.ACTION_UP;
-import static com.zhuchao.android.libfilemanager.MyAppsManager.ADDTOMYAPPS_ACTION;
 import static com.zhuchao.android.libfilemanager.MyAppsManager.DELFROMMYAPPS_ACTION;
+import static com.zhuchao.android.libfilemanager.MyAppsManager.SCANING_COMPLETE_ACTION;
 import static com.zhuchao.android.tianpu.utils.PageType.MY_APP_TYPE;
 import static com.zhuchao.android.tianpu.utils.PageType.RECENT_TYPE;
 
-public class MainActivity extends Activity implements OnTouchListener, OnGlobalFocusChangeListener, NetChangedCallBack,
+public class MainActivity extends Activity implements OnTouchListener, OnGlobalFocusChangeListener, NetChangedCallBack, View.OnLongClickListener,
         View.OnClickListener, TimeHandler.OnTimeDateListener, WallperHandler.OnWallperUpdateListener, AppsChangedCallback, ViewTreeObserver.OnGlobalLayoutListener,
         View.OnKeyListener, ServiceConnection {
     private Context mContext;
@@ -169,7 +169,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     private View OldView = null;
 
     private NetUtils netUtils = null;
-    private MyAppsManager myAppsManager = null;
+    private MyAppsManager mMyAppsManager = null;
 
     private int mMainLayoutHeight = 0;
 
@@ -197,12 +197,12 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         //启动服务
         StartMyService();
         netUtils = new NetUtils(MainActivity.this, this);
-        myAppsManager = new MyAppsManager(MainActivity.this, this);
-        myAppsManager.getFilter().add("com.zhuchao.android.tianpu");
-        myAppsManager.getFilter().add("com.wxs.scanner");
-        myAppsManager.getFilter().add("com.iflytek.xiri");
-        myAppsManager.getFilter().add("com.softwinner.dragonbox");
-        myAppsManager.getFilter().add("com.android.camera2");
+        mMyAppsManager = new MyAppsManager(MainActivity.this, this);
+        mMyAppsManager.getFilter().add("com.zhuchao.android.tianpu");
+        mMyAppsManager.getFilter().add("com.wxs.scanner");
+        mMyAppsManager.getFilter().add("com.iflytek.xiri");
+        mMyAppsManager.getFilter().add("com.softwinner.dragonbox");
+        mMyAppsManager.getFilter().add("com.android.camera2");
 
         binding.fl5.setOnClickListener(this);
         //binding.fl5.setOnKeyListener(this);
@@ -237,7 +237,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         // binding.fl16.setOnKeyListener(this);
         //binding.fl16.setOnClickListener(this);
         binding.fl2.setOnClickListener(this);
-
+        binding.fl2.setOnLongClickListener(this);
 
         binding.fl0.setOnClickListener(this);
         binding.fl0.setOnKeyListener(this);
@@ -251,7 +251,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         binding.fl0.setOnTouchListener(this);
         binding.fl1.setOnTouchListener(this);
         binding.fl2.setOnTouchListener(this);
-
+        binding.fl2.setOnLongClickListener(this);
 
         binding.fl3.setOnTouchListener(this);
         binding.fl4.setOnTouchListener(this);
@@ -284,13 +284,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         binding.bgIv5.setOnClickListener(this);
         binding.ivFill.setOnClickListener(this);
 
-        binding.fl2.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                ShowHotAppDialog(v.getTag(), R.id.fl2);
-                return true;
-            }
-        });
 
         selEffectBridge = (SelEffectBridge) binding.mainUpView.getEffectBridge();
         binding.mainRl.getViewTreeObserver().addOnGlobalFocusChangeListener(this);
@@ -323,6 +316,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     @Override
     protected void onStop() {
         super.onStop();
+        switchToOtherChanel("I2s 通道");
         Log.d(TAG, "launcher is onStop");
     }
 
@@ -343,6 +337,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             binding.fl0.setFocusable(true);
             binding.fl0.requestFocus();
         }
+
         new Thread() {
             @Override
             public void run() {
@@ -367,22 +362,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             }
         }.start();
 
-
-
-        String pkg = SPreference.getSharedPreferences(mContext, "MyAppInfors", "MyAppInfors");
-
-        if (!TextUtils.isEmpty(pkg)) {
-            //binding.ivAdd1.setImageDrawable(MyAppsManager.getDrawable(MainActivity.this, pkg));
-            GlideMgr.loadNormalDrawableImg(MainActivity.this, MyAppsManager.getDrawable(MainActivity.this, pkg), binding.ivAdd1);
-            binding.fl2.setTag(pkg);
-
-            AppInfor appIn = myAppsManager.getAppInfor(pkg);
-            if (appIn != null) {
-                GlideMgr.loadNormalDrawableImg(MainActivity.this, appIn.getIcon(), binding.ivAdd1);
-                binding.tvAdd1.setText(appIn.getName());
-                binding.fl2.setTag(appIn.getPackageName());
-            }
-        }
     }
 
     @Override
@@ -423,8 +402,17 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     }
 
     @Override
+    public boolean onLongClick(View v) {
+        if (v.getId() == binding.fl2.getId()) {
+            ShowHotAppDialog(v.getTag(), R.id.fl2);
+        }
+        return true;
+    }
+
+    @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
-        //Log.e("key","onKey>>>>keyCode="+keyCode+"    KeyEvent="+event);
+        Log.e("key","onKey>>>>keyCode="+keyCode+"    KeyEvent="+event);
+        Log.e(TAG,">>>>>>>>>>>>>>>>>>>>>>>>>>>>"+keyCode);
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             switch (keyCode) {
                 case KeyEvent.KEYCODE_MENU:
@@ -623,13 +611,11 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
         int focusVId = newFocus.getId();
 
-        if (focusVId == R.id.fl7)
-        {
+        if (focusVId == R.id.fl7) {
             String mac = netUtils.getMAC().toUpperCase();
             binding.mac.setText(String.format("MAC: %s", mac));
             binding.mac.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             binding.mac.setVisibility(View.INVISIBLE);
         }
 
@@ -719,19 +705,18 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     }
 
     private void openSettings() {
-        if (myAppsManager.isTheAppExist("com.android.tv.settings"))
-        {
-            myAppsManager.startTheApp("com.android.tv.settings");
+        if (mMyAppsManager.isTheAppExist("com.android.tv.settings")) {
+            mMyAppsManager.startTheApp("com.android.tv.settings");
         } else {
-            myAppsManager.startTheApp("com.android.settings");
+            mMyAppsManager.startTheApp("com.android.settings");
             //Intent in = new Intent();
             //in.setClassName("com.android.settings", "com.android.settings.Settings");
             //startActivity(in);
         }
     }
 
-    public MyAppsManager getMyAppsManager() {
-        return myAppsManager;
+    public MyAppsManager getmMyAppsManager() {
+        return mMyAppsManager;
     }
 
     /**
@@ -790,16 +775,16 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
     private void OnMainPageViewClick(View v, int keyCode, boolean isClick) {
         int id = v.getId();
 
-        Drawable drawable = myAppsManager.getAppInfor(PackageName.qqMusic).getIcon();
+        Drawable drawable = mMyAppsManager.getAppInfor(PackageName.qqMusic).getIcon();
         switch (id) {
             case R.id.fl4:
                 //QQ音乐
                 binding.fl4.requestFocus();
                 binding.bgIv5.setImageResource(R.drawable.bb2);
                 binding.bgIcon.setVisibility(View.VISIBLE);
-                drawable = myAppsManager.getAppInfor(PackageName.qqMusic).getIcon();
+                drawable = mMyAppsManager.getAppInfor(PackageName.qqMusic).getIcon();
                 binding.bgIcon.setImageDrawable(drawable);
-                //Glide.with(this).asBitmap().load(myAppsManager.getAppInfor(PackageName.qqMusic).getIcon()).into(binding.bgIcon);
+                //Glide.with(this).asBitmap().load(mMyAppsManager.getAppInfor(PackageName.qqMusic).getIcon()).into(binding.bgIcon);
                 launchApp(PackageName.qqMusic);
                 switchToOtherChanel("QQ音乐");
                 break;
@@ -808,9 +793,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.fl0.requestFocus();
                 binding.bgIv5.setImageResource(R.drawable.bb2);
                 binding.bgIcon.setVisibility(View.VISIBLE);
-                drawable = myAppsManager.getAppInfor(PackageName.qmSing).getIcon();
+                drawable = mMyAppsManager.getAppInfor(PackageName.qmSing).getIcon();
                 binding.bgIcon.setImageDrawable(drawable);
-                //Glide.with(this).asBitmap().load(myAppsManager.getAppInfor(PackageName.qmSing).getIcon()).into(binding.bgIcon);
+                //Glide.with(this).asBitmap().load(mMyAppsManager.getAppInfor(PackageName.qmSing).getIcon()).into(binding.bgIcon);
                 launchApp(PackageName.qmSing);
                 switchToOtherChanel("全民k歌");
                 break;
@@ -819,9 +804,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.fl6.requestFocus();
                 binding.bgIv5.setImageResource(R.drawable.bb2);
                 binding.bgIcon.setVisibility(View.VISIBLE);
-                drawable = myAppsManager.getAppInfor("com.softwinner.TvdFileManager").getIcon();
+                drawable = mMyAppsManager.getAppInfor("com.softwinner.TvdFileManager").getIcon();
                 binding.bgIcon.setImageDrawable(drawable);
-                //Glide.with(this).asBitmap().load(myAppsManager.getAppInfor("com.softwinner.TvdFileManager").getIcon()).into(binding.bgIcon);
+                //Glide.with(this).asBitmap().load(mMyAppsManager.getAppInfor("com.softwinner.TvdFileManager").getIcon()).into(binding.bgIcon);
                 launchApp("com.softwinner.TvdFileManager");
                 switchToOtherChanel("文件管理器");
                 break;
@@ -839,8 +824,8 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.fl7.requestFocus();
                 binding.bgIv5.setImageResource(R.drawable.bb2);
                 binding.bgIcon.setVisibility(View.VISIBLE);
-                binding.bgIcon.setImageDrawable(myAppsManager.getAppInfor("com.android.settings").getIcon());
-                //Glide.with(this).asBitmap().load(myAppsManager.getAppInfor("com.android.settings").getIcon()).into(binding.bgIv5);
+                binding.bgIcon.setImageDrawable(mMyAppsManager.getAppInfor("com.android.settings").getIcon());
+                //Glide.with(this).asBitmap().load(mMyAppsManager.getAppInfor("com.android.settings").getIcon()).into(binding.bgIv5);
                 openSettings();
 
                 switchToOtherChanel("系统设置");
@@ -850,9 +835,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.fl8.requestFocus();
                 binding.bgIv5.setImageResource(R.drawable.bb2);
                 binding.bgIcon.setVisibility(View.VISIBLE);
-                drawable = myAppsManager.getAppInfor(PackageName.hdp).getIcon();
+                drawable = mMyAppsManager.getAppInfor(PackageName.hdp).getIcon();
                 binding.bgIcon.setImageDrawable(drawable);
-                //Glide.with(this).asBitmap().load(myAppsManager.getAppInfor(PackageName.hdp).getIcon()).into(binding.bgIcon);
+                //Glide.with(this).asBitmap().load(mMyAppsManager.getAppInfor(PackageName.hdp).getIcon()).into(binding.bgIcon);
                 launchApp(PackageName.hdp);
                 switchToOtherChanel("hdp 频道");
                 break;
@@ -860,9 +845,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 //腾讯视频
                 binding.fl1.requestFocus();
                 binding.bgIv5.setImageResource(R.drawable.bb2);
-                drawable = myAppsManager.getAppInfor(PackageName.qqTv).getIcon();
+                drawable = mMyAppsManager.getAppInfor(PackageName.qqTv).getIcon();
                 binding.bgIcon.setImageDrawable(drawable);
-                //Glide.with(this).asBitmap().load(myAppsManager.getAppInfor(PackageName.qqTv).getIcon()).into(binding.bgIcon);
+                //Glide.with(this).asBitmap().load(mMyAppsManager.getAppInfor(PackageName.qqTv).getIcon()).into(binding.bgIcon);
                 launchApp(PackageName.qqTv);
                 binding.bgIcon.setVisibility(View.VISIBLE);
                 switchToOtherChanel("腾讯视频");
@@ -877,12 +862,14 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 }
                 break;
             case R.id.fl2:
+                binding.fl2.requestFocus();
                 binding.bgIv5.setImageResource(R.drawable.bb2);
                 Object obj = v.getTag();
                 if (obj == null || !isClick) {
                     switchToOtherChanel(v.getClass().getName());
                     ShowHotAppDialog(obj, id);
                 } else if (obj != null && isClick) {
+                    switchToOtherChanel("我的APP");
                     launchApp(obj.toString());
                 }
                 break;
@@ -986,7 +973,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 break;
             case R.id.bg_iv5:
                 binding.ivFill.setVisibility(View.VISIBLE);
-
+                break;
+            case R.id.fl5:
+                binding.ivFill.setVisibility(View.VISIBLE);
                 break;
         }
 
@@ -1134,6 +1123,9 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 mSerialCommand = data;
                 Log.i("Callback.onDataChange", "data=" + data);
                 if (null != SerialPortReceiveHandler) {
+                    //Intent in = new Intent();
+                    //in.setClassName("com.zhuchao.android.tianpu", "com.zhuchao.android.tianpu.activities.MainActivity");
+                    //startActivity(in);
                     SerialPortReceiveHandler.post(HandleSerialPortrunnable);
                 } else {
                     Log.e("tag", "SerialPortReceiveHandler=null");
@@ -1167,8 +1159,8 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
     public void launchApp(String packageName) {
 
-        if (myAppsManager.isTheAppExist(packageName))
-            myAppsManager.startTheApp(packageName);
+        if (mMyAppsManager.isTheAppExist(packageName))
+            mMyAppsManager.startTheApp(packageName);
         else
             Toast.makeText(mContext, "Not found the app you want:" + packageName, Toast.LENGTH_LONG).show();
     }
@@ -1211,7 +1203,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 TimeTickCount = 0;
 
                 //startActivity(new Intent().setClassName("com.wxs.scanner", "com.wxs.scanner.activity.workstation.CheckActivity"));
-                b = myAppsManager.startTheApp("com.wxs.scanner");
+                b = mMyAppsManager.startTheApp("com.wxs.scanner");
                 if (!b)
                     break;
                 Toast.makeText(mContext, "未安装老化测试App" + "com.wxs.scanner", Toast.LENGTH_SHORT).show();
@@ -1219,7 +1211,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 //重置输入
                 InpputNumStr = "";
                 TimeTickCount = 0;
-                b = myAppsManager.startTheApp("com.softwinner.agingdragonbox");
+                b = mMyAppsManager.startTheApp("com.softwinner.agingdragonbox");
                 if (!b)
                     break;
                 Toast.makeText(mContext, "未安装老化测试App" + "com.wxs.scanner", Toast.LENGTH_SHORT).show();
@@ -1301,16 +1293,33 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
 
     @Override
     public void OnAppsChanged(String s, AppInfor appInfor) {
-        if (s.equals(ADDTOMYAPPS_ACTION)) {
-            GlideMgr.loadNormalDrawableImg(MainActivity.this, appInfor.getIcon(), binding.ivAdd1);
-            binding.tvAdd1.setText(appInfor.getName());
-            binding.fl2.setTag(appInfor.getPackageName());
-        }
-        if (s.equals(DELFROMMYAPPS_ACTION)) {
-            binding.ivAdd1.setImageResource(R.drawable.add);
-            binding.fl2.setTag(null);
-            binding.tvAdd1.setText(R.string.add);
-        }
+        //Log.d(TAG, s + ">>>>>>>>>>>>>>");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (s.equals("ADDTOMYAPPS")) {
+                    GlideMgr.loadNormalDrawableImg(MainActivity.this, appInfor.getIcon(), binding.ivAdd1);
+                    binding.tvAdd1.setText(appInfor.getName());
+                    binding.fl2.setTag(appInfor.getPackageName());
+                    //Log.d(TAG, s + ">>>>>>>>>>>>>>" + appInfor.toString());
+                }
+                if (s.equals(DELFROMMYAPPS_ACTION)) {
+                    binding.ivAdd1.setImageResource(R.drawable.add);
+                    binding.fl2.setTag(null);
+                    binding.tvAdd1.setText(R.string.add);
+                }
+                if (s.equals(SCANING_COMPLETE_ACTION)) {
+                    String pkg = SPreference.getSharedPreferences(mContext, "MyAppInfors", "MyAppInfors");
+                    AppInfor appInfor1 = mMyAppsManager.getAppInfor(pkg);
+                    if (appInfor1 != null) {
+                        GlideMgr.loadNormalDrawableImg(MainActivity.this, appInfor1.getIcon(), binding.ivAdd1);
+                        binding.tvAdd1.setText(appInfor1.getName());
+                        binding.fl2.setTag(appInfor1.getPackageName());
+                    }
+                }
+            }
+        });
+        //Log.d(TAG, s + ">>>>>>>>>>>>>>");
     }
 
     @Override
@@ -1490,7 +1499,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                     //卸载app
                     List<String> data = removeAppBean.getData();
                     for (String pck : data) {
-                        myAppsManager.uninstall(pck);
+                        mMyAppsManager.uninstall(pck);
                     }
                 }
             }
@@ -1814,7 +1823,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
      */
     private void downloadApk(final RecommendBean.DataBean dataBean, final int index) {
         String url = dataBean.getSyy_app_download();//
-        String toFilePath = myAppsManager.getDownloadDir() + dataBean.getSyy_app_download().substring(dataBean.getSyy_app_download().lastIndexOf("/") + 1);
+        String toFilePath = mMyAppsManager.getDownloadDir() + dataBean.getSyy_app_download().substring(dataBean.getSyy_app_download().lastIndexOf("/") + 1);
         OkHttpUtils.Download(url, toFilePath, dataBean.getSyy_app_packageName(), new NormalRequestCallback() {
             @Override
             public void onRequestComplete(String s, int i) {
@@ -1841,7 +1850,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
      * @param url
      */
     private void downloadApk(final String url) {
-        String toFilePath = myAppsManager.getDownloadDir() + url.substring(url.lastIndexOf("/") + 1);
+        String toFilePath = mMyAppsManager.getDownloadDir() + url.substring(url.lastIndexOf("/") + 1);
         OkHttpUtils.Download(url, toFilePath, this.getLocalClassName(), new NormalRequestCallback() {
             @Override
             public void onRequestComplete(String s, int i) {
@@ -1849,7 +1858,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                     @Override
                     public void run() {
                         if (i >= 0) {
-                            myAppsManager.install(toFilePath);
+                            mMyAppsManager.install(toFilePath);
                         } else {
                             Toast.makeText(mContext, R.string.download_failed, Toast.LENGTH_SHORT).show();
                         }
@@ -1858,6 +1867,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             }
         });
     }
+
 
     public class MyReceiver extends BroadcastReceiver {
         @Override
@@ -1952,7 +1962,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 isCharging = intent.getBooleanExtra("isCharge", false);
                 if (isCharging) {
                     binding.ivBattery.setImageResource(R.drawable.charge);
-                   // binding.ivBwi.setVisibility(View.INVISIBLE);
+                    // binding.ivBwi.setVisibility(View.INVISIBLE);
                 } else {
                     //binding.ivBwi.setVisibility(View.VISIBLE);
                 }

@@ -20,6 +20,7 @@ import android.view.WindowManager;
 import androidx.annotation.Nullable;
 
 import com.zhuchao.android.libfilemanager.devices.MySerialPort;
+import com.zhuchao.android.playerutil.PlayerUtil;
 import com.zhuchao.android.tianpu.R;
 import com.zhuchao.android.tianpu.utils.ForegroundAppUtil;
 import com.zhuchao.android.tianpu.utils.TypeTool;
@@ -73,6 +74,8 @@ public class MyService extends Service {
     public static void setMusicVolume(int musicVolume) {
         MusicVolume = musicVolume;
     }
+
+    private OMedia mOMedia = null;
 
     @Override
     public void onCreate() {
@@ -197,7 +200,7 @@ public class MyService extends Service {
                 }
                 //播放特效声
                 if (buffer[2] == 0x21) {
-                    mMyHandler.sendEmptyMessage(buffer[7]+1);
+                    mMyHandler.sendEmptyMessage(buffer[7] + 1);
                     return;
                 }
                 //Setting
@@ -300,14 +303,17 @@ public class MyService extends Service {
                     break;
             }
 
-        } else if (type.equals("0500")) {
-            if (actionCallback != null) {
-                if (isTopActivity("com.zhuchao.android.tianpu") == false && !data.equals("010105000002000000097E")) {
+        }
+        else if (type.equals("0500"))
+        {
+            if (actionCallback != null)
+            {
+                if (isTopActivity("com.zhuchao.android.tianpu") == false && !data.equals("010105000002000000097E"))
+                {
                     Intent i = new Intent();
-                    i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    //i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     ComponentName cn = new ComponentName("com.zhuchao.android.tianpu", "com.zhuchao.android.tianpu.activities.MainActivity");
                     i.setComponent(cn);
-
                     startActivity(i);
                 }
                 actionCallback.onDataChange(this.data);
@@ -325,8 +331,7 @@ public class MyService extends Service {
 
     }
 
-    private void showVolumeDialog(int direction, String type)
-    {
+    private void showVolumeDialog(int direction, String type) {
         if (dialog == null || dialog.isShowing() != true) {
             dialog = new MusicDialog(this);
             //dialog.setVolumeAdjustListener();
@@ -416,8 +421,14 @@ public class MyService extends Service {
 
         //PlayerUtil.FreeSingle();
         if (fd != null) {
-            OMedia audio = new OMedia();
-            audio.with(this.getApplicationContext()).play(fd);
+            if (mOMedia != null) {
+                if (mOMedia.isPlaying()) {
+                    if (mOMedia.getMovie().getMovieName().equals("charge.mp3")) ;
+                }
+            }
+
+            mOMedia = new OMedia(fileName);
+            mOMedia.with(this.getApplicationContext()).play(fd);
         }
     }
 
