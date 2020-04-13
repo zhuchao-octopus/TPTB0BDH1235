@@ -159,9 +159,9 @@ public class AppsActivity extends Activity implements AppsChangedCallback {
     @Override
     public void OnAppsChanged(String s, AppInfor appInfor)
     {
-        if (s.equals(MyAppsManager.SCANING_ACTION) )
+        if (s.equals(MyAppsManager.SCANING_COMPLETE_ACTION) )
         {
-           //LoadData();
+           LoadData();
         }
     }
 }
