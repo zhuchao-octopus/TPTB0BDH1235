@@ -161,7 +161,7 @@ public class AppsActivity extends Activity implements AppsChangedCallback {
     {
         if (s.equals(MyAppsManager.SCANING_ACTION) )
         {
-           LoadData();
+           //LoadData();
         }
     }
 }
