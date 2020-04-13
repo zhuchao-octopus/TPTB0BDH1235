@@ -79,8 +79,10 @@ public class AppAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        AppInfor app = apps.get(position);
         try {
+            if(position<0) return null;
+            if(position >= apps.size()) return null;
+            AppInfor app = apps.get(position);
             //Log.d("xiaolp","app = "+app+" viewHolder = "+viewHolder);
             GlideMgr.loadNormalDrawableImg(mContext, app.getIcon(), viewHolder.iv);
             viewHolder.tv.setText(app.getName());
