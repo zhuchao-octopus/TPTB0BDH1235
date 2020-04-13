@@ -85,7 +85,6 @@ public class AppsActivity extends Activity implements AppsChangedCallback {
     }
 
     public void LoadData() {
-
         MyAppInfors = mMyAppsManager.getUserApps();
         runOnUiThread(new Runnable() {
             @Override
