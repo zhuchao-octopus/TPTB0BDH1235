@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -99,9 +101,8 @@ public class AppsActivity extends Activity implements AppsChangedCallback {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Log.e(TAG,">>>>>>>>>>>>>>>>>>>>>>>>>>>>"+keyCode);
-        if(keyCode == KeyEvent.KEYCODE_TV_INPUT)
-        {
+        Log.e(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>" + keyCode);
+        if (keyCode == KeyEvent.KEYCODE_TV_INPUT) {
             finish();
         }
 
@@ -114,10 +115,8 @@ public class AppsActivity extends Activity implements AppsChangedCallback {
     }
 
     @Override
-    protected void onResume()
-    {
-        if (mMyAppsManager != null)
-        {
+    protected void onResume() {
+        if (mMyAppsManager != null) {
             mMyAppsManager.setmAppsChangedCallback(this);
             LoadData();
         }
@@ -126,7 +125,7 @@ public class AppsActivity extends Activity implements AppsChangedCallback {
 
     @Override
     protected void onRestart() {
-            LoadData();
+        LoadData();
         super.onRestart();
     }
 
@@ -158,11 +157,24 @@ public class AppsActivity extends Activity implements AppsChangedCallback {
     }
 
     @Override
-    public void OnAppsChanged(String s, AppInfor appInfor)
-    {
-        if (s.equals(MyAppsManager.SCANING_COMPLETE_ACTION) )
-        {
-           //LoadData();
+    public void OnAppsChanged(String s, AppInfor appInfor) {
+        if (s.equals(MyAppsManager.SCANING_COMPLETE_ACTION)) {
+            //LoadData();
+            handler.sendEmptyMessage(0x11);
         }
     }
+
+    final Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            if (msg.what == 0x11) {
+                LoadData();
+                //Bundle bundle = msg.getData();
+                //String date = bundle.getString("msg");
+            }
+        }
+    };
+
 }
