@@ -88,7 +88,6 @@ public class AppsActivity extends Activity implements AppsChangedCallback {
 
     public  void LoadData() {
         MyAppInfors = mMyAppsManager.getUserApps();
-
         appAdapter.notifyDataSetChanged();
 //        runOnUiThread(new Runnable() {
 //            @Override
@@ -119,16 +118,15 @@ public class AppsActivity extends Activity implements AppsChangedCallback {
 
     @Override
     protected void onResume() {
-        if (mMyAppsManager != null) {
-            mMyAppsManager.setmAppsChangedCallback(this);
-            LoadData();
-        }
+        //if (mMyAppsManager != null) {
+        //    mMyAppsManager.setmAppsChangedCallback(this);
+        //    LoadData();
+        //}
         super.onResume();
     }
 
     @Override
     protected void onRestart() {
-        LoadData();
         super.onRestart();
     }
 
