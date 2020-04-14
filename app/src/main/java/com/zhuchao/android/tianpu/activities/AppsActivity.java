@@ -86,14 +86,17 @@ public class AppsActivity extends Activity implements AppsChangedCallback {
 
     public synchronized void LoadData() {
         MyAppInfors = mMyAppsManager.getUserApps();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                appAdapter.setApps(MyAppInfors);
-                binding.allapps.setAdapter(appAdapter);
-                appAdapter.notifyDataSetChanged();
-            }
-        });
+        appAdapter.setApps(MyAppInfors);
+        binding.allapps.setAdapter(appAdapter);
+        appAdapter.notifyDataSetChanged();
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                appAdapter.setApps(MyAppInfors);
+//                binding.allapps.setAdapter(appAdapter);
+//                appAdapter.notifyDataSetChanged();
+//            }
+//        });
 
 
     }
