@@ -49,12 +49,13 @@ public class AppsActivity extends Activity implements AppsChangedCallback {
         //String pageTypeStr = getIntent().getStringExtra("type");
         //pageType = TextUtils.isEmpty(pageTypeStr) ? PageType.MY_APP_TYPE : PageType.valueOf(pageTypeStr);
         appAdapter = new AppAdapter(this);
+        appAdapter.setApps(MyAppInfors);
+        binding.allapps.setAdapter(appAdapter);
 
         if (mMyAppsManager != null) {
             mMyAppsManager.setmAppsChangedCallback(this);
         }
-        appAdapter.setApps(MyAppInfors);
-        binding.allapps.setAdapter(appAdapter);
+
         LoadData();
 
         binding.allapps.setOnItemClickListener(new AdapterView.OnItemClickListener() {
