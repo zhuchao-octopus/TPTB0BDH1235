@@ -53,7 +53,8 @@ public class AppsActivity extends Activity implements AppsChangedCallback {
         if (mMyAppsManager != null) {
             mMyAppsManager.setmAppsChangedCallback(this);
         }
-
+        appAdapter.setApps(MyAppInfors);
+        binding.allapps.setAdapter(appAdapter);
         LoadData();
 
         binding.allapps.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -86,8 +87,7 @@ public class AppsActivity extends Activity implements AppsChangedCallback {
 
     public  void LoadData() {
         MyAppInfors = mMyAppsManager.getUserApps();
-        appAdapter.setApps(MyAppInfors);
-        binding.allapps.setAdapter(appAdapter);
+
         appAdapter.notifyDataSetChanged();
 //        runOnUiThread(new Runnable() {
 //            @Override
