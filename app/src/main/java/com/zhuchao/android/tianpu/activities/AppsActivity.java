@@ -122,13 +122,14 @@ public class AppsActivity extends Activity implements AppsChangedCallback {
         //    mMyAppsManager.setmAppsChangedCallback(this);
         //    LoadData();
         //}
-        handler.sendEmptyMessage(0x11);
         super.onResume();
+        handler.sendEmptyMessage(0x11);
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
+        handler.sendEmptyMessage(0x11);
     }
 
     @Override
