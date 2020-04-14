@@ -122,6 +122,7 @@ public class AppsActivity extends Activity implements AppsChangedCallback {
         //    mMyAppsManager.setmAppsChangedCallback(this);
         //    LoadData();
         //}
+        handler.sendEmptyMessage(0x11);
         super.onResume();
     }
 
@@ -143,8 +144,8 @@ public class AppsActivity extends Activity implements AppsChangedCallback {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        appAdapter = null;
-        binding = null;
+        //appAdapter = null;
+        //binding = null;
     }
 
     public static void lunchAppsActivity(Context context, PageType pageType) {
