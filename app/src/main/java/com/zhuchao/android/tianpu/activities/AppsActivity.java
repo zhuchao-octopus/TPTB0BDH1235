@@ -122,10 +122,10 @@ public class AppsActivity extends Activity implements AppsChangedCallback {
         //    mMyAppsManager.setmAppsChangedCallback(this);
         //    LoadData();
         //}
+
         appAdapter.setApps(MyAppInfors);
         binding.allapps.setAdapter(appAdapter);
         super.onResume();
-
         handler.sendEmptyMessage(0x11);
     }
 

@@ -203,6 +203,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
         mMyAppsManager.getFilter().add("com.iflytek.xiri");
         mMyAppsManager.getFilter().add("com.softwinner.dragonbox");
         mMyAppsManager.getFilter().add("com.android.camera2");
+        mMyAppsManager.getFilter().add("com.android.soundrecorder");
 
         binding.fl5.setOnClickListener(this);
         //binding.fl5.setOnKeyListener(this);
