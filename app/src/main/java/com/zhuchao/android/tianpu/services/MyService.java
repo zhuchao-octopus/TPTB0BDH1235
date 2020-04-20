@@ -89,7 +89,7 @@ public class MyService extends Service {
         };
 
         //boolean bRet = myPortDevice.openPort("/dev/ttyS0", 9600, true);
-        boolean bRet = myPortDevice.openPort("/dev/ttyS1", 9600, true);
+        boolean bRet = myPortDevice.openPort("/dev/ttyS3", 9600, true);
 
         if (bRet) {
             pollingSerialPortEvent();

@@ -355,7 +355,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                                     setFocuseEffect(v);
                                     break;
                                 }
-
                             }
                         }
                     }
@@ -681,7 +680,6 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
             default:
                 break;// throw new IllegalStateException("Unexpected value: " + focusVId);
         }
-
     }
 
     @SuppressLint("LongLogTag")
@@ -773,17 +771,25 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
      * @param keyCode
      * @param isClick true:点击 false:菜单
      */
+    private Drawable GetDrawable(String packageName)
+    {
+        AppInfor appInfor=mMyAppsManager.getAppInfor(packageName);
+        if(appInfor != null)
+            return appInfor.getIcon();
+        else
+            return null;
+    }
     private void OnMainPageViewClick(View v, int keyCode, boolean isClick) {
+        Drawable drawable;
         int id = v.getId();
-
-        Drawable drawable = mMyAppsManager.getAppInfor(PackageName.qqMusic).getIcon();
+        drawable = GetDrawable(PackageName.qqMusic);
         switch (id) {
             case R.id.fl4:
                 //QQ音乐
                 binding.fl4.requestFocus();
                 binding.bgIv5.setImageResource(R.drawable.bb2);
                 binding.bgIcon.setVisibility(View.VISIBLE);
-                drawable = mMyAppsManager.getAppInfor(PackageName.qqMusic).getIcon();
+                drawable = GetDrawable(PackageName.qqMusic);
                 binding.bgIcon.setImageDrawable(drawable);
                 //Glide.with(this).asBitmap().load(mMyAppsManager.getAppInfor(PackageName.qqMusic).getIcon()).into(binding.bgIcon);
                 launchApp(PackageName.qqMusic);
@@ -794,7 +800,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.fl0.requestFocus();
                 binding.bgIv5.setImageResource(R.drawable.bb2);
                 binding.bgIcon.setVisibility(View.VISIBLE);
-                drawable = mMyAppsManager.getAppInfor(PackageName.qmSing).getIcon();
+                drawable = GetDrawable(PackageName.qmSing);
                 binding.bgIcon.setImageDrawable(drawable);
                 //Glide.with(this).asBitmap().load(mMyAppsManager.getAppInfor(PackageName.qmSing).getIcon()).into(binding.bgIcon);
                 launchApp(PackageName.qmSing);
@@ -805,7 +811,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.fl6.requestFocus();
                 binding.bgIv5.setImageResource(R.drawable.bb2);
                 binding.bgIcon.setVisibility(View.VISIBLE);
-                drawable = mMyAppsManager.getAppInfor("com.softwinner.TvdFileManager").getIcon();
+                drawable = GetDrawable("com.softwinner.TvdFileManager");
                 binding.bgIcon.setImageDrawable(drawable);
                 //Glide.with(this).asBitmap().load(mMyAppsManager.getAppInfor("com.softwinner.TvdFileManager").getIcon()).into(binding.bgIcon);
                 launchApp("com.softwinner.TvdFileManager");
@@ -825,7 +831,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.fl7.requestFocus();
                 binding.bgIv5.setImageResource(R.drawable.bb2);
                 binding.bgIcon.setVisibility(View.VISIBLE);
-                binding.bgIcon.setImageDrawable(mMyAppsManager.getAppInfor("com.android.settings").getIcon());
+                binding.bgIcon.setImageDrawable(GetDrawable("com.android.settings"));
                 //Glide.with(this).asBitmap().load(mMyAppsManager.getAppInfor("com.android.settings").getIcon()).into(binding.bgIv5);
                 openSettings();
 
@@ -836,7 +842,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 binding.fl8.requestFocus();
                 binding.bgIv5.setImageResource(R.drawable.bb2);
                 binding.bgIcon.setVisibility(View.VISIBLE);
-                drawable = mMyAppsManager.getAppInfor(PackageName.hdp).getIcon();
+                drawable = GetDrawable(PackageName.hdp);
                 binding.bgIcon.setImageDrawable(drawable);
                 //Glide.with(this).asBitmap().load(mMyAppsManager.getAppInfor(PackageName.hdp).getIcon()).into(binding.bgIcon);
                 launchApp(PackageName.hdp);
@@ -846,7 +852,7 @@ public class MainActivity extends Activity implements OnTouchListener, OnGlobalF
                 //腾讯视频
                 binding.fl1.requestFocus();
                 binding.bgIv5.setImageResource(R.drawable.bb2);
-                drawable = mMyAppsManager.getAppInfor(PackageName.qqTv).getIcon();
+                drawable = GetDrawable(PackageName.qqTv);
                 binding.bgIcon.setImageDrawable(drawable);
                 //Glide.with(this).asBitmap().load(mMyAppsManager.getAppInfor(PackageName.qqTv).getIcon()).into(binding.bgIcon);
                 launchApp(PackageName.qqTv);
